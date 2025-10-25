@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .profile-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .teacher-badge {
+            background-color: #6f42c1;
+            color: white;
+        }
+        .student-badge {
+            background-color: #20c997;
+            color: white;
+        }
+        .badge-card {
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        .badge-card:hover {
+            transform: translateY(-5px);
+        }
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 10px;
+            color: white;
+        }
+        .linkedin { background-color: #0077b5; }
+        .twitter { background-color: #1da1f2; }
+        .facebook { background-color: #3b5998; }
+        .instagram { background-color: #e4405f; }
+        .website { background-color: #2ecc71; }
+        .badge-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .badge-date {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Learning
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="modules.html">Modules</a></li>
+                        <li><a class="dropdown-item" href="quiz.html">Assessments</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Community
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="challenges.html">Challenges</a></li>
+                        <li><a class="dropdown-item" href="leaderboard.html">Leaderboard</a></li>
+                        <li><a class="dropdown-item" href="eco-map-student.html">Eco-Map</a></li>
+                        <li><a class="dropdown-item" href="events.html">Events</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="redeem.html">Rewards</a>
+                </li>
+            </ul>
+            
+            <!-- Profile Dropdown with Eco-Points -->
+<div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                
+                <!-- Eco-points display in dropdown -->
+                <div class="eco-points-display mt-2">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="fas fa-leaf text-success me-2"></i>
+                        <span class="fw-bold text-success" id="dropdown-points">0</span>
+                        <span class="text-muted ms-1">Eco-Points</span>
+                    </div>
+                </div>
+                
+                <span class="badge user-role-badge student-badge mt-2">Student</span>
+            </div>
+        </li>
+        <li>
+            <a class="dropdown-item active" href="profile.html">
+                <i class="fas fa-user"></i>My Profile
+            </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="help.html">
+                <i class="fas fa-question-circle"></i>Help & Support
+            </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+           <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+
+        </div>
+    </div>
+</nav>
+
+    <!-- Profile Content -->
+    <div class="container py-5">
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="profile-card card">
+                    <div class="card-body text-center">
+                        <img src="https://ui-avatars.com/api/?name=User+Name&background=27ae60&color=fff&size=100" class="rounded-circle mb-3" alt="Profile" id="profile-avatar">
+                        <h4 id="profile-name">User Name</h4>
+                        <p class="text-muted" id="profile-school">Green University</p>
+                        <p class="text-muted" id="profile-location-display"></p>
+                        <div class="mb-3">
+                            <span class="badge" id="profile-role-badge">Student</span>
+                        </div>
+                        
+                        <!-- Social Media Links -->
+                        <div class="mb-3" id="social-links">
+                            <a href="#" class="social-icon linkedin" id="linkedin-link" style="display: none;">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="#" class="social-icon twitter" id="twitter-link" style="display: none;">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-icon facebook" id="facebook-link" style="display: none;">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-icon instagram" id="instagram-link" style="display: none;">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="social-icon website" id="website-link" style="display: none;">
+                                <i class="fas fa-globe"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#avatarModal">Change Avatar</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-card card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Account Stats</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Modules Completed
+                                <span class="badge bg-success rounded-pill" id="modules-completed">3</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Quizzes Completed
+                                <span class="badge bg-success rounded-pill" id="quizzes-taken">12</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Total Eco-Points
+                                <span class="badge bg-success rounded-pill" id="total-points">750</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Current Streak
+                                <span class="badge bg-success rounded-pill" id="current-streak">5 days</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Badges Earned
+                                <span class="badge bg-success rounded-pill" id="badges-count">0</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="profile-card card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Interests</h5>
+                        <div id="interests-container">
+                            <!-- Interests will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="profile-card card">
+                    <div class="card-body">
+                        <h5 class="card-title"></h5>
+
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-pills mb-3" id="profile-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="tab-settings" data-bs-toggle="pill" data-bs-target="#pane-settings" type="button" role="tab">Profile Settings</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-achievements" data-bs-toggle="pill" data-bs-target="#pane-achievements" type="button" role="tab">Achievements</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-password" data-bs-toggle="pill" data-bs-target="#pane-password" type="button" role="tab">Change Password</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="pane-settings" role="tabpanel">
+                                <form id="profile-form">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="profile-name-input" class="form-label">Full Name</label>
+                                            <input type="text" class="form-control" id="profile-name-input" value="User Name">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="profile-email" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" id="profile-email" value="user@example.com" disabled>
+                                            <div class="form-text">Email cannot be changed</div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="profile-phone" class="form-label">Contact Number</label>
+                                            <input type="tel" class="form-control" id="profile-phone" value="+1 (555) 123-4567">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="profile-school-input" class="form-label">School/College</label>
+                                            <input type="text" class="form-control" id="profile-school-input" value="Green University">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="profile-location" class="form-label">Location</label>
+                                            <input type="text" class="form-control" id="profile-location" placeholder="Your city or country">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3" id="profile-rollnumber-field">
+                                        <label for="profile-rollnumber" class="form-label">Roll Number</label>
+                                        <input type="text" class="form-control" id="profile-rollnumber" value="12345">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="profile-bio" class="form-label">Bio</label>
+                                        <textarea class="form-control" id="profile-bio" rows="3">Passionate about sustainability and environmental conservation.</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="profile-interests" class="form-label">Interests (comma separated)</label>
+                                        <input type="text" class="form-control" id="profile-interests" placeholder="Renewable energy, Recycling, Biodiversity">
+                                    </div>
+                                    <h6 class="mt-4 mb-3">Social Media</h6>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="profile-linkedin" class="form-label">LinkedIn</label>
+                                            <input type="url" class="form-control" id="profile-linkedin" placeholder="https://linkedin.com/in/username">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="profile-twitter" class="form-label">Twitter</label>
+                                            <input type="url" class="form-control" id="profile-twitter" placeholder="https://twitter.com/username">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="profile-facebook" class="form-label">Facebook</label>
+                                            <input type="url" class="form-control" id="profile-facebook" placeholder="https://facebook.com/username">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="profile-instagram" class="form-label">Instagram</label>
+                                            <input type="url" class="form-control" id="profile-instagram" placeholder="https://instagram.com/username">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="profile-website" class="form-label">Website</label>
+                                            <input type="url" class="form-control" id="profile-website" placeholder="https://yourwebsite.com">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Save Changes</button>
+                                </form>
+                            </div>
+
+                            <div class="tab-pane fade" id="pane-achievements" role="tabpanel">
+                                <h6>Your Badges</h6>
+                                <div id="achievements-container" class="row">
+                                    <div class="col-12 text-center" id="loading-badges">
+                                        <div class="spinner-border text-success" role="status">
+                                            <span class="visually-hidden">Loading badges...</span>
+                                        </div>
+                                        <p class="mt-2">Loading your achievements...</p>
+                                    </div>
+                                </div>
+
+                                <hr />
+                                <h6 class="mt-3">Modules Completed</h6>
+                                <div id="modules-completed-list" class="mb-3">
+                                    <p class="text-muted">Loading completed modules...</p>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="pane-password" role="tabpanel">
+                                <form id="password-form">
+                                    <div class="mb-3">
+                                        <label for="current-password" class="form-label">Current Password</label>
+                                        <input type="password" class="form-control" id="current-password" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="new-password" class="form-label">New Password</label>
+                                        <input type="password" class="form-control" id="new-password" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirm-password" class="form-label">Confirm New Password</label>
+                                        <input type="password" class="form-control" id="confirm-password" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Update Password</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Ujjivana</h5>
+                    <p>Gamifying environmental education for a sustainable future.</p>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">About</a></li>
+                        <li><a href="modules.html" class="text-white text-decoration-none">Modules</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@ujjivana.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe for updates on new features and content.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-success" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2023 Ujjivana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div class="modal fade" id="avatarModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Avatar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img src="https://ui-avatars.com/api/?name=User+Name&background=27ae60&color=fff&size=100" class="rounded-circle mb-3" alt="Profile">
+                        <p>Upload a new profile image</p>
+                        <input type="file" class="form-control" id="avatar-file-input" accept="image/*">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="save-avatar-btn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Update UI for student login status with profile dropdown
+function updateUIForLoginStatus() {
+    const user = getCurrentUser();
+    const authButtons = document.getElementById('auth-buttons');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (user) {
+        // Hide auth buttons, show user menu
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        // Update user information in dropdown
+        updateUserDropdown(user);
+        
+    } else {
+        // Show auth buttons, hide user menu
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// Update dropdown with student information
+function updateUserDropdown(user) {
+    // Safely get all elements
+    const navbarUsername = document.getElementById('navbar-username');
+    const navbarAvatar = document.getElementById('navbar-avatar');
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownAvatar = document.getElementById('dropdown-avatar');
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    
+    // Update basic user information
+    if (navbarUsername) navbarUsername.textContent = user.name || 'Student';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'Student';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    
+    // Update avatar with student color
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Student')}&background=20c997&color=fff&size=`;
+    
+    if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+    if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+    
+    // Update eco-points - ALWAYS show for student interface
+    const points = user.points || 0;
+    if (navbarPoints) navbarPoints.textContent = formatPoints(points);
+    if (dropdownPoints) dropdownPoints.textContent = formatPoints(points);
+    
+    // Update points level styling
+    updatePointsLevelStyling(points);
+}
+
+// Format points with commas
+function formatPoints(points) {
+    return points.toLocaleString();
+}
+function updatePointsLevelStyling(points) {
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    const ecoPointsBadge = document.querySelector('.eco-points-badge');
+    
+    if (!navbarPoints || !ecoPointsBadge) return;
+    
+    // Remove existing level classes
+    ecoPointsBadge.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    navbarPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    if (dropdownPoints) {
+        dropdownPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    }
+    
+    // Add appropriate level class
+    let levelClass = 'points-level-beginner';
+    if (points >= 1000) levelClass = 'points-level-intermediate';
+    if (points >= 5000) levelClass = 'points-level-advanced';
+    if (points >= 10000) levelClass = 'points-level-expert';
+    
+    ecoPointsBadge.classList.add(levelClass);
+    navbarPoints.classList.add(levelClass);
+    if (dropdownPoints) dropdownPoints.classList.add(levelClass);
+}
+// Update points in navbar if available
+function updatePointsDisplay(user) {
+    const pointsElement = document.getElementById('navbar-points');
+    if (pointsElement && user.points) {
+        pointsElement.textContent = user.points.toLocaleString();
+    }
+}
+
+// Initialize student dropdown
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForLoginStatus();
+    
+    // Update dropdown when user data changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user') {
+            const user = getCurrentUser();
+            if (user) {
+                updateUserDropdown(user);
+            }
+        }
+    });
+});
+    </script>
+    <script>
+        // Load user data when page loads
+        // Load user data when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserProfileData();
+    
+    // Listen for storage changes to update data
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user' || e.key === 'moduleUpdated') {
+            loadUserProfileData();
+        }
+    });
+
+    // Re-sync when page becomes visible again
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            loadUserProfileData();
+        }
+    });
+});
+
+// Function to load and display user profile data
+// Function to load and display user profile data
+async function loadUserProfileData() {
+    try {
+        // First, refresh user data from server to get latest information
+        const updatedUser = await refreshUserData();
+        const user = updatedUser || getCurrentUser();
+        
+        if (!user) {
+            console.error('No user data available');
+            return;
+        }
+
+        console.log('Loading user profile data:', user);
+
+        // Update profile information with REAL data
+        document.getElementById('profile-name').textContent = user.name || 'User Name';
+        document.getElementById('profile-name-input').value = user.name || '';
+        document.getElementById('profile-email').value = user.email || '';
+        document.getElementById('profile-phone').value = user.phone || '';
+        document.getElementById('profile-school').textContent = user.school || 'Not specified';
+        document.getElementById('profile-school-input').value = user.school || '';
+        document.getElementById('profile-rollnumber').value = user.rollNumber || '';
+        document.getElementById('profile-bio').value = user.bio || '';
+        document.getElementById('profile-location').value = user.location || '';
+        
+        // Update location display
+        if (user.location) {
+            document.getElementById('profile-location-display').textContent = user.location;
+        } else {
+            document.getElementById('profile-location-display').textContent = '';
+        }
+        
+        // Update social links with REAL data
+        updateSocialLinks(user);
+        
+        // Update interests with REAL data
+        updateInterests(user.interests || []);
+        
+        // Update avatar with role-specific color and REAL name
+        const avatar = document.getElementById('profile-avatar');
+        const navbarAvatar = document.getElementById('navbar-avatar');
+        const dropdownAvatar = document.getElementById('dropdown-avatar');
+        const roleBadge = document.getElementById('profile-role-badge');
+        
+        if (user.role === 'teacher') {
+            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Teacher')}&background=6f42c1&color=fff&size=100`;
+            if (navbarAvatar) navbarAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Teacher')}&background=6f42c1&color=fff&size=32`;
+            if (dropdownAvatar) dropdownAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Teacher')}&background=6f42c1&color=fff&size=64`;
+            roleBadge.textContent = 'Teacher';
+            roleBadge.className = 'badge teacher-badge';
+            document.getElementById('profile-rollnumber-field').style.display = 'none';
+        } else {
+            avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Student')}&background=20c997&color=fff&size=100`;
+            if (navbarAvatar) navbarAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Student')}&background=20c997&color=fff&size=32`;
+            if (dropdownAvatar) dropdownAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Student')}&background=20c997&color=fff&size=64`;
+            roleBadge.textContent = 'Student';
+            roleBadge.className = 'badge student-badge';
+            document.getElementById('profile-rollnumber-field').style.display = 'block';
+        }
+        
+        // Calculate quizzes taken from quizAttempts object
+        const quizzesTaken = calculateQuizzesTaken(user.quizAttempts);
+        
+        // Update stats with REAL data
+        document.getElementById('modules-completed').textContent = user.modulesCompleted || 0;
+        document.getElementById('quizzes-taken').textContent = quizzesTaken;
+        document.getElementById('total-points').textContent = user.points || 0;
+        document.getElementById('current-streak').textContent = user.streak ? `${user.streak} days` : '0 days';
+        document.getElementById('badges-count').textContent = user.badges ? user.badges.length : 0;
+        
+        // Update navbar and dropdown with REAL data
+        updateNavbarWithUserData(user);
+        
+        // Load achievements with REAL data
+        loadAchievements(user.badges || []);
+        
+        // Load completed modules list with REAL data
+        loadCompletedModules();
+
+    } catch (error) {
+        console.error('Error loading user profile data:', error);
+        
+        // Fallback to localStorage data if API fails
+        const user = getCurrentUser();
+        if (user) {
+            console.log('Using fallback user data from localStorage');
+            updateBasicProfileInfo(user);
+        }
+    }
+}
+
+// Function to calculate quizzes taken from quizAttempts object
+function calculateQuizzesTaken(quizAttempts) {
+    if (!quizAttempts) return 0;
+    
+    try {
+        // If quizAttempts is already a number, return it
+        if (typeof quizAttempts === 'number') {
+            return quizAttempts;
+        }
+        
+        // If it's an object with quiz IDs as keys, count the number of keys
+        if (typeof quizAttempts === 'object') {
+            // Handle different object types
+            if (Array.isArray(quizAttempts)) {
+                return quizAttempts.length;
+            } else {
+                // Count the number of quiz IDs in the object
+                const quizIds = Object.keys(quizAttempts);
+                console.log('Quiz attempts object:', quizAttempts, 'Count:', quizIds.length);
+                return quizIds.length;
+            }
+        }
+        
+        return 0;
+    } catch (error) {
+        console.error('Error calculating quizzes taken:', error);
+        return 0;
+    }
+}
+
+// Function to update navbar with real user data
+function updateNavbarWithUserData(user) {
+    const navbarUsername = document.getElementById('navbar-username');
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    
+    if (navbarUsername) navbarUsername.textContent = user.name || 'User';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'User';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    if (dropdownPoints) dropdownPoints.textContent = user.points || 0;
+}
+
+// Function to update basic profile info as fallback
+function updateBasicProfileInfo(user) {
+    // Update only the most critical fields
+    const elementsToUpdate = {
+        'profile-name': user.name,
+        'profile-name-input': user.name,
+        'profile-email': user.email,
+        'profile-school': user.school,
+        'profile-school-input': user.school,
+        'total-points': user.points
+    };
+    
+    for (const [elementId, value] of Object.entries(elementsToUpdate)) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            if (element.type === 'input' || element.type === 'textarea') {
+                element.value = value || '';
+            } else {
+                element.textContent = value || '';
+            }
+        }
+    }
+}
+
+        // Listen for storage changes to the user or module updates
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'user' || e.key === 'moduleUpdated') {
+                const updatedUser = getCurrentUser();
+                if (updatedUser) {
+                    // Update stats and UI pieces
+                    document.getElementById('modules-completed').textContent = updatedUser.modulesCompleted || 0;
+                    document.getElementById('total-points').textContent = updatedUser.points || 0;
+                    document.getElementById('current-streak').textContent = updatedUser.streak ? `${updatedUser.streak} days` : '0 days';
+                    document.getElementById('badges-count').textContent = updatedUser.badges ? updatedUser.badges.length : 0;
+                    loadAchievements(updatedUser.badges || []);
+                            // Refresh completed modules list
+                            loadCompletedModules();
+                }
+            }
+        });
+
+        // Re-sync when page becomes visible again
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                const updatedUser = getCurrentUser();
+                if (updatedUser) {
+                    document.getElementById('modules-completed').textContent = updatedUser.modulesCompleted || 0;
+                    document.getElementById('total-points').textContent = updatedUser.points || 0;
+                    document.getElementById('current-streak').textContent = updatedUser.streak ? `${updatedUser.streak} days` : '0 days';
+                    document.getElementById('badges-count').textContent = updatedUser.badges ? updatedUser.badges.length : 0;
+                    loadAchievements(updatedUser.badges || []);
+                            // Load completed modules list in achievements tab
+                            loadCompletedModules();
+                }
+            }
+        });
+
+        // Update social links in the profile
+        function updateSocialLinks(user) {
+            const socialLinks = {
+                linkedin: user.linkedin,
+                twitter: user.twitter,
+                facebook: user.facebook,
+                instagram: user.instagram,
+                website: user.website
+            };
+            
+            for (const [platform, url] of Object.entries(socialLinks)) {
+                const linkElement = document.getElementById(`${platform}-link`);
+                if (url) {
+                    linkElement.href = url;
+                    linkElement.style.display = 'inline-block';
+                    
+                    // Also update the input field
+                    const inputElement = document.getElementById(`profile-${platform}`);
+                    if (inputElement) {
+                        inputElement.value = url;
+                    }
+                } else {
+                    linkElement.style.display = 'none';
+                }
+            }
+        }
+
+        // Update interests display
+        function updateInterests(interests) {
+            const interestsContainer = document.getElementById('interests-container');
+            interestsContainer.innerHTML = '';
+            
+            if (interests.length === 0) {
+                interestsContainer.innerHTML = '<p class="text-muted">No interests added yet.</p>';
+                return;
+            }
+            
+            interests.forEach(interest => {
+                const badge = document.createElement('span');
+                badge.className = 'badge bg-light text-dark me-1 mb-1';
+                badge.textContent = interest;
+                interestsContainer.appendChild(badge);
+            });
+            
+            // Also update the interests input field
+            document.getElementById('profile-interests').value = interests.join(', ');
+        }
+
+        // Load achievements (badges)
+        function loadAchievements(badges) {
+            const achievementsContainer = document.getElementById('achievements-container');
+            const loadingElement = document.getElementById('loading-badges');
+            
+            if (loadingElement) {
+                loadingElement.remove();
+            }
+
+                // (completed modules loading moved to top-level function below)
+            
+            if (!badges || badges.length === 0) {
+                achievementsContainer.innerHTML = `
+                    <div class="col-12 text-center">
+                        <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
+                        <h5>No achievements yet</h5>
+                        <p class="text-muted">Complete modules and quizzes to earn badges!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            badges.forEach(badge => {
+                // Handle both old string format and new object format
+                const badgeName = typeof badge === 'string' ? badge : badge.name;
+                const badgeDescription = badge.description || 'Earned for your achievements';
+                const earnedDate = badge.earnedAt ? new Date(badge.earnedAt).toLocaleDateString() : 'Recently';
+                
+                // Select icon based on badge name
+                let badgeIcon = 'fa-trophy';
+                if (badgeName.includes('Quiz')) badgeIcon = 'fa-brain';
+                if (badgeName.includes('Module')) badgeIcon = 'fa-book';
+                if (badgeName.includes('Green')) badgeIcon = 'fa-leaf';
+                if (badgeName.includes('Eco')) badgeIcon = 'fa-recycle';
+                
+                html += `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card badge-card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas ${badgeIcon} fa-3x text-warning badge-icon"></i>
+                                <h6 class="card-title">${badgeName}</h6>
+                                <p class="card-text small">${badgeDescription}</p>
+                                <small class="badge-date">Earned on ${earnedDate}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            achievementsContainer.innerHTML = html;
+        }
+
+        // Load completed modules list (names) and render
+        async function loadCompletedModules() {
+            const container = document.getElementById('modules-completed-list');
+            if (!container) return;
+
+            container.innerHTML = '<p class="text-muted">Loading completed modules...</p>';
+
+            try {
+                // Use single endpoint to get completed modules for current user
+                const resp = await apiCall('/modules/completed');
+                const completedModules = (resp.data || resp) || [];
+
+                // completedModules is an array of { id, title }
+
+                if (!completedModules || completedModules.length === 0) {
+                    container.innerHTML = '<p class="text-muted">No modules completed yet.</p>';
+                    return;
+                }
+
+                container.innerHTML = '<ul class="list-group"></ul>';
+                const ul = container.querySelector('ul');
+                completedModules.forEach(mod => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = mod.title || mod;
+                    ul.appendChild(li);
+                });
+            } catch (err) {
+                console.error('Error loading completed modules:', err);
+                container.innerHTML = '<p class="text-muted">Could not load completed modules.</p>';
+            }
+        }
+
+        // Form submissions
+document.getElementById('profile-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Get form values
+    const name = document.getElementById('profile-name-input').value;
+    const phone = document.getElementById('profile-phone').value;
+    const school = document.getElementById('profile-school-input').value;
+    const rollNumber = document.getElementById('profile-rollnumber').value;
+    const bio = document.getElementById('profile-bio').value;
+    const location = document.getElementById('profile-location').value;
+    const interests = document.getElementById('profile-interests').value.split(',').map(i => i.trim()).filter(i => i);
+    const linkedin = document.getElementById('profile-linkedin').value;
+    const twitter = document.getElementById('profile-twitter').value;
+    const facebook = document.getElementById('profile-facebook').value;
+    const instagram = document.getElementById('profile-instagram').value;
+    const website = document.getElementById('profile-website').value;
+    
+    // Update profile information
+    updateProfile({ 
+        name, 
+        phone, 
+        school, 
+        rollNumber, 
+        bio, 
+        location, 
+        interests,
+        linkedin, 
+        twitter, 
+        facebook, 
+        instagram, 
+        website 
+    })
+        .then(response => {
+            // Reload the profile data to ensure everything is synchronized
+            loadUserProfileData();
+            alert('Profile updated successfully!');
+        })
+        .catch(error => {
+            console.error('Error updating profile:', error);
+            alert('Error updating profile: ' + error.message);
+        });
+});
+        
+        document.getElementById('password-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match!');
+                return;
+            }
+            
+            updatePassword(currentPassword, newPassword)
+                .then(response => {
+                    alert('Password updated successfully!');
+                    document.getElementById('password-form').reset();
+                })
+                .catch(error => {
+                    console.error('Error updating password:', error);
+                    alert('Error updating password: ' + error.message);
+                });
+        });
+
+        // Avatar upload handling removed. Implement later when feature is added.
+    </script>
+</body>
+</html>

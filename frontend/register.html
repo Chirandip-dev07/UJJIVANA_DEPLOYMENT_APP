@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --primary-green: #2ecc71;
+            --secondary-green: #27ae60;
+            --light-green: #d5f4e6;
+            --dark-green: #1e8449;
+            --accent-yellow: #f1c40f;
+            --accent-blue: #3498db;
+            --accent-orange: #e67e22;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .brand-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        @keyframes leaf-grow {
+            0% { transform: scale(1) rotate(0deg); }
+            100% { transform: scale(1.1) rotate(5deg); }
+        }
+        
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .auth-form {
+            padding: 40px;
+        }
+        
+        .auth-quote {
+            background: linear-gradient(45deg, var(--primary-green), var(--accent-blue), var(--accent-orange));
+            background-size: 400% 400%;
+            animation: gradientShift 10s ease infinite;
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .quote-header {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quote-text {
+            font-size: 1.4rem;
+            font-style: italic;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .quote-author {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 0.2rem rgba(46, 204, 113, 0.25);
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, var(--primary-green), var(--secondary-green));
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+        
+        .password-toggle {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border: 1px solid #e0e0e0;
+            border-left: none;
+            background-color: white;
+        }
+        
+        .password-toggle:hover {
+            background-color: #f8f9fa;
+        }
+        
+        footer {
+            background: linear-gradient(to right, #2c3e50, #34495e);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 40px;
+        }
+        
+        .form-title {
+            color: var(--dark-green);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .form-subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        
+        .role-selection .form-check {
+            flex: 1;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 10px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .role-selection .form-check-input {
+            display: none;
+        }
+        
+        .role-selection .form-check-label {
+            width: 100%;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .role-selection .form-check-input:checked + .form-check-label {
+            color: var(--primary-green);
+        }
+        
+        .role-selection .form-check-input:checked ~ .form-check-label {
+            border-color: var(--primary-green);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary-green);
+            border-color: var(--primary-green);
+        }
+      /* Registration Animation Styles */
+.register-animation-container {
+    height: 140px;
+    position: relative;
+    margin-bottom: 2rem;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid #e8f5e9;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.animated-scene {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Role Display Text */
+.role-display {
+    text-align: center;
+    z-index: 2;
+}
+
+.display-text {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1b5e20;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(45deg, #1b5e20, #2e7d32, #388e3c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Progress Animation (Hidden by default) */
+.progress-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+}
+
+/* Progress Leaves */
+.progress-leaves {
+    position: relative;
+    width: 100px;
+    height: 60px;
+    margin-bottom: 15px;
+}
+
+.leaf {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #1b5e20;
+    border-radius: 50% 0 50% 0;
+    transform: rotate(45deg);
+    opacity: 0;
+}
+
+.leaf-1 {
+    top: 10px;
+    left: 20px;
+    background: #1b5e20;
+}
+
+.leaf-2 {
+    top: 20px;
+    left: 40px;
+    background: #2e7d32;
+    transform: rotate(135deg);
+}
+
+.leaf-3 {
+    top: 10px;
+    left: 60px;
+    background: #388e3c;
+    transform: rotate(225deg);
+}
+
+.leaf-floating .leaf-1 {
+    animation: leaf-float-1 2s ease-in-out infinite;
+}
+
+.leaf-floating .leaf-2 {
+    animation: leaf-float-2 2s ease-in-out 0.3s infinite;
+}
+
+.leaf-floating .leaf-3 {
+    animation: leaf-float-3 2s ease-in-out 0.6s infinite;
+}
+
+@keyframes leaf-float-1 {
+    0% {
+        transform: rotate(45deg) translateY(0) scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: rotate(45deg) translateY(-15px) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(45deg) translateY(-30px) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes leaf-float-2 {
+    0% {
+        transform: rotate(135deg) translateY(0) scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: rotate(135deg) translateY(-20px) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(135deg) translateY(-40px) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes leaf-float-3 {
+    0% {
+        transform: rotate(225deg) translateY(0) scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: rotate(225deg) translateY(-25px) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(225deg) translateY(-50px) scale(0);
+        opacity: 0;
+    }
+}
+
+/* Registration Progress */
+.register-progress {
+    text-align: center;
+    width: 80%;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1b5e20, #4caf50);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 2s ease-in-out;
+}
+
+.progress-text {
+    font-size: 0.8rem;
+    color: #1b5e20;
+    font-weight: 600;
+}
+
+.progress-complete .progress-fill {
+    width: 100%;
+}
+
+/* Success Animation */
+.success-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+}
+
+.success-circle {
+    width: 60px;
+    height: 60px;
+    background: #4caf50;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+    margin-bottom: 10px;
+    transform: scale(0);
+}
+
+.success-sparkles {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.sparkle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ffeb3b;
+    border-radius: 50%;
+}
+
+.sparkle:nth-child(1) {
+    top: -30px;
+    left: -30px;
+    animation: sparkle-pop 0.6s ease-out 0.1s;
+}
+
+.sparkle:nth-child(2) {
+    top: -30px;
+    right: -30px;
+    animation: sparkle-pop 0.6s ease-out 0.3s;
+}
+
+.sparkle:nth-child(3) {
+    bottom: -30px;
+    left: 0;
+    animation: sparkle-pop 0.6s ease-out 0.5s;
+}
+
+@keyframes sparkle-pop {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2) rotate(180deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.success-text {
+    color: #1b5e20;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-top: 10px;
+}
+
+.success-show {
+    display: flex;
+}
+
+.success-show .success-circle {
+    animation: success-grow 0.6s ease-out forwards;
+}
+
+@keyframes success-grow {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Animation States */
+.register-animation-container.processing .role-display {
+    display: none;
+}
+
+.register-animation-container.processing .progress-animation {
+    display: flex;
+}
+
+.register-animation-container.success .progress-animation {
+    display: none;
+}
+
+.register-animation-container.success .success-animation {
+    display: flex;
+}
+
+/* Button States */
+.register-btn.animating .btn-text {
+    display: none;
+}
+
+.register-btn.animating .btn-loading {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .register-animation-container {
+        height: 120px;
+    }
+    
+    .display-text {
+        font-size: 1.2rem;
+    }
+    
+    .success-text {
+        font-size: 1rem;
+    }
+}
+/* Quote Section Styles */
+.auth-quote {
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-quote::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.auth-quote .text-center {
+    position: relative;
+    z-index: 2;
+}
+
+.auth-quote h4 {
+    font-size: 1.4rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-quote p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.quote-refresh-hint {
+    opacity: 0.7;
+    font-size: 0.8rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Smooth transition for quote changes */
+.auth-quote h4, .auth-quote p {
+    transition: opacity 0.5s ease-in-out;
+}
+
+.quote-changing {
+    opacity: 0.5;
+}
+
+/* Floating animation for quote icon */
+.auth-quote .fa-quote-left {
+    animation: float-quote 4s ease-in-out infinite;
+}
+
+@keyframes float-quote {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Gradient text effect for quotes */
+.auth-quote h4 {
+    background: linear-gradient(45deg, #ffffff, #e8f5e9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .auth-quote h4 {
+        font-size: 1.2rem;
+        min-height: 100px;
+    }
+    
+    .auth-quote p {
+        font-size: 1rem;
+    }
+}
+/* OTP Verification Styles */
+.otp-verified {
+    border-color: var(--primary-green) !important;
+    background-color: var(--light-green) !important;
+}
+
+.otp-pending {
+    border-color: var(--accent-orange) !important;
+}
+
+.otp-error {
+    border-color: #dc3545 !important;
+}
+
+/* OTP input styling */
+#email-otp, #phone-otp {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+/* Verification status */
+.verification-status {
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.verification-success {
+    color: var(--primary-green);
+}
+
+.verification-pending {
+    color: var(--accent-orange);
+}
+
+.verification-error {
+    color: #dc3545;
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top navbar-locked navbar-blur">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Learning
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="modules.html">Modules</a></li>
+                        <li><a class="dropdown-item" href="quiz.html">Assessments</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Community
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="challenges.html">Challenges</a></li>
+                        <li><a class="dropdown-item" href="leaderboard.html">Leaderboard</a></li>
+                        <li><a class="dropdown-item" href="eco-map-student.html">Eco-Map</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="redeem.html">Rewards</a>
+                </li>
+            </ul>
+            
+            <div class="d-flex" id="auth-buttons">
+                <a href="login.html" class="btn btn-outline-success me-2 auth-link">Login</a>
+                <a href="register.html" class="btn btn-success auth-link">Sign Up</a>
+            </div>
+            
+            <div class="d-none" id="user-menu">
+                <div class="dropdown">
+                    <a class="btn btn-outline-success dropdown-toggle" href="#" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-1"></i>
+                        <span id="username-display">User</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+    <!-- Register Content -->
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 auth-container">
+            <div class="row">
+                <div class="col-md-6 auth-form">
+                    <h2 class="text-center mb-4">Create an Account</h2>
+                    
+                    <!-- Registration Animation Container -->
+                    <div class="register-animation-container mb-4" id="register-animation-container">
+                        <div class="animated-scene">
+                            <!-- Role Display Text -->
+                            <div class="role-display" id="role-display">
+                                <i class="fas fa-leaf me-2"></i>
+                                <h3 class="display-text">Ujjivana Student Registration</h3>
+                            </div>
+                            
+                            <!-- Progress Animation -->
+                            <div class="progress-animation" id="progress-animation">
+                                <div class="progress-leaves">
+                                    <div class="leaf leaf-1"></div>
+                                    <div class="leaf leaf-2"></div>
+                                    <div class="leaf leaf-3"></div>
+                                </div>
+                                
+                                <!-- Progress Indicator -->
+                                <div class="register-progress" id="register-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill"></div>
+                                    </div>
+                                    <div class="progress-text">Creating your account...</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Success Animation -->
+                            <div class="success-animation" id="success-animation">
+                                <div class="success-circle">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="success-sparkles">
+                                    <div class="sparkle"></div>
+                                    <div class="sparkle"></div>
+                                    <div class="sparkle"></div>
+                                </div>
+                                <div class="success-text">Registration Successful!</div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Role Selection -->
+                    <div class="mb-3">
+                        <label class="form-label">I am a</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userType" id="studentType" value="student" checked>
+                                <label class="form-check-label" for="studentType">Student</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userType" id="teacherType" value="teacher">
+                                <label class="form-check-label" for="teacherType">Teacher</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form id="register-form">
+                        <!-- ... rest of your form fields remain the same ... -->
+                        <div class="mb-3">
+                            <label for="register-name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="register-name" required>
+                        </div>
+                        <div class="mb-3">
+    <label for="register-email" class="form-label">Email Address</label>
+    <div class="input-group">
+        <input type="email" class="form-control" id="register-email" required>
+        <button type="button" class="btn btn-outline-success" id="send-email-otp">
+            Send OTP
+        </button>
+    </div>
+</div>
+
+<!-- Email OTP Verification -->
+<div class="mb-3" id="email-otp-section" style="display: none;">
+    <label for="email-otp" class="form-label">Email OTP Verification</label>
+    <div class="input-group">
+        <input type="text" class="form-control" id="email-otp" placeholder="Enter OTP">
+        <button type="button" class="btn btn-outline-success" id="verify-email-otp">
+            Verify
+        </button>
+    </div>
+    <div class="form-text" id="email-otp-status"></div>
+</div>
+                        <div class="mb-3">
+    <label for="register-phone" class="form-label">Contact Number</label>
+    <div class="input-group">
+        <input type="tel" class="form-control" id="register-phone">
+        <button type="button" class="btn btn-outline-success" id="send-phone-otp">
+            Send OTP
+        </button>
+    </div>
+</div>
+
+<!-- Phone OTP Verification -->
+<div class="mb-3" id="phone-otp-section" style="display: none;">
+    <label for="phone-otp" class="form-label">Phone OTP Verification</label>
+    <div class="input-group">
+        <input type="text" class="form-control" id="phone-otp" placeholder="Enter OTP">
+        <button type="button" class="btn btn-outline-success" id="verify-phone-otp">
+            Verify
+        </button>
+    </div>
+    <div class="form-text" id="phone-otp-status"></div>
+</div>
+                        <div class="mb-3">
+                            <label for="register-school" class="form-label">School/College Name</label>
+                            <input type="text" class="form-control" id="register-school">
+                        </div>
+                        
+                        <!-- Student-specific field -->
+                        <div class="mb-3" id="rollNumberField">
+                            <label for="register-rollnumber" class="form-label">Roll Number</label>
+                            <input type="text" class="form-control" id="register-rollnumber">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="register-password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="register-password" required>
+                                <button class="btn password-toggle" type="button" id="toggle-register-password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="register-confirm-password" class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="register-confirm-password" required>
+                                <button class="btn password-toggle" type="button" id="toggle-confirm-password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 py-2 register-btn" id="register-btn">
+                            <span class="btn-text">Register</span>
+                            <div class="btn-loading d-none">
+                                <div class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <span class="ms-2">Creating Account...</span>
+                            </div>
+                        </button>
+                        <div class="text-center mt-3">
+                            <p>Already have an account? <a href="login.html">Login here</a></p>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6 auth-quote">
+    <div class="text-center">
+        <i class="fas fa-quote-left fa-3x mb-3"></i>
+        <h4 id="quote-text">"The greatest threat to our planet is the belief that someone else will save it."</h4>
+        <p id="quote-author">— Robert Swan</p>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Welcome Popup for Registration -->
+<div class="modal fade" id="welcomeRegisterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center p-5">
+                <div class="success-icon mb-3">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h3 class="text-success mb-3" id="welcome-title">Welcome to Ujjivana!</h3>
+                <p class="mb-4" id="welcome-message">Your account has been successfully created.</p>
+                <div class="spinner-border text-success mb-3" role="status">
+                    <span class="visually-hidden">Redirecting...</span>
+                </div>
+                <p class="text-muted">Setting up your experience...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Ujjivana</h5>
+                    <p>Gamifying environmental education for a sustainable future.</p>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">About</a></li>
+                        <li><a href="modules.html" class="text-white text-decoration-none">Modules</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@ujjivana.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe for updates on new features and content.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-success" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2023 Ujjivana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+       // Registration Animation Functions
+function initializeRegisterAnimation() {
+    const registerForm = document.getElementById('register-form');
+    const studentType = document.getElementById('studentType');
+    const teacherType = document.getElementById('teacherType');
+    
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegisterWithAnimation);
+    }
+    
+    // Update role text when selection changes
+    if (studentType && teacherType) {
+        studentType.addEventListener('change', updateRoleText);
+        teacherType.addEventListener('change', updateRoleText);
+        
+        // Initial state
+        updateRoleText();
+    }
+}
+
+function updateRoleText() {
+    const studentType = document.getElementById('studentType');
+    const roleDisplay = document.getElementById('role-display');
+    const displayText = roleDisplay.querySelector('.display-text');
+    
+    if (studentType.checked) {
+        displayText.textContent = 'Ujjivana Student Registration';
+    } else {
+        displayText.textContent = 'Ujjivana Teacher Registration';
+    }
+}
+
+async function handleRegisterWithAnimation(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('register-name').value;
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
+    const confirmPassword = document.getElementById('register-confirm-password').value;
+    const phone = document.getElementById('register-phone').value;
+    const school = document.getElementById('register-school').value;
+    const rollNumber = document.getElementById('register-rollnumber').value;
+    const userType = document.querySelector('input[name="userType"]:checked').value;
+    
+    // Validation
+    if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+    }
+    
+    if (!name || !email || !password) {
+        alert('Please fill in all required fields (name, email, password)');
+        return;
+    }
+    
+    // Start animation and registration process
+    await startRegisterAnimation(name, email, password, phone, school, rollNumber, userType);
+}
+
+async function startRegisterAnimation(name, email, password, phone, school, rollNumber, userType) {
+    const registerBtn = document.getElementById('register-btn');
+    const animationContainer = document.getElementById('register-animation-container');
+    const progressAnimation = document.getElementById('progress-animation');
+    
+    // Disable form and show loading state
+    registerBtn.disabled = true;
+    registerBtn.classList.add('animating');
+    
+    // Show processing state
+    animationContainer.classList.add('processing');
+    
+    try {
+        // Start leaf animation
+        progressAnimation.classList.add('leaf-floating');
+        
+        // Start progress bar
+        setTimeout(() => {
+            const progressFill = document.querySelector('.progress-fill');
+            progressFill.style.width = '100%';
+        }, 100);
+        
+        // Phase 3: Attempt registration
+        await performRegistration(name, email, password, phone, school, rollNumber, userType);
+        
+        // Phase 4: Show success animation
+        await playRegistrationSuccessAnimation();
+        
+    } catch (error) {
+        // Registration failed - reset animation
+        resetRegisterAnimation();
+        
+        // Show error message
+        alert('Registration failed: ' + error.message);
+        
+        // Re-enable the register button
+        registerBtn.disabled = false;
+        registerBtn.classList.remove('animating');
+    }
+}
+
+async function performRegistration(name, email, password, phone, school, rollNumber, userType) {
+    // Check if OTPs are verified
+    if (!emailOtpVerified) {
+        throw new Error('Please verify your email address first');
+    }
+
+    // Prepare data based on user type
+    const userData = {
+        name, 
+        email, 
+        password, 
+        phone, 
+        school,
+        role: userType,
+        emailVerificationToken: emailOtpToken
+    };
+    
+    // Add phone verification token if phone was verified
+    if (phoneOtpVerified) {
+        userData.phoneVerificationToken = phoneOtpToken;
+    }
+    
+    // Only add rollNumber for students
+    if (userType === 'student' && rollNumber) {
+        userData.rollNumber = rollNumber;
+    }
+    
+    // Use your existing register function
+    return await register(userData);
+}
+async function register(userData) {
+    try {
+        // Determine the endpoint based on user type
+        const endpoint = userData.role === 'teacher' ? '/auth/register/teacher' : '/auth/register';
+        
+        // Remove role from data for student registration (will use default)
+        if (userData.role === 'student') {
+            delete userData.role;
+        }
+        
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        });
+        
+        if (!response.ok) {
+            let errorMessage = 'Registration failed';
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } catch (e) {
+                errorMessage = response.statusText || errorMessage;
+            }
+            throw new Error(errorMessage);
+        }
+        
+        const data = await response.json();
+        
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        
+        updateUIForLoginStatus();
+        
+        return data;
+    } catch (error) {
+        console.error('Registration error:', error);
+        throw error;
+    }
+}
+async function playRegistrationSuccessAnimation() {
+    return new Promise((resolve) => {
+        const animationContainer = document.getElementById('register-animation-container');
+        
+        // Switch to success state
+        animationContainer.classList.remove('processing');
+        animationContainer.classList.add('success');
+        
+        // Show welcome popup after delay
+        setTimeout(() => {
+            const userType = document.querySelector('input[name="userType"]:checked').value;
+            showRegistrationWelcomePopup(userType);
+            resolve();
+        }, 2000);
+    });
+}
+
+function resetRegisterAnimation() {
+    const animationContainer = document.getElementById('register-animation-container');
+    const progressAnimation = document.getElementById('progress-animation');
+    const progressFill = document.querySelector('.progress-fill');
+    
+    // Reset all animations
+    animationContainer.classList.remove('processing', 'success');
+    progressAnimation.classList.remove('leaf-floating');
+    progressFill.style.width = '0%';
+}
+
+function showRegistrationWelcomePopup(userType) {
+    const welcomeModal = new bootstrap.Modal(document.getElementById('welcomeRegisterModal'));
+    const welcomeTitle = document.getElementById('welcome-title');
+    const welcomeMessage = document.getElementById('welcome-message');
+    
+    // Customize message based on role
+    if (userType === 'teacher') {
+        welcomeTitle.textContent = 'Welcome, Educator!';
+        welcomeMessage.textContent = 'Your teacher account has been created. Get ready to inspire the next generation!';
+    } else {
+        welcomeTitle.textContent = 'Welcome to Ujjivana!';
+        welcomeMessage.textContent = 'Your student account has been created. Start your eco-learning journey!';
+    }
+    
+    // Show the welcome modal
+    welcomeModal.show();
+    
+    // Determine redirect URL based on user role
+    let redirectUrl = 'index.html';
+    if (userType === 'teacher') {
+        redirectUrl = 'teacher-dashboard.html';
+    }
+    
+    // Redirect after 3 seconds
+    setTimeout(() => {
+        window.location.href = redirectUrl;
+    }, 3000);
+}
+
+// Toggle password visibility for register form
+document.getElementById('toggle-register-password').addEventListener('click', function() {
+    const passwordInput = document.getElementById('register-password');
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+});
+
+document.getElementById('toggle-confirm-password').addEventListener('click', function() {
+    const passwordInput = document.getElementById('register-confirm-password');
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+});
+
+// Toggle roll number field based on user type
+document.addEventListener('DOMContentLoaded', function() {
+    const studentType = document.getElementById('studentType');
+    const teacherType = document.getElementById('teacherType');
+    const rollNumberField = document.getElementById('rollNumberField');
+    
+    function toggleRollNumberField() {
+        if (studentType.checked) {
+            rollNumberField.style.display = 'block';
+        } else {
+            rollNumberField.style.display = 'none';
+        }
+    }
+    
+    studentType.addEventListener('change', toggleRollNumberField);
+    teacherType.addEventListener('change', toggleRollNumberField);
+    document.getElementById('send-email-otp').addEventListener('click', sendEmailOTP);
+    document.getElementById('verify-email-otp').addEventListener('click', verifyEmailOTP);
+    document.getElementById('send-phone-otp').addEventListener('click', sendPhoneOTP);
+    document.getElementById('verify-phone-otp').addEventListener('click', verifyPhoneOTP);
+    // Initial state
+    toggleRollNumberField();
+    
+    // Initialize animation
+    initializeRegisterAnimation();
+});
+</script>
+<script>
+    // OTP Verification Functions
+let emailOtpVerified = false;
+let phoneOtpVerified = false;
+let emailOtpToken = null;
+let phoneOtpToken = null;
+
+// Send Email OTP
+async function sendEmailOTP() {
+    const email = document.getElementById('register-email').value;
+    
+    if (!email) {
+        alert('Please enter your email address first');
+        return;
+    }
+
+    try {
+        const response = await apiCall('/auth/send-email-otp', {
+            method: 'POST',
+            body: { email }
+        });
+
+        document.getElementById('email-otp-section').style.display = 'block';
+        document.getElementById('email-otp-status').innerHTML = 
+            '<span class="text-success">OTP sent to your email!</span>';
+        
+    } catch (error) {
+        document.getElementById('email-otp-status').innerHTML = 
+            `<span class="text-danger">Failed to send OTP: ${error.message}</span>`;
+    }
+}
+
+// Verify Email OTP
+async function verifyEmailOTP() {
+    const email = document.getElementById('register-email').value;
+    const otp = document.getElementById('email-otp').value;
+
+    if (!email || !otp) {
+        alert('Please enter email and OTP');
+        return;
+    }
+
+    try {
+        const response = await apiCall('/auth/verify-email-otp', {
+            method: 'POST',
+            body: { email, otp }
+        });
+
+        emailOtpVerified = true;
+        emailOtpToken = response.verificationToken;
+        document.getElementById('email-otp-status').innerHTML = 
+            '<span class="text-success"><i class="fas fa-check"></i> Email verified successfully!</span>';
+        document.getElementById('verify-email-otp').disabled = true;
+        
+    } catch (error) {
+        document.getElementById('email-otp-status').innerHTML = 
+            `<span class="text-danger">Verification failed: ${error.message}</span>`;
+    }
+}
+
+// Send Phone OTP
+async function sendPhoneOTP() {
+    const phone = document.getElementById('register-phone').value;
+    
+    if (!phone) {
+        alert('Please enter your phone number first');
+        return;
+    }
+
+    try {
+        const response = await apiCall('/auth/send-phone-otp', {
+            method: 'POST',
+            body: { phone }
+        });
+
+        document.getElementById('phone-otp-section').style.display = 'block';
+        document.getElementById('phone-otp-status').innerHTML = 
+            '<span class="text-success">OTP sent to your phone!</span>';
+        
+    } catch (error) {
+        document.getElementById('phone-otp-status').innerHTML = 
+            `<span class="text-danger">Failed to send OTP: ${error.message}</span>`;
+    }
+}
+
+// Verify Phone OTP
+async function verifyPhoneOTP() {
+    const phone = document.getElementById('register-phone').value;
+    const otp = document.getElementById('phone-otp').value;
+
+    if (!phone || !otp) {
+        alert('Please enter phone number and OTP');
+        return;
+    }
+
+    try {
+        const response = await apiCall('/auth/verify-phone-otp', {
+            method: 'POST',
+            body: { phone, otp }
+        });
+
+        phoneOtpVerified = true;
+        phoneOtpToken = response.verificationToken;
+        document.getElementById('phone-otp-status').innerHTML = 
+            '<span class="text-success"><i class="fas fa-check"></i> Phone verified successfully!</span>';
+        document.getElementById('verify-phone-otp').disabled = true;
+        
+    } catch (error) {
+        document.getElementById('phone-otp-status').innerHTML = 
+            `<span class="text-danger">Verification failed: ${error.message}</span>`;
+    }
+}
+</script>
+<script>
+    // Eco Quotes Collection
+const ecoQuotes = [
+    {
+        text: "The Earth does not belong to us: we belong to the Earth.",
+        author: "Marlee Matlin"
+    },
+    {
+        text: "The greatest threat to our planet is the belief that someone else will save it.",
+        author: "Robert Swan"
+    },
+    {
+        text: "We won't have a society if we destroy the environment.",
+        author: "Margaret Mead"
+    },
+    {
+        text: "What we are doing to the forests of the world is but a mirror reflection of what we are doing to ourselves and to one another.",
+        author: "Mahatma Gandhi"
+    },
+    {
+        text: "The environment is where we all meet; where we all have a mutual interest; it is the one thing all of us share.",
+        author: "Lady Bird Johnson"
+    },
+    {
+        text: "Time spent among trees is never time wasted.",
+        author: "Anonymous"
+    },
+    {
+        text: "He that plants trees loves others beside himself.",
+        author: "Thomas Fuller"
+    },
+    {
+        text: "The clearest way into the Universe is through a forest wilderness.",
+        author: "John Muir"
+    },
+    {
+        text: "Nature is not a place to visit. It is home.",
+        author: "Gary Snyder"
+    },
+    {
+        text: "We don't inherit the earth from our ancestors, we borrow it from our children.",
+        author: "Native American Proverb"
+    },
+    {
+        text: "The poetry of the earth is never dead.",
+        author: "John Keats"
+    },
+    {
+        text: "Look deep into nature, and then you will understand everything better.",
+        author: "Albert Einstein"
+    },
+    {
+        text: "To leave the world better than you found it, sometimes you have to pick up other people's trash.",
+        author: "Bill Nye"
+    },
+    {
+        text: "What is the use of a house if you haven't got a tolerable planet to put it on?",
+        author: "Henry David Thoreau"
+    },
+    {
+        text: "The environment and the economy are really both two sides of the same coin. If we cannot sustain the environment, we cannot sustain ourselves.",
+        author: "Wangari Maathai"
+    },
+    {
+        text: "One of the first conditions of happiness is that the link between man and nature shall not be broken.",
+        author: "Leo Tolstoy"
+    },
+    {
+        text: "The wonder is that we can see these trees and not wonder more.",
+        author: "Ralph Waldo Emerson"
+    },
+    {
+        text: "Teaching children about the natural world should be treated as one of the most important events in their lives.",
+        author: "Thomas Berry"
+    },
+    {
+        text: "The creation of a thousand forests is in one acorn.",
+        author: "Ralph Waldo Emerson"
+    },
+    {
+        text: "Nature is painting for us, day after day, pictures of infinite beauty.",
+        author: "John Ruskin"
+    }
+];
+
+// Function to get a random quote
+function getRandomQuote() {
+    const randomIndex = Math.floor(Math.random() * ecoQuotes.length);
+    return ecoQuotes[randomIndex];
+}
+
+// Function to display random quote
+function displayRandomQuote() {
+    const quote = getRandomQuote();
+    const quoteTextElement = document.getElementById('quote-text');
+    const quoteAuthorElement = document.getElementById('quote-author');
+    
+    if (quoteTextElement && quoteAuthorElement) {
+        quoteTextElement.textContent = `"${quote.text}"`;
+        quoteAuthorElement.textContent = `— ${quote.author}`;
+    }
+}
+
+// Display random quote when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    displayRandomQuote();
+    
+    // Change quote every 30 seconds
+    setInterval(displayRandomQuote, 30000);
+    
+    // Optional: Add click to refresh functionality
+    const quoteSection = document.querySelector('.auth-quote');
+    if (quoteSection) {
+        quoteSection.style.cursor = 'pointer';
+        quoteSection.addEventListener('click', displayRandomQuote);
+        quoteSection.title = 'Click for a new quote';
+    }
+});
+</script>
+</body>
+</html>

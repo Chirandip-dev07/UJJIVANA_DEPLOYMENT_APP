@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .events-hero {
+            background: linear-gradient(135deg, #20c997 0%, #3DD4AF 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .stat-card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            opacity: 0.8;
+        }
+        
+        .calendar-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .event-filters {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .event-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .event-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+        
+        .event-image {
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        
+        .event-image-placeholder {
+            height: 200px;
+            background: linear-gradient(135deg, #20c997, #3DD4AF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        
+        .calendar-export-btn {
+            background: #20c997;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: background 0.3s ease;
+        }
+        
+        .calendar-export-btn:hover {
+            background: #1ba87e;
+        }
+        
+        .fc-event {
+            cursor: pointer;
+        }
+        
+        .fc-daygrid-event {
+            border-radius: 6px;
+            padding: 2px 4px;
+        }
+        
+        /* Calendar customization */
+        .fc .fc-toolbar {
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .fc .fc-toolbar-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .fc .fc-button {
+            background-color: #20c997;
+            border-color: #20c997;
+        }
+        
+        .fc .fc-button:hover {
+            background-color: #1ba87e;
+            border-color: #1ba87e;
+        }
+        
+        .fc .fc-button-primary:not(:disabled).fc-button-active {
+            background-color: #198754;
+            border-color: #198754;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .event-filters .row {
+                gap: 1rem;
+            }
+            
+            .event-card-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .fc .fc-toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .fc .fc-toolbar-chunk {
+                margin-bottom: 0.5rem;
+            }
+        }
+        
+        .export-dropdown .dropdown-menu {
+            min-width: 200px;
+        }
+        
+        .category-badge {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+        }
+        /* List View Styles */
+.events-list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.events-list-view .event-card {
+    margin-bottom: 0;
+}
+
+/* Ensure grid view works properly */
+.event-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+/* Mobile responsive for grid */
+@media (max-width: 768px) {
+    .event-card-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+/* Fix dropdown menus */
+.export-dropdown .dropdown-menu,
+.event-actions .dropdown-menu {
+    z-index: 1060;
+}
+
+/* Ensure cards have proper spacing */
+.event-card {
+    transition: all 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+/* Ensure event cards display properly */
+.event-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.event-card-grid .event-card {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Fix for any hidden elements */
+.event-card {
+    display: block !important;
+}
+
+/* Ensure images don't break the layout */
+.event-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.event-image-placeholder {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #20c997, #3DD4AF);
+}
+
+/* List view styling */
+.events-list-view {
+    display: block;
+}
+
+.events-list-view .event-card {
+    margin-bottom: 1rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .event-card-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .events-list-view .card-body .row {
+        flex-direction: column;
+    }
+    
+    .events-list-view .col-md-3,
+    .events-list-view .col-md-5,
+    .events-list-view .col-md-2 {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Make sure cards are visible */
+.card {
+    display: block !important;
+    visibility: visible !important;
+}
+/* Events Statistics - Matching Modules Style */
+.events-stats-card {
+    background: rgb(225, 234, 225);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+.events-stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+.events-stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+}
+
+.events-stats-card.total-events::before { background: linear-gradient(90deg, #ff6b6b, #ffa726); }
+.events-stats-card.upcoming-events::before { background: linear-gradient(90deg, #4ecdc4, #45b7d1); }
+.events-stats-card.open-registration::before { background: linear-gradient(90deg, #4ac288, #9abcab); }
+.events-stats-card.total-registrations::before { background: linear-gradient(90deg, #28a745, #20c997); }
+
+.events-stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    opacity: 0.8;
+}
+
+.events-stats-card.total-events .events-stat-icon { color: #ff6b6b; }
+.events-stats-card.upcoming-events .events-stat-icon { color: #4ecdc4; }
+.events-stats-card.open-registration .events-stat-icon { color: #146f44; }
+.events-stats-card.total-registrations .events-stat-icon { color: #28a745; }
+
+.events-stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.events-stat-label {
+    font-size: 0.9rem;
+    color: #454444;
+    margin-bottom: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.events-level-text {
+    color: #05351b;
+    font-size: 0.8rem;
+    margin-top: 8px;
+}
+
+.events-streak-info {
+    color: #6f4e37;
+    font-size: 0.8rem;
+    margin-top: 8px;
+}
+
+.events-quizzes-completed-info {
+    color: #054907;
+    font-size: 0.8rem;
+    margin-top: 8px;
+}
+
+.events-impact-stats {
+    color: #330329;
+    font-size: 0.8rem;
+    margin-top: 8px;
+}
+
+.events-impact-text {
+    color: #0b3d91;
+    font-size: 0.8rem;
+    margin-top: 8px;
+}
+
+.events-text-warning {
+    color: #0b623b !important;
+}
+
+/* Progress bars for events */
+.events-progress {
+    height: 6px;
+    margin-bottom: 10px;
+    background-color: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.events-progress-bar {
+    background: linear-gradient(90deg, #28a745, #20c997);
+    transition: width 0.6s ease;
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation (same as index.html) -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Learning
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="modules.html">Modules</a></li>
+                        <li><a class="dropdown-item" href="quiz.html">Assessments</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+                        Community
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="challenges.html">Challenges</a></li>
+                        <li><a class="dropdown-item" href="leaderboard.html">Leaderboard</a></li>
+                        <li><a class="dropdown-item" href="eco-map-student.html">Eco-Map</a></li>
+                        <li><a class="dropdown-item active" href="events.html">Events</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="redeem.html">Rewards</a>
+                </li>
+            </ul>
+            
+            <!-- Profile Dropdown -->
+<div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                
+                <!-- Eco-points display in dropdown -->
+                <div class="eco-points-display mt-2">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="fas fa-leaf text-success me-2"></i>
+                        <span class="fw-bold text-success" id="dropdown-points">0</span>
+                        <span class="text-muted ms-1">Eco-Points</span>
+                    </div>
+                </div>
+                
+                <span class="badge user-role-badge student-badge mt-2">Student</span>
+            </div>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="profile.html">
+                <i class="fas fa-user"></i>My Profile
+            </a>
+        </li>
+       
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="help.html">
+                <i class="fas fa-question-circle"></i>Help & Support
+            </a>
+        </li>
+        <li>
+           <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+        </div>
+    </div>
+</nav>
+
+    <!-- Hero Section -->
+    <section class="events-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-3">Green Events & Calendar</h1>
+                    <p class="lead mb-4" style="color: rgb(255, 255, 255);">Discover environmental events, track your participation, and sync with your calendar. Make a difference while earning eco-points!</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="#events-grid" class="btn btn-light btn-lg">Browse Events</a>
+                        <a href="#calendar-view" class="btn btn-outline-light btn-lg">View Calendar</a>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-calendar-alt fa-8x opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Events Statistics</h2>
+        <div class="row" id="events-statistics">
+            <div class="col-12 text-center">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading statistics...</span>
+                </div>
+                <p class="mt-2">Loading events statistics...</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Main Content -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Filters Sidebar -->
+                <div class="col-lg-3 mb-4">
+                    <div class="event-filters" style="top: 100px;">
+                        <h5 class="mb-3">Filter Events</h5>
+                        
+                        <!-- Category Filter -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Category</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="all" id="filter-all" checked>
+                                <label class="form-check-label" for="filter-all">All Categories</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input category-filter" type="checkbox" value="tree-planting" id="filter-tree">
+                                <label class="form-check-label" for="filter-tree">Tree Planting</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input category-filter" type="checkbox" value="beach-cleanup" id="filter-beach">
+                                <label class="form-check-label" for="filter-beach">Beach Cleanup</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input category-filter" type="checkbox" value="workshop" id="filter-workshop">
+                                <label class="form-check-label" for="filter-workshop">Workshop</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input category-filter" type="checkbox" value="conference" id="filter-conference">
+                                <label class="form-check-label" for="filter-conference">Conference</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input category-filter" type="checkbox" value="fundraiser" id="filter-fundraiser">
+                                <label class="form-check-label" for="filter-fundraiser">Fundraiser</label>
+                            </div>
+                        </div>
+
+                        <!-- Status Filter -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Status</label>
+                            <div class="form-check">
+                                <input class="form-check-input status-filter" type="checkbox" value="upcoming" id="filter-upcoming" checked>
+                                <label class="form-check-label" for="filter-upcoming">Upcoming</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input status-filter" type="checkbox" value="ongoing" id="filter-ongoing">
+                                <label class="form-check-label" for="filter-ongoing">Ongoing</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input status-filter" type="checkbox" value="past" id="filter-past">
+                                <label class="form-check-label" for="filter-past">Past Events</label>
+                            </div>
+                        </div>
+
+                        <!-- Registration Filter -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Registration</label>
+                            <div class="form-check">
+                                <input class="form-check-input registration-filter" type="checkbox" value="open" id="filter-open" checked>
+                                <label class="form-check-label" for="filter-open">Open for Registration</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input registration-filter" type="checkbox" value="registered" id="filter-registered">
+                                <label class="form-check-label" for="filter-registered">My Registered Events</label>
+                            </div>
+                        </div>
+
+                        <!-- Date Range -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Date Range</label>
+                            <input type="date" class="form-control mb-2" id="filter-start-date">
+                            <input type="date" class="form-control" id="filter-end-date">
+                        </div>
+
+                        <button class="btn btn-success w-100" onclick="applyFilters()">Apply Filters</button>
+                        <button class="btn btn-outline-secondary w-100 mt-2" onclick="resetFilters()">Reset Filters</button>
+                    </div>
+                </div>
+
+                <!-- Main Content Area -->
+                <div class="col-lg-9">
+                    <!-- Calendar View -->
+                    <div class="calendar-container mb-5" id="calendar-view">
+                        <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">Events Calendar</h4>
+                            <div class="dropdown export-dropdown">
+                                <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-download me-2"></i>Export
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="exportAllEventsICS()"><i class="fas fa-file-export me-2"></i>Export All as ICS</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="addAllToGoogleCalendar()"><i class="fab fa-google me-2"></i>Add All to Google Calendar</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <div id="calendar"></div>
+                        </div>
+                    </div>
+
+                    <!-- Events Grid -->
+                    <div id="events-grid">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4>All Events</h4>
+                            <div class="d-flex gap-2">
+                                
+                            </div>
+                        </div>
+
+                        <div class="event-card-grid" id="events-container">
+                            <div class="col-12 text-center">
+                                <div class="spinner-border text-success" role="status">
+                                    <span class="visually-hidden">Loading events...</span>
+                                </div>
+                                <p class="mt-2">Loading events...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (same as index.html) -->
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Ujjivana</h5>
+                    <p>Gamifying environmental education for a sustainable future.</p>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">About</a></li>
+                        <li><a href="modules.html" class="text-white text-decoration-none">Modules</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@ujjivana.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe for updates on new features and content.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-success" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2023 Ujjivana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/events-page.js"></script>
+    <script>
+        // Update UI for student login status with profile dropdown
+function updateUIForLoginStatus() {
+    const user = getCurrentUser();
+    const authButtons = document.getElementById('auth-buttons');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (user) {
+        // Hide auth buttons, show user menu
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        // Update user information in dropdown
+        updateUserDropdown(user);
+        
+    } else {
+        // Show auth buttons, hide user menu
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// Update dropdown with student information
+function updateUserDropdown(user) {
+    // Safely get all elements
+    const navbarUsername = document.getElementById('navbar-username');
+    const navbarAvatar = document.getElementById('navbar-avatar');
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownAvatar = document.getElementById('dropdown-avatar');
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    
+    // Update basic user information
+    if (navbarUsername) navbarUsername.textContent = user.name || 'Student';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'Student';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    
+    // Update avatar with student color
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Student')}&background=20c997&color=fff&size=`;
+    
+    if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+    if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+    
+    // Update eco-points - ALWAYS show for student interface
+    const points = user.points || 0;
+    if (navbarPoints) navbarPoints.textContent = formatPoints(points);
+    if (dropdownPoints) dropdownPoints.textContent = formatPoints(points);
+    
+    // Update points level styling
+    updatePointsLevelStyling(points);
+}
+
+// Format points with commas
+function formatPoints(points) {
+    return points.toLocaleString();
+}
+function updatePointsLevelStyling(points) {
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    const ecoPointsBadge = document.querySelector('.eco-points-badge');
+    
+    if (!navbarPoints || !ecoPointsBadge) return;
+    
+    // Remove existing level classes
+    ecoPointsBadge.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    navbarPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    if (dropdownPoints) {
+        dropdownPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    }
+    
+    // Add appropriate level class
+    let levelClass = 'points-level-beginner';
+    if (points >= 1000) levelClass = 'points-level-intermediate';
+    if (points >= 5000) levelClass = 'points-level-advanced';
+    if (points >= 10000) levelClass = 'points-level-expert';
+    
+    ecoPointsBadge.classList.add(levelClass);
+    navbarPoints.classList.add(levelClass);
+    if (dropdownPoints) dropdownPoints.classList.add(levelClass);
+}
+
+// Update points in navbar if available
+function updatePointsDisplay(user) {
+    const pointsElement = document.getElementById('navbar-points');
+    if (pointsElement && user.points) {
+        pointsElement.textContent = user.points.toLocaleString();
+    }
+}
+
+// Enhanced logout for student
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize student dropdown
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForLoginStatus();
+    
+    // Update dropdown when user data changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user') {
+            const user = getCurrentUser();
+            if (user) {
+                updateUserDropdown(user);
+            }
+        }
+    });
+});
+    </script>
+</body>
+</html>

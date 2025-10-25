@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .stats-card {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        .student-card {
+            border-left: 4px solid #3498db;
+            transition: all 0.3s;
+        }
+        .student-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .progress-sm {
+            height: 8px;
+        }
+        .badge-pill {
+            border-radius: 10px;
+        }
+        .table-hover tbody tr:hover {
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+        /* Profile Dropdown Styles */
+.user-dropdown .dropdown-toggle {
+    border: none;
+    background: transparent;
+    color: var(--dark-text) !important;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+}
+
+.user-dropdown .dropdown-toggle:hover {
+    background: rgba(46, 139, 87, 0.1);
+    color: var(--primary-green) !important;
+}
+
+.user-dropdown .dropdown-toggle::after {
+    margin-left: 0.5rem;
+}
+
+.user-dropdown .dropdown-menu {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-strong);
+    padding: 0.5rem;
+    min-width: 200px;
+}
+
+.user-dropdown .dropdown-item {
+    border-radius: var(--border-radius-sm);
+    padding: 0.75rem 1rem;
+    margin: 0.1rem 0;
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.user-dropdown .dropdown-item:hover {
+    background: rgba(46, 139, 87, 0.1);
+    transform: translateX(5px);
+}
+
+.user-dropdown .dropdown-item i {
+    width: 20px;
+    text-align: center;
+    margin-right: 0.5rem;
+    color: var(--primary-green);
+}
+
+.user-dropdown .dropdown-divider {
+    margin: 0.5rem 0;
+}
+
+/* Role-specific badge in dropdown */
+.user-role-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    margin-left: 0.5rem;
+}
+
+/* Teacher specific styles */
+.teacher-badge {
+    background: linear-gradient(135deg, #6f42c1, #8B5FBF);
+    color: white;
+}
+
+/* Admin specific styles */
+.admin-badge {
+    background: linear-gradient(135deg, #dc3545, #e35d6a);
+    color: white;
+}
+
+/* Student specific styles */
+.student-badge {
+    background: linear-gradient(135deg, #20c997, #3DD4AF);
+    color: white;
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="teacher-dashboard.html">
+                <i class="fas fa-leaf me-2"></i>Ujjivana
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="teacher-dashboard.html">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="manageContentDropdown" role="button" data-bs-toggle="dropdown">
+                            Manage Content
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="teacher-modules.html">Your Modules</a></li>
+                            <li><a class="dropdown-item" href="teacher-quizzes.html">Your Quizzes</a></li>
+                            <li><a class="dropdown-item" href="teacher-challenges.html">Your Challenges</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=27ae60&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=27ae60&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                <span class="badge user-role-badge student-badge" id="dropdown-role">Student</span>
+            </div>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="teacher-profile.html">
+                <i class="fas fa-user"></i>My Profile
+            </a>
+        </li>
+        
+        <!-- Teacher/Admin Specific Links -->
+        <div id="teacher-admin-links" style="display: none;">
+            
+            <li>
+                <a class="dropdown-item" href="admin-panel.html" id="admin-panel-link">
+                    <i class="fas fa-tools"></i>Admin Panel
+                </a>
+            </li>
+        </div>
+        
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="help.html">
+                <i class="fas fa-question-circle"></i>Help & Support
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Teacher Dashboard Content -->
+    <div class="container py-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2>Teacher Dashboard</h2>
+                <p class="text-muted" id="school-name">School: Loading...</p>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-5">
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <h3 id="total-students">0</h3>
+                    <p>Total Students</p>
+                    <i class="fas fa-users fa-2x"></i>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <h3 id="active-students">0</h3>
+                    <p>Active Students</p>
+                    <i class="fas fa-user-check fa-2x"></i>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <h3 id="total-points">0</h3>
+                    <p>Total Eco-Points</p>
+                    <i class="fas fa-star fa-2x"></i>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <h3 id="avg-points">0</h3>
+                    <p>Avg Points/Student</p>
+                    <i class="fas fa-chart-line fa-2x"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Students List -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Students in Your School</h5>
+                        <button class="btn btn-sm btn-outline-success" id="refresh-students">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Points</th>
+                                        <th>Modules</th>
+                                        <th>Progress</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="students-table">
+                                    <!-- Students will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- School Leaderboard -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">School Leaderboard</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="school-leaderboard">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-success" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading leaderboard...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update the Recent Activity section -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent Student Activity</h5>
+                <small class="text-muted">Live updates every 30 seconds</small>
+            </div>
+            <div class="card-body">
+                <div id="recent-activity">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading activity...</span>
+                        </div>
+                        <p class="mt-2">Loading recent activity...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/teacher-dashboard.js"></script>
+    <script>
+        // Update UI based on login status with profile dropdown
+function updateUIForLoginStatus() {
+    const user = getCurrentUser();
+    const authButtons = document.getElementById('auth-buttons');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (user) {
+        // Hide auth buttons, show user menu
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        // Update user information in dropdown
+        updateUserDropdown(user);
+        
+        // Show/hide role-specific links
+        toggleRoleSpecificLinks(user.role);
+        
+    } else {
+        // Show auth buttons, hide user menu
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// Update dropdown with user information
+function updateUserDropdown(user) {
+    // Navbar elements
+    const navbarUsername = document.getElementById('navbar-username');
+    const navbarAvatar = document.getElementById('navbar-avatar');
+    
+    // Dropdown elements
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownAvatar = document.getElementById('dropdown-avatar');
+    const dropdownRole = document.getElementById('dropdown-role');
+    
+    if (navbarUsername) navbarUsername.textContent = user.name || 'User';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'User';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    
+    // Update avatars based on role
+    const avatarColor = getAvatarColorByRole(user.role);
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=${avatarColor}&color=fff&size=`;
+    
+    if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+    if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+    
+    // Update role badge
+    if (dropdownRole) {
+        dropdownRole.textContent = user.role || 'Student';
+        dropdownRole.className = 'badge user-role-badge ' + getRoleBadgeClass(user.role);
+    }
+}
+
+// Get avatar background color based on role
+function getAvatarColorByRole(role) {
+    const colors = {
+        'student': '20c997',
+        'teacher': '6f42c1', 
+        'admin': 'dc3545'
+    };
+    return colors[role] || '27ae60';
+}
+
+// Get badge class based on role
+function getRoleBadgeClass(role) {
+    const classes = {
+        'student': 'student-badge',
+        'teacher': 'teacher-badge',
+        'admin': 'admin-badge'
+    };
+    return classes[role] || 'student-badge';
+}
+
+// Show/hide role-specific links
+function toggleRoleSpecificLinks(role) {
+    const teacherAdminLinks = document.getElementById('teacher-admin-links');
+    const teacherDashboardLink = document.getElementById('teacher-dashboard-link');
+    const adminPanelLink = document.getElementById('admin-panel-link');
+    
+    if (teacherAdminLinks) {
+        if (role === 'teacher' || role === 'admin') {
+            teacherAdminLinks.style.display = 'block';
+        } else {
+            teacherAdminLinks.style.display = 'none';
+        }
+    }
+    
+    // Show/hide specific links based on role
+    if (teacherDashboardLink) {
+        teacherDashboardLink.style.display = role === 'teacher' ? 'block' : 'none';
+    }
+    
+    if (adminPanelLink) {
+        adminPanelLink.style.display = role === 'admin' ? 'block' : 'none';
+    }
+}
+
+// Enhanced logout function
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize dropdown on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForLoginStatus();
+    
+    // Update dropdown when user data changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user') {
+            const user = getCurrentUser();
+            if (user) {
+                updateUserDropdown(user);
+            }
+        }
+    });
+});
+    </script>
+</body>
+</html>

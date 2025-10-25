@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Map - Ujjivana Student</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Student hero (shared) */
+        .student-hero {
+            background: linear-gradient(135deg, #20c997 0%, #3DD4AF 100%);
+            color: white;
+            padding: 2.25rem 0;
+            margin-bottom: 1.5rem;
+        }
+        .student-hero .lead { color: rgba(255,255,255,0.95); }
+        .student-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        #map-container {
+            height: 500px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .pin-type-badge {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .pollution-badge { background-color: #dc3545; }
+        .park-badge { background-color: #198754; }
+        .project-badge { background-color: #0dcaf0; }
+        .club-badge { background-color: #ffc107; color: #000; }
+        
+        .eco-pin-card {
+            border-left: 4px solid #28a745;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .eco-pin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .eco-pin-card.pollution { border-left-color: #dc3545; }
+        .eco-pin-card.park { border-left-color: #198754; }
+        .eco-pin-card.project { border-left-color: #0dcaf0; }
+        .eco-pin-card.club { border-left-color: #ffc107; }
+        
+        .legend {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .club-card {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .club-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .club-header {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .club-body {
+            padding: 15px;
+        }
+        
+        .join-btn {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .tabs-container {
+            margin-bottom: 20px;
+        }
+        
+        .tab-content {
+            padding: 20px 0;
+        }
+        
+        /* Updated styles for scrollable pins section */
+        .pins-container {
+            height: 500px; /* Fixed height to show ~3 pins */
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .pins-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .pins-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .pins-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        
+        .pins-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* Scrollable clubs container */
+        .clubs-container {
+            height: 600px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .clubs-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .clubs-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .clubs-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        
+        .clubs-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* Enhanced Statistics Dashboard */
+.stats-card {
+    background: rgb(225, 234, 225);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+.stats-card.overall-progress::before { background: linear-gradient(90deg, #ff6b6b, #ffa726); }
+.stats-card.engagement::before { background: linear-gradient(90deg, #4ecdc4, #45b7d1); }
+.stats-card.quizzes-completed::before { background: linear-gradient(90deg, #4ac288, #9abcab); }
+.stats-card.impact::before { background: linear-gradient(90deg, #28a745, #20c997); }
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    opacity: 0.8;
+}
+
+.stats-card.overall-progress .stat-icon { color: #ff6b6b; }
+.stats-card.engagement .stat-icon { color: #4ecdc4; }
+.stats-card.quizzes-completed .stat-icon { color: #146f44; }
+.stats-card.impact .stat-icon { color: #28a745; }
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.level-text, .streak-info, .quizzes-completed-info, .impact-stats {
+    font-size: 0.8rem;
+    margin-top: 8px;
+}
+
+.streak-info .badge {
+    background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+    color: #2d3436;
+}
+
+.progress {
+    height: 10px;
+    margin-bottom: 10px;
+}
+
+/* Progress Animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.stats-card.highlight {
+    animation: pulse 2s infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .stats-card {
+        padding: 15px;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .stat-icon {
+        font-size: 2rem;
+    }
+}
+small{
+    color: #198754;
+}
+.impact-text{
+    color: #FFC107;
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Learning
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="modules.html">Modules</a></li>
+                        <li><a class="dropdown-item" href="quiz.html">Assessments</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+                        Community
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="challenges.html">Challenges</a></li>
+                        <li><a class="dropdown-item" href="leaderboard.html">Leaderboard</a></li>
+                        <li><a class="dropdown-item active" href="eco-map-student.html">Eco-Map</a></li>
+                        <li><a class="dropdown-item" href="events.html">Events</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="redeem.html">Rewards</a>
+                </li>
+            </ul>
+            
+            <!-- Profile Dropdown -->
+<div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                
+                <!-- Eco-points display in dropdown -->
+                <div class="eco-points-display mt-2">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="fas fa-leaf text-success me-2"></i>
+                        <span class="fw-bold text-success" id="dropdown-points">0</span>
+                        <span class="text-muted ms-1">Eco-Points</span>
+                    </div>
+                </div>
+                
+                <span class="badge user-role-badge student-badge mt-2">Student</span>
+            </div>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="profile.html">
+                <i class="fas fa-user"></i>My Profile
+            </a>
+        </li>
+       
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="help.html">
+                <i class="fas fa-question-circle"></i>Help & Support
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+        </div>
+    </div>
+</nav>
+
+    <!-- Hero Section -->
+    <section class="student-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-2">Eco Map</h1>
+                    <p class="lead mb-3">Discover green spots, projects and clubs in your area. Explore, join and contribute.</p>
+                </div>
+                <div class="col-lg-4 text-center d-none d-lg-block">
+                    <i class="fas fa-map-marked-alt fa-6x opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Student Eco Map Content -->
+    <div class="student-container py-4">
+        
+        <!-- Statistics Cards -->
+<div class="row mb-4" id="eco-map-stats-section">
+    <!-- Total Eco Pins Card -->
+    <div class="col-md-2 mb-4">
+        <div class="stats-card overall-progress">
+            <div class="stat-icon">
+                <i class="fas fa-map-pin"></i>
+            </div>
+            <div class="stat-content">
+                <h4 class="stat-number" id="total-pins">0</h4>
+                <p class="stat-label">Total Eco Pins</p>
+                <div class="progress" style="height: 6px;">
+                    <div class="progress-bar" style="width: 0%"></div>
+                </div>
+                <small class="level-text" id="pins-level">Exploring</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pollution Hotspots Card -->
+    <div class="col-md-2 mb-4">
+        <div class="stats-card engagement">
+            <div class="stat-icon">
+                <i class="fas fa-smog"></i>
+            </div>
+            <div class="stat-content">
+                <h4 class="stat-number" id="pollution-pins">0</h4>
+                <p class="stat-label">Pollution Hotspots</p>
+                <div class="streak-info">
+                    <small id="pollution-bonus">Help clean up!</small>
+                </div>
+                <small class="text-warning" id="pollution-message">Report issues</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Green Parks Card -->
+    <div class="col-md-2 mb-4">
+        <div class="stats-card quizzes-completed">
+            <div class="stat-icon">
+                <i class="fas fa-tree"></i>
+            </div>
+            <div class="stat-content">
+                <h4 class="stat-number" id="park-pins">0</h4>
+                <p class="stat-label">Green Parks</p>
+                <div class="quizzes-completed-info">
+                    <small id="parks-message">Visit green spaces!</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Environmental Projects Card -->
+    <div class="col-md-2 mb-4">
+        <div class="stats-card impact">
+            <div class="stat-icon">
+                <i class="fas fa-recycle"></i>
+            </div>
+            <div class="stat-content">
+                <h4 class="stat-number" id="project-pins">0</h4>
+                <p class="stat-label">Env Projects</p>
+                <div class="impact-stats">
+                    <small>Get involved!</small>
+                </div>
+                <small class="impact-text" id="projects-impact-message">Join projects!</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Eco Clubs Card -->
+    <div class="col-md-2 mb-4">
+        <div class="stats-card overall-progress">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h4 class="stat-number" id="club-pins">0</h4>
+                <p class="stat-label">Eco Clubs</p>
+                <div class="progress" style="height: 6px;">
+                    <div class="progress-bar" style="width: 0%"></div>
+                </div>
+                <small class="level-text" id="clubs-level">Join clubs</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Pins Card -->
+    <div class="col-md-2 mb-4">
+        <div class="stats-card engagement">
+            <div class="stat-icon">
+                <i class="fas fa-bullseye"></i>
+            </div>
+            <div class="stat-content">
+                <h4 class="stat-number" id="active-pins">0</h4>
+                <p class="stat-label">Active Pins</p>
+                <div class="streak-info">
+                    <small id="active-bonus">Stay active!</small>
+                </div>
+                <small class="text-warning" id="active-message">Explore more</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Tabs for Map and Clubs -->
+        <div class="tabs-container">
+            <ul class="nav nav-tabs" id="ecoMapTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="map-tab" data-bs-toggle="tab" data-bs-target="#map" type="button" role="tab" aria-controls="map" aria-selected="true">
+                        <i class="fas fa-map me-2"></i>Interactive Map
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="clubs-tab" data-bs-toggle="tab" data-bs-target="#clubs" type="button" role="tab" aria-controls="clubs" aria-selected="false">
+                        <i class="fas fa-users me-2"></i>Eco Clubs
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="request-tab" data-bs-toggle="tab" data-bs-target="#request" type="button" role="tab" aria-controls="request" aria-selected="false">
+                        <i class="fas fa-plus me-2"></i>Request New Pin
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="ecoMapTabContent">
+                <!-- Map Tab -->
+                <div class="tab-pane fade show active" id="map" role="tabpanel" aria-labelledby="map-tab">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div id="map-container"></div>
+                            
+                            <!-- Legend -->
+                            <div class="legend mt-3">
+                                <h6>Map Legend</h6>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="legend-item">
+                                            <div class="legend-color pollution-badge"></div>
+                                            <span>Pollution Hotspots</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="legend-item">
+                                            <div class="legend-color park-badge"></div>
+                                            <span>Green Parks</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="legend-item">
+                                            <div class="legend-color project-badge"></div>
+                                            <span>Environmental Projects</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="legend-item">
+                                            <div class="legend-color club-badge"></div>
+                                            <span>Eco Clubs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0" style="color: white;"><i class="fas fa-map-pin me-2"></i>Eco Pins</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Filter by Type</label>
+                                        <select class="form-select" id="pin-type-filter">
+                                            <option value="">All Types</option>
+                                            <option value="pollution">Pollution Hotspots</option>
+                                            <option value="park">Green Parks</option>
+                                            <option value="project">Environmental Projects</option>
+                                            <option value="club">Eco Clubs</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Scrollable pins container -->
+                                    <div class="pins-container" id="pins-list">
+                                        <div class="text-center py-4">
+                                            <div class="spinner-border text-success" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <p class="mt-2">Loading eco pins...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Eco Clubs Tab -->
+                <div class="tab-pane fade" id="clubs" role="tabpanel" aria-labelledby="clubs-tab">
+                    <h3 class="mb-4">Join Eco Clubs in Your Area</h3>
+                    <p class="lead mb-4">Connect with like-minded students and participate in environmental activities. Join clubs through WhatsApp or Discord to stay updated!</p>
+                    
+                    <!-- Scrollable clubs container -->
+                    <div class="clubs-container" id="clubs-list">
+                        <!-- Clubs will be loaded here dynamically -->
+                        <div class="col-12 text-center">
+                            <div class="spinner-border text-success" role="status">
+                                <span class="visually-hidden">Loading clubs...</span>
+                            </div>
+                            <p class="mt-2">Loading eco clubs...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Request New Pin Tab -->
+                <div class="tab-pane fade" id="request" role="tabpanel" aria-labelledby="request-tab">
+                    <h3 class="mb-4">Request a New Eco Pin</h3>
+                    <p class="lead mb-4">Found an environmental spot that should be on our map? Submit a request and our admin team will review it!</p>
+                    
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <form id="pin-request-form">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="request-title" class="form-label">Title *</label>
+                                                    <input type="text" class="form-control" id="request-title" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="request-type" class="form-label">Pin Type *</label>
+                                                    <select class="form-select" id="request-type" required>
+                                                        <option value="">Select Type</option>
+                                                        <option value="pollution">Pollution Hotspot</option>
+                                                        <option value="park">Green Park</option>
+                                                        <option value="project">Environmental Project</option>
+                                                        <option value="club">Eco Club</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="request-description" class="form-label">Description *</label>
+                                            <textarea class="form-control" id="request-description" rows="3" required></textarea>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="request-address" class="form-label">Address *</label>
+                                                    <input type="text" class="form-control" id="request-address" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="request-contact" class="form-label">Contact Information</label>
+                                                    <input type="text" class="form-control" id="request-contact">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="request-latitude" class="form-label">Latitude *</label>
+                                                    <input type="number" step="any" class="form-control" id="request-latitude" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="request-longitude" class="form-label">Longitude *</label>
+                                                    <input type="number" step="any" class="form-control" id="request-longitude" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="request-website" class="form-label">Website</label>
+                                            <input type="url" class="form-control" id="request-website">
+                                        </div>
+                                        <div class="row" id="club-links-section" style="display: none;">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="request-whatsapp" class="form-label">WhatsApp Group Link *</label>
+                                                    <input type="url" class="form-control" id="request-whatsapp">
+                                                    <div class="form-text">Required for eco clubs</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="request-discord" class="form-label">Discord Server Link *</label>
+                                                    <input type="url" class="form-control" id="request-discord">
+                                                    <div class="form-text">Required for eco clubs</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="request-notes" class="form-label">Additional Notes (Optional)</label>
+                                            <textarea class="form-control" id="request-notes" rows="2"></textarea>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-success w-100" id="submit-request-btn">
+                                            <span class="loading-text">Submit Request</span>
+                                            <div class="spinner-border spinner-border-sm loading-spinner" role="status" style="display: none;">
+                                                <span class="visually-hidden">Submitting...</span>
+                                            </div>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Ujjivana</h5>
+                    <p>Gamifying environmental education for a sustainable future.</p>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">About</a></li>
+                        <li><a href="modules.html" class="text-white text-decoration-none">Modules</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@ujjivana.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe for updates on new features and content.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-success" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2023 Ujjivana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/eco-map-student.js"></script>
+    <script>
+        // Update UI for student login status with profile dropdown
+function updateUIForLoginStatus() {
+    const user = getCurrentUser();
+    const authButtons = document.getElementById('auth-buttons');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (user) {
+        // Hide auth buttons, show user menu
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        // Update user information in dropdown
+        updateUserDropdown(user);
+        
+    } else {
+        // Show auth buttons, hide user menu
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// Update dropdown with student information
+function updateUserDropdown(user) {
+    // Safely get all elements
+    const navbarUsername = document.getElementById('navbar-username');
+    const navbarAvatar = document.getElementById('navbar-avatar');
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownAvatar = document.getElementById('dropdown-avatar');
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    
+    // Update basic user information
+    if (navbarUsername) navbarUsername.textContent = user.name || 'Student';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'Student';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    
+    // Update avatar with student color
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Student')}&background=20c997&color=fff&size=`;
+    
+    if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+    if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+    
+    // Update eco-points - ALWAYS show for student interface
+    const points = user.points || 0;
+    if (navbarPoints) navbarPoints.textContent = formatPoints(points);
+    if (dropdownPoints) dropdownPoints.textContent = formatPoints(points);
+    
+    // Update points level styling
+    updatePointsLevelStyling(points);
+}
+
+// Format points with commas
+function formatPoints(points) {
+    return points.toLocaleString();
+}
+function updatePointsLevelStyling(points) {
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    const ecoPointsBadge = document.querySelector('.eco-points-badge');
+    
+    if (!navbarPoints || !ecoPointsBadge) return;
+    
+    // Remove existing level classes
+    ecoPointsBadge.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    navbarPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    if (dropdownPoints) {
+        dropdownPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    }
+    
+    // Add appropriate level class
+    let levelClass = 'points-level-beginner';
+    if (points >= 1000) levelClass = 'points-level-intermediate';
+    if (points >= 5000) levelClass = 'points-level-advanced';
+    if (points >= 10000) levelClass = 'points-level-expert';
+    
+    ecoPointsBadge.classList.add(levelClass);
+    navbarPoints.classList.add(levelClass);
+    if (dropdownPoints) dropdownPoints.classList.add(levelClass);
+}
+
+// Update points in navbar if available
+function updatePointsDisplay(user) {
+    const pointsElement = document.getElementById('navbar-points');
+    if (pointsElement && user.points) {
+        pointsElement.textContent = user.points.toLocaleString();
+    }
+}
+
+// Enhanced logout for student
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize student dropdown
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForLoginStatus();
+    
+    // Update dropdown when user data changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user') {
+            const user = getCurrentUser();
+            if (user) {
+                updateUserDropdown(user);
+            }
+        }
+    });
+});
+// Function to update eco-map statistics
+function updateEcoMapStatistics() {
+    const pinsData = JSON.parse(localStorage.getItem('pinsData')) || {
+        totalPins: 24,
+        pollutionPins: 8,
+        parkPins: 6,
+        projectPins: 5,
+        clubPins: 3,
+        activePins: 18
+    };
+
+    // Update DOM elements
+    document.getElementById('total-pins').textContent = pinsData.totalPins;
+    document.getElementById('pollution-pins').textContent = pinsData.pollutionPins;
+    document.getElementById('park-pins').textContent = pinsData.parkPins;
+    document.getElementById('project-pins').textContent = pinsData.projectPins;
+    document.getElementById('club-pins').textContent = pinsData.clubPins;
+    document.getElementById('active-pins').textContent = pinsData.activePins;
+
+    // Calculate exploration progress
+    const explorationRate = (pinsData.activePins / pinsData.totalPins) * 100;
+    const progressBar = document.querySelector('.overall-progress .progress-bar');
+    if (progressBar) {
+        progressBar.style.width = `${Math.min(explorationRate, 100)}%`;
+    }
+
+    // Update level text
+    let pinsLevel = 'Exploring';
+    if (pinsData.activePins >= 20) pinsLevel = 'Eco Explorer';
+    else if (pinsData.activePins >= 10) pinsLevel = 'Active Explorer';
+    document.getElementById('pins-level').textContent = pinsLevel;
+}
+
+// Initialize statistics when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // For eco-map-student.html
+    if (document.getElementById('eco-map-stats-section')) {
+        updateEcoMapStatistics();
+    }
+});
+    </script>
+</body>
+</html>

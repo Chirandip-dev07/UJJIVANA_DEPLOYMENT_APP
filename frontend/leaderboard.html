@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --green-primary: #4CAF50;
+            --green-light: #8BC34A;
+            --green-dark: #388E3C;
+            --gold: #FFD700;
+            --silver: #C0C0C0;
+            --bronze: #CD7F32;
+        }
+
+        .student-hero {
+            background: linear-gradient(135deg, #20c997 0%, #3DD4AF 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+            color: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(76,175,80,0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label-large {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            margin: 2rem 0;
+            gap: 15px;
+        }
+
+        .podium-item {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            min-width: 150px;
+            position: relative;
+        }
+
+        .podium-first {
+            background: linear-gradient(135deg, var(--gold), #FFC107);
+            height: 200px;
+            order: 2;
+            z-index: 3;
+        }
+
+        .podium-second {
+            background: linear-gradient(135deg, var(--silver), #E0E0E0);
+            height: 180px;
+            order: 1;
+            z-index: 2;
+        }
+
+        .podium-third {
+            background: linear-gradient(135deg, var(--bronze), #D2691E);
+            height: 160px;
+            order: 3;
+            z-index: 1;
+        }
+
+        .trophy {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .leaderboard-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .leaderboard-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .time-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .time-filter {
+            padding: 8px 16px;
+            border: 2px solid var(--green-primary);
+            background: white;
+            color: var(--green-primary);
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .time-filter.active, .time-filter:hover {
+            background: var(--green-primary);
+            color: white;
+        }
+
+        .my-rank-btn {
+            background: var(--green-dark);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .my-rank-btn:hover {
+            background: var(--green-primary);
+            transform: translateY(-2px);
+        }
+
+        .leaderboard-entry {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            background: white;
+            border-left: 4px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .leaderboard-entry:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .leaderboard-entry.current-user {
+            background: linear-gradient(135deg, #E8F5E8, #ffffff);
+            border-left-color: var(--green-primary);
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.15);
+        }
+
+        .rank-1, .rank-2, .rank-3 {
+            border-left-width: 6px;
+        }
+
+        .rank-1 { border-left-color: var(--gold); }
+        .rank-2 { border-left-color: var(--silver); }
+        .rank-3 { border-left-color: var(--bronze); }
+
+        .rank-badge {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .rank-1 .rank-badge { background: var(--gold); color: white; }
+        .rank-2 .rank-badge { background: var(--silver); color: white; }
+        .rank-3 .rank-badge { background: var(--bronze); color: white; }
+        .other-ranks .rank-badge { background: #f0f0f0; color: #757575; }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .points-badge {
+            background: var(--green-primary);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .current-user-badge {
+            background: var(--green-dark);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-left: 8px;
+        }
+
+        .pagination {
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .achievement-showcase {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 1rem 0;
+            margin: 2rem 0;
+        }
+
+        .achievement-badge {
+            min-width: 80px;
+            text-align: center;
+            padding: 1rem 0.5rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+
+        .school-name {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 0.2rem;
+        }
+        .lead{
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Learning
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="modules.html">Modules</a></li>
+                        <li><a class="dropdown-item" href="quiz.html">Assessments</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+                        Community
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="challenges.html">Challenges</a></li>
+                        <li><a class="dropdown-item active" href="leaderboard.html">Leaderboard</a></li>
+                        <li><a class="dropdown-item" href="eco-map-student.html">Eco-Map</a></li>
+                        <li><a class="dropdown-item" href="events.html">Events</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="redeem.html">Rewards</a>
+                </li>
+            </ul>
+            
+            <!-- Profile Dropdown -->
+<div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                
+                <!-- Eco-points display in dropdown -->
+                <div class="eco-points-display mt-2">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="fas fa-leaf text-success me-2"></i>
+                        <span class="fw-bold text-success" id="dropdown-points">0</span>
+                        <span class="text-muted ms-1">Eco-Points</span>
+                    </div>
+                </div>
+                
+                <span class="badge user-role-badge student-badge mt-2">Student</span>
+            </div>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="profile.html">
+                <i class="fas fa-user"></i>My Profile
+            </a>
+        </li>
+       
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="help.html">
+                <i class="fas fa-question-circle"></i>Help & Support
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+        </div>
+    </div>
+</nav>
+
+    <!-- Hero Section (Keep existing) -->
+    <section class="student-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-2">Eco Leaderboard</h1>
+                    <p class="lead mb-3">Compete with fellow eco-warriors and climb the ranks</p>
+                </div>
+                <div class="col-lg-4 text-center d-none d-lg-block">
+                    <i class="fas fa-ranking-star fa-6x opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Eco Performance Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="stats-card">
+                    <h3 class="text-white mb-4">Your Eco Performance</h3>
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-number" id="user-rank">#0</div>
+                            <div class="stat-label-large">Current Rank</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-number" id="user-streak">0</div>
+                            <div class="stat-label-large">Day Streak</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-number" id="user-points">0</div>
+                            <div class="stat-label-large">Eco Points</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overall Leaderboard -->
+        <div class="leaderboard-section">
+            <div class="leaderboard-header">
+                <h3>Top Eco Warriors</h3>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="time-filters">
+                        <button class="time-filter active" data-timeframe="all">All Time</button>
+                        <button class="time-filter" data-timeframe="monthly">Monthly</button>
+                        <button class="time-filter" data-timeframe="weekly">Weekly</button>
+                    </div>
+                    <button class="my-rank-btn" id="overall-my-rank">
+                        <i class="fas fa-user me-1"></i>My Rank
+                    </button>
+                </div>
+            </div>
+
+            <!-- Podium -->
+            <div class="podium">
+                <div class="podium-item podium-second">
+                    <div class="trophy">🥈</div>
+                    <h5 id="second-place-name">-</h5>
+                    <p id="second-place-points">0 pts</p>
+                </div>
+                <div class="podium-item podium-first">
+                    <div class="trophy">🥇</div>
+                    <h5 id="first-place-name">-</h5>
+                    <p id="first-place-points">0 pts</p>
+                </div>
+                <div class="podium-item podium-third">
+                    <div class="trophy">🥉</div>
+                    <h5 id="third-place-name">-</h5>
+                    <p id="third-place-points">0 pts</p>
+                </div>
+            </div>
+
+            <!-- Leaderboard List -->
+            <div id="user-leaderboard">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3">Loading leaderboard...</p>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <nav>
+                <ul class="pagination" id="user-pagination">
+                    <!-- Pagination will be generated here -->
+                </ul>
+            </nav>
+        </div>
+
+        <!-- School Leaderboard -->
+        <div class="leaderboard-section">
+            <div class="leaderboard-header">
+                <h3>School Rankings</h3>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="my-rank-btn" id="school-my-rank">
+                        <i class="fas fa-user me-1"></i>My Rank
+                    </button>
+                </div>
+            </div>
+
+            <div id="school-leaderboard">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading school rankings...</p>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <nav>
+                <ul class="pagination" id="school-pagination">
+                    <!-- Pagination will be generated here -->
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Achievements Section -->
+        <div class="leaderboard-section">
+            <h3 class="mb-4">Your Achievements</h3>
+            <div class="achievement-showcase" id="achievements-container">
+                <!-- Achievements will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer (Keep existing footer) -->
+    <footer class="bg-dark text-white py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Ujjivana</h5>
+                    <p>Gamifying environmental education for a sustainable future.</p>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="about.html" class="text-white text-decoration-none">About</a></li>
+                        <li><a href="modules.html" class="text-white text-decoration-none">Modules</a></li>
+                        <li><a href="leaderboard.html" class="text-white text-decoration-none">Leaderboard</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@ujjivana.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe for updates on new features and content.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-success" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2023 Ujjivana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+         let currentUser = null;
+        let currentTimeframe = 'all';
+        let currentUserPage = 1;
+        let currentSchoolPage = 1;
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // Filter active students
+        function filterActiveStudents(users) {
+            return users.filter(user => {
+                const isStudent = user.role === undefined || user.role === 'student';
+                const hasPoints = user.points > 0;
+                return isStudent && hasPoints;
+            });
+        }
+
+        // Load user leaderboard
+        async function loadUserLeaderboard(timeframe = 'all', page = 1) {
+            try {
+                const response = await getUserLeaderboard(timeframe, page, 10);
+                const users = response.data;
+                const leaderboardContainer = document.getElementById('user-leaderboard');
+                
+                leaderboardContainer.innerHTML = '';
+
+                if (!users || users.length === 0) {
+                    leaderboardContainer.innerHTML = `
+                        <div class="no-data">
+                            <i class="fas fa-trophy fa-3x mb-3" style="color: #9E9E9E;"></i>
+                            <h5>No active students yet</h5>
+                            <p>Be the first to earn points by completing modules and quizzes!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Update podium
+                if (users.length >= 3) {
+                    document.getElementById('first-place-name').textContent = users[0].name;
+                    document.getElementById('first-place-points').textContent = `${formatNumber(users[0].points)} pts`;
+                    
+                    document.getElementById('second-place-name').textContent = users[1].name;
+                    document.getElementById('second-place-points').textContent = `${formatNumber(users[1].points)} pts`;
+                    
+                    document.getElementById('third-place-name').textContent = users[2].name;
+                    document.getElementById('third-place-points').textContent = `${formatNumber(users[2].points)} pts`;
+                }
+
+                // Render leaderboard
+                users.forEach((user, index) => {
+                    const rank = (page - 1) * 10 + index + 1;
+                    const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'other-ranks';
+                    const isCurrentUser = currentUser && (user.id === currentUser.id || user._id === currentUser.id);
+
+                    const leaderboardItem = `
+                        <div class="leaderboard-entry ${rankClass} ${isCurrentUser ? 'current-user' : ''}" data-user-id="${user.id || user._id}">
+                            <div class="d-flex align-items-center">
+                                <div class="rank-badge">${rank}</div>
+                                <div class="user-info">
+                                    <h6 class="mb-0">${user.name} ${isCurrentUser ? '<span class="current-user-badge">You</span>' : ''}</h6>
+                                    <div class="school-name">${user.school || 'No school'}</div>
+                                </div>
+                            </div>
+                            <div class="points-badge">${formatNumber(user.points)} pts</div>
+                        </div>
+                    `;
+                    leaderboardContainer.innerHTML += leaderboardItem;
+                });
+
+                // Update pagination
+                updatePagination('user', response.page, response.pages);
+
+            } catch (error) {
+                console.error('Error loading user leaderboard:', error);
+                document.getElementById('user-leaderboard').innerHTML = 
+                    '<p class="text-center text-danger py-4">Error loading leaderboard. Please try again.</p>';
+            }
+        }
+
+        // Get quiz attempts count
+        function getQuizAttemptsCount(user) {
+            if (!user.quizAttempts) return 0;
+            if (typeof user.quizAttempts.size === 'number') {
+                return user.quizAttempts.size;
+            } else {
+                return Object.keys(user.quizAttempts).length;
+            }
+        }
+
+        // Update top performers on podium
+        function updateTopPerformers(students) {
+            if (students.length >= 3) {
+                document.getElementById('first-place-name').textContent = students[0].name;
+                document.getElementById('first-place-points').textContent = `${formatNumber(students[0].points)} pts`;
+                
+                document.getElementById('second-place-name').textContent = students[1].name;
+                document.getElementById('second-place-points').textContent = `${formatNumber(students[1].points)} pts`;
+                
+                document.getElementById('third-place-name').textContent = students[2].name;
+                document.getElementById('third-place-points').textContent = `${formatNumber(students[2].points)} pts`;
+                
+                topPerformers = [students[0], students[1], students[2]];
+            } else if (students.length > 0) {
+                // Handle case when there are fewer than 3 students
+                const placeholders = ['No one yet', 'No one yet', 'No one yet'];
+                const pointsPlaceholders = ['0 pts', '0 pts', '0 pts'];
+                
+                students.forEach((student, index) => {
+                    placeholders[index] = student.name;
+                    pointsPlaceholders[index] = `${formatNumber(student.points)} pts`;
+                });
+                
+                document.getElementById('first-place-name').textContent = placeholders[0];
+                document.getElementById('first-place-points').textContent = pointsPlaceholders[0];
+                
+                document.getElementById('second-place-name').textContent = placeholders[1];
+                document.getElementById('second-place-points').textContent = pointsPlaceholders[1];
+                
+                document.getElementById('third-place-name').textContent = placeholders[2];
+                document.getElementById('third-place-points').textContent = pointsPlaceholders[2];
+                
+                topPerformers = students;
+            }
+        }
+
+        // Load school leaderboard
+        async function loadSchoolLeaderboard(page = 1) {
+            try {
+                if (!currentUser || !currentUser.school) {
+                    document.getElementById('school-leaderboard').innerHTML = `
+                        <div class="no-data">
+                            <i class="fas fa-school fa-3x mb-3" style="color: #9E9E9E;"></i>
+                            <h5>No school assigned</h5>
+                            <p>Update your profile to join your school's leaderboard!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const response = await getSchoolLeaderboard(currentUser.school, page, 10);
+                const schoolUsers = response.data;
+                const leaderboardContainer = document.getElementById('school-leaderboard');
+                
+                leaderboardContainer.innerHTML = '';
+
+                if (!schoolUsers || schoolUsers.length === 0) {
+                    leaderboardContainer.innerHTML = `
+                        <div class="no-data">
+                            <i class="fas fa-users fa-3x mb-3" style="color: #9E9E9E;"></i>
+                            <h5>No students from your school yet</h5>
+                            <p>Encourage your schoolmates to join Ujjivana!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Render school leaderboard
+                schoolUsers.forEach((user) => {
+                    const isCurrentUser = currentUser && (user.id === currentUser.id || user._id === currentUser.id);
+
+                    const leaderboardItem = `
+                        <div class="leaderboard-entry ${isCurrentUser ? 'current-user' : ''}" data-user-id="${user.id || user._id}">
+                            <div class="d-flex align-items-center">
+                                <div class="rank-badge">${user.rank}</div>
+                                <div class="user-info">
+                                    <h6 class="mb-0">${user.name} ${isCurrentUser ? '<span class="current-user-badge">You</span>' : ''}</h6>
+                                </div>
+                            </div>
+                            <div class="points-badge">${formatNumber(user.points)} pts</div>
+                        </div>
+                    `;
+                    leaderboardContainer.innerHTML += leaderboardItem;
+                });
+
+                // Update pagination
+                updatePagination('school', response.page, response.pages);
+
+            } catch (error) {
+                console.error('Error loading school leaderboard:', error);
+                document.getElementById('school-leaderboard').innerHTML = 
+                    '<p class="text-center text-danger py-4">Error loading school rankings.</p>';
+            }
+        }
+
+        function updatePagination(type, currentPage, totalPages) {
+            const paginationContainer = document.getElementById(`${type}-pagination`);
+            paginationContainer.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            // Previous button
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a>`;
+            paginationContainer.appendChild(prevLi);
+
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                const pageLi = document.createElement('li');
+                pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                pageLi.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
+                paginationContainer.appendChild(pageLi);
+            }
+
+            // Next button
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage + 1}">Next</a>`;
+            paginationContainer.appendChild(nextLi);
+
+            // Add event listeners
+            paginationContainer.querySelectorAll('.page-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = parseInt(link.dataset.page);
+                    if (page >= 1 && page <= totalPages) {
+                        if (type === 'user') {
+                            currentUserPage = page;
+                            loadUserLeaderboard(currentTimeframe, page);
+                        } else {
+                            currentSchoolPage = page;
+                            loadSchoolLeaderboard(page);
+                        }
+                    }
+                });
+            });
+        }
+        // Update user progress and stats
+        function updateUserProgress(userObj) {
+            if (userObj) {
+                // Find user's rank
+                let userRank = 'N/A';
+                if (topPerformers.length > 0) {
+                    const userIndex = topPerformers.findIndex(u => 
+                        u.id === userObj.id || u._id === userObj.id);
+                    userRank = userIndex !== -1 ? `#${userIndex + 1}` : 'Not in top 3';
+                }
+                
+                // Update personal stats
+                document.getElementById('user-rank').textContent = userRank;
+                document.getElementById('user-points').textContent = formatNumber(userObj.points || 0);
+                document.getElementById('user-streak').textContent = userObj.streak || 0;
+                
+                // Calculate challenges completed (this would need to be fetched from challenges API)
+                const challengesCompleted = 0; // Placeholder
+                document.getElementById('user-challenges').textContent = challengesCompleted;
+                
+                // Update progress chart
+                setTimeout(() => {
+                    const modulesProgress = Math.min(100, ((userObj.modulesCompleted || 0) / 8) * 100);
+                    const quizzesProgress = Math.min(100, ((getQuizAttemptsCount(userObj) || 0) / 10) * 100);
+                    const challengesProgress = Math.min(100, (challengesCompleted / 5) * 100);
+                    
+                    document.querySelector('.chart-bar:nth-child(1)').style.height = `${modulesProgress}%`;
+                    document.querySelector('.chart-bar:nth-child(2)').style.height = `${quizzesProgress}%`;
+                    document.querySelector('.chart-bar:nth-child(3)').style.height = `${challengesProgress}%`;
+                    
+                    document.getElementById('modules-value').textContent = `${Math.round(modulesProgress)}%`;
+                    document.getElementById('quizzes-value').textContent = `${Math.round(quizzesProgress)}%`;
+                    document.getElementById('challenges-value').textContent = `${Math.round(challengesProgress)}%`;
+                }, 500);
+                
+                // Load achievements
+                loadAchievements(userObj);
+            }
+        }
+
+        // Load user achievements
+        function loadAchievements(user) {
+            const achievementsContainer = document.getElementById('achievements-container');
+            const achievements = [
+                { icon: '🏆', name: 'First Module', earned: (user.modulesCompleted || 0) > 0 },
+                { icon: '⭐', name: 'Quiz Master', earned: (getQuizAttemptsCount(user) || 0) >= 5 },
+                { icon: '🔥', name: 'Streak Keeper', earned: (user.streak || 0) >= 7 },
+                { icon: '🌱', name: 'Eco Beginner', earned: (user.points || 0) >= 100 },
+                { icon: '🌍', name: 'Planet Saver', earned: (user.points || 0) >= 500 },
+                { icon: '📚', name: 'Module Master', earned: (user.modulesCompleted || 0) >= 5 }
+            ];
+
+            let html = '';
+            achievements.forEach(achievement => {
+                html += `
+                    <div class="achievement-badge ${achievement.earned ? '' : 'opacity-25'}">
+                        <div class="achievement-icon">${achievement.icon}</div>
+                        <div class="achievement-name">${achievement.name}</div>
+                    </div>
+                `;
+            });
+
+            achievementsContainer.innerHTML = html;
+        }
+
+
+        // Refresh leaderboard
+        async function refreshLeaderboard() {
+            currentUser = getCurrentUser();
+            
+            if (currentUser) {
+                // Update eco performance section
+                const rankResponse = await getUserRank('all');
+                if (rankResponse && rankResponse.success) {
+                    document.getElementById('user-rank').textContent = `#${rankResponse.data.rank}`;
+                }
+                
+                document.getElementById('user-streak').textContent = currentUser.streak || 0;
+                document.getElementById('user-points').textContent = formatNumber(currentUser.points || 0);
+
+                await loadUserLeaderboard(currentTimeframe, currentUserPage);
+                await loadSchoolLeaderboard(currentSchoolPage);
+                loadAchievements(currentUser);
+            }
+        }
+
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#4CAF50', '#8BC34A', '#FFD700', '#C0C0C0', '#CD7F32'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animation = `confetti ${1 + Math.random() * 2}s ease forwards`;
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', async function() {
+            updateUIForLoginStatus();
+            currentUser = getCurrentUser();
+
+            if (checkLogin()) {
+                await refreshLeaderboard();
+
+                // Timeframe filters
+                document.querySelectorAll('.time-filter').forEach(link => {
+                    link.addEventListener('click', async function(e) {
+                        e.preventDefault();
+                        document.querySelectorAll('.time-filter').forEach(l => l.classList.remove('active'));
+                        this.classList.add('active');
+                        currentTimeframe = this.dataset.timeframe;
+                        currentUserPage = 1;
+                        await loadUserLeaderboard(currentTimeframe, currentUserPage);
+                    });
+                });
+
+                // My Rank buttons
+                document.getElementById('overall-my-rank').addEventListener('click', () => scrollToMyRank('user'));
+                document.getElementById('school-my-rank').addEventListener('click', () => scrollToMyRank('school'));
+
+            } else {
+                // Show login prompts for guests
+                document.getElementById('user-leaderboard').innerHTML = `
+                    <div class="alert alert-info text-center py-5">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Please <a href="login.html">login</a> to view the leaderboard and track your progress.
+                    </div>
+                `;
+
+                document.getElementById('school-leaderboard').innerHTML = `
+                    <div class="alert alert-info text-center py-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Please <a href="login.html">login</a> to view school rankings.
+                    </div>
+                `;
+            }
+        });
+        async function scrollToMyRank(type) {
+            let userElement;
+            if (type === 'user') {
+                userElement = document.querySelector(`#user-leaderboard .leaderboard-entry[data-user-id="${currentUser.id}"]`);
+            } else {
+                userElement = document.querySelector(`#school-leaderboard .leaderboard-entry[data-user-id="${currentUser.id}"]`);
+            }
+
+            if (userElement) {
+                userElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Add highlight effect
+                userElement.style.background = 'linear-gradient(135deg, #4CAF50, #8BC34A)';
+                userElement.style.color = 'white';
+                setTimeout(() => {
+                    userElement.style.background = '';
+                    userElement.style.color = '';
+                }, 2000);
+            } else {
+                alert('Your rank is not on the current page.');
+            }
+        }
+    </script>
+    <script>
+        // Update UI for student login status with profile dropdown
+function updateUIForLoginStatus() {
+    const user = getCurrentUser();
+    const authButtons = document.getElementById('auth-buttons');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (user) {
+        // Hide auth buttons, show user menu
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        // Update user information in dropdown
+        updateUserDropdown(user);
+        
+    } else {
+        // Show auth buttons, hide user menu
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// Update dropdown with student information
+function updateUserDropdown(user) {
+    // Safely get all elements
+    const navbarUsername = document.getElementById('navbar-username');
+    const navbarAvatar = document.getElementById('navbar-avatar');
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownAvatar = document.getElementById('dropdown-avatar');
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    
+    // Update basic user information
+    if (navbarUsername) navbarUsername.textContent = user.name || 'Student';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'Student';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    
+    // Update avatar with student color
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Student')}&background=20c997&color=fff&size=`;
+    
+    if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+    if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+    
+    // Update eco-points - ALWAYS show for student interface
+    const points = user.points || 0;
+    if (navbarPoints) navbarPoints.textContent = formatPoints(points);
+    if (dropdownPoints) dropdownPoints.textContent = formatPoints(points);
+    
+    // Update points level styling
+    updatePointsLevelStyling(points);
+}
+
+// Format points with commas
+function formatPoints(points) {
+    return points.toLocaleString();
+}
+function updatePointsLevelStyling(points) {
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    const ecoPointsBadge = document.querySelector('.eco-points-badge');
+    
+    if (!navbarPoints || !ecoPointsBadge) return;
+    
+    // Remove existing level classes
+    ecoPointsBadge.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    navbarPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    if (dropdownPoints) {
+        dropdownPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    }
+    
+    // Add appropriate level class
+    let levelClass = 'points-level-beginner';
+    if (points >= 1000) levelClass = 'points-level-intermediate';
+    if (points >= 5000) levelClass = 'points-level-advanced';
+    if (points >= 10000) levelClass = 'points-level-expert';
+    
+    ecoPointsBadge.classList.add(levelClass);
+    navbarPoints.classList.add(levelClass);
+    if (dropdownPoints) dropdownPoints.classList.add(levelClass);
+}
+
+// Update points in navbar if available
+function updatePointsDisplay(user) {
+    const pointsElement = document.getElementById('navbar-points');
+    if (pointsElement && user.points) {
+        pointsElement.textContent = user.points.toLocaleString();
+    }
+}
+
+// Enhanced logout for student
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize student dropdown
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForLoginStatus();
+    
+    // Update dropdown when user data changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user') {
+            const user = getCurrentUser();
+            if (user) {
+                updateUserDropdown(user);
+            }
+        }
+    });
+});
+    </script>
+</body>
+</html>

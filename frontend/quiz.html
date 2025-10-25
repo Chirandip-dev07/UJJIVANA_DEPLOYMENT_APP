@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizzes & Surveys - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+    /* Student hero (shared) */
+    .student-hero {
+      background: linear-gradient(135deg, #20c997 0%, #3DD4AF 100%);
+      color: white;
+      padding: 2.25rem 0;
+      margin-bottom: 1.5rem;
+    }
+    .student-hero .lead { color: rgba(255,255,255,0.95); }
+        .stats-card {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: rgb(5, 5, 5);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .survey-card {
+            border-left: 4px solid #e67e22;
+            transition: all 0.3s;
+        }
+        .survey-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .progress {
+            height: 10px;
+            margin-bottom: 10px;
+        }
+        .teacher-survey-panel {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        /* Enhanced Statistics Dashboard */
+.stats-card {
+  background: rgb(225, 234, 225);
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+}
+
+.stats-card.overall-progress::before { background: linear-gradient(90deg, #ff6b6b, #ffa726); }
+.stats-card.engagement::before { background: linear-gradient(90deg, #4ecdc4, #45b7d1); }
+.stats-card.mastery::before { background: linear-gradient(90deg, #4ac288, #9abcab); }
+.stats-card.impact::before { background: linear-gradient(90deg, #28a745, #20c997); }
+
+.stat-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  opacity: 0.8;
+}
+
+.stats-card.overall-progress .stat-icon { color: #ff6b6b; }
+.stats-card.engagement .stat-icon { color: #4ecdc4; }
+.stats-card.mastery .stat-icon { color: #146f44; }
+.stats-card.impact .stat-icon { color: #28a745; }
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.level-text, .streak-info, .mastery-badges, .impact-stats {
+  font-size: 0.8rem;
+  margin-top: 8px;
+}
+
+.streak-info .badge {
+  background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+  color: #2d3436;
+}
+
+.mastery-badge {
+  background: linear-gradient(135deg, #81ecec, #74b9ff);
+}
+/* Achievement Badges */
+.achievement-badges {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.achievement-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+  color: #2d3436;
+  font-size: 0.8rem;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Progress Animations */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.stats-card.highlight {
+  animation: pulse 2s infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stats-card {
+    padding: 15px;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .stat-icon {
+    font-size: 2rem;
+  }
+  
+  .chart-bars {
+    height: 80px;
+  }
+}
+
+/* Survey Specific Styles */
+.survey-organization {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.survey-duration {
+    font-size: 0.8rem;
+    color: #28a745;
+}
+
+.survey-category {
+    font-size: 0.8rem;
+}
+
+.survey-completion-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.stats-card.quizzes-completed::before { 
+  background: linear-gradient(90deg, #4ac288, #9abcab); 
+}
+.stats-card.quizzes-completed .stat-icon { 
+  color: #146f44; 
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+                        Learning
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="modules.html">Modules</a></li>
+                        <li><a class="dropdown-item active" href="quiz.html">Assessments</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Community
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="challenges.html">Challenges</a></li>
+                        <li><a class="dropdown-item" href="leaderboard.html">Leaderboard</a></li>
+                        <li><a class="dropdown-item" href="eco-map-student.html">Eco-Map</a></li>
+                        <li><a class="dropdown-item" href="events.html">Events</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="redeem.html">Rewards</a>
+                </li>
+            </ul>
+            
+            <!-- Profile Dropdown -->
+<div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                
+                <!-- Eco-points display in dropdown -->
+                <div class="eco-points-display mt-2">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="fas fa-leaf text-success me-2"></i>
+                        <span class="fw-bold text-success" id="dropdown-points">0</span>
+                        <span class="text-muted ms-1">Eco-Points</span>
+                    </div>
+                </div>
+                
+                <span class="badge user-role-badge student-badge mt-2">Student</span>
+            </div>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="profile.html">
+                <i class="fas fa-user"></i>My Profile
+            </a>
+        </li>
+       
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="help.html">
+                <i class="fas fa-question-circle"></i>Help & Support
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+        </div>
+    </div>
+</nav>
+
+  <!-- Hero Section -->
+  <section class="student-hero">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="display-5 fw-bold mb-2">Quizzes & Surveys</h1>
+          <p class="lead mb-3">Test your knowledge, participate in surveys and earn points for each complete attempt.</p>
+        </div>
+        <div class="col-lg-4 text-center d-none d-lg-block">
+          <i class="fas fa-clipboard-question fa-6x opacity-25"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quiz Content -->
+  <div class="container py-5">
+        
+        <!-- Enhanced Statistics Dashboard -->
+<div class="row mb-5" id="quiz-stats-section">
+  <div class="col-md-12">
+    <h3 class="mb-4">Your Eco-Journey Dashboard</h3>
+    <div class="row">
+      <!-- Overall Progress Card -->
+      <div class="col-md-3 mb-4">
+        <div class="stats-card overall-progress">
+          <div class="stat-icon">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <div class="stat-content">
+            <h4 class="stat-number" id="total-points">0</h4>
+            <p class="stat-label">Total Eco-Points</p>
+            <div class="progress" style="height: 6px;">
+              <div class="progress-bar" style="width: 0%"></div>
+            </div>
+            <small class="level-text" id="current-level">Eco-Beginner</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Engagement Card -->
+      <div class="col-md-3 mb-4">
+        <div class="stats-card engagement">
+          <div class="stat-icon">
+            <i class="fas fa-fire"></i>
+          </div>
+          <div class="stat-content">
+            <h4 class="stat-number" id="day-streak">0</h4>
+            <p class="stat-label">Day Streak</p>
+            <div class="streak-info">
+              <small id="streak-bonus">+0% Bonus</small>
+            </div>
+            <small class="text-warning" id="streak-message">Keep it up!</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-4">
+  <div class="stats-card quizzes-completed">
+    <div class="stat-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    <div class="stat-content">
+      <h4 class="stat-number" id="quizzes-completed-count">0</h4>
+      <p class="stat-label">Quizzes Completed</p>
+      <div class="quizzes-completed-info">
+        <small id="quizzes-completed-message">Keep learning!</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <!-- Impact Card -->
+      <div class="col-md-3 mb-4">
+        <div class="stats-card impact">
+          <div class="stat-icon">
+            <i class="fas fa-poll"></i>
+          </div>
+          <div class="stat-content">
+            <h4 class="stat-number" id="surveys-completed">0</h4>
+            <p class="stat-label">Surveys Completed</p>
+            <div class="impact-stats">
+              <small>Making an impact!</small>
+            </div>
+            <small class="impact-text" id="impact-message">Your opinion matters!</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+  </div>
+</div>
+        
+        <!-- Daily Question Section -->
+        <div class="row mb-5">
+            <div class="col-md-8 mx-auto">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">Question of the Day</h4>
+                        <div id="daily-question-card">
+                            <p class="card-text">Complete today's question to maintain your streak and earn bonus points!</p>
+                            <div class="my-3">
+                                <span class="badge bg-success me-2">+5 points</span>
+                                <span class="badge bg-info">Current Streak: <span id="current-streak">0</span> days</span>
+                            </div>
+                            <button class="btn btn-success btn-lg" onclick="showDailyQuestion()">Answer Today's Question</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+             
+        <!-- General Quizzes Section -->
+<div class="row mb-5">
+  <div class="col-md-12">
+    <h3 class="mb-4">General Quizzes</h3>
+    <p class="text-muted mb-4">Test your environmental knowledge with these general quizzes!</p>
+    <div class="row" id="general-quizzes-container">
+      <!-- General quizzes will be populated here -->
+    </div>
+  </div>
+</div>
+
+<!-- Module-Based Quizzes Section -->
+<div class="row mb-5" id="module-quizzes-container">
+  <div class="col-md-12">
+    <h3 class="mb-4">Module-Based Quizzes</h3>
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle me-2"></i>
+      Complete modules to unlock their quizzes and earn points!
+    </div>
+    <div class="row" id="module-quizzes">
+      <!-- Module quizzes will be populated here -->
+    </div>
+  </div>
+</div>
+<!-- Surveys Section -->
+        <div class="row mb-5" id="surveys-section">
+            <div class="col-md-12">
+                <h3 class="mb-4">Environmental Surveys</h3>
+                <p class="text-muted mb-4">Participate in these surveys to share your opinions and earn points!</p>
+                
+                <div class="row" id="surveys-container">
+                    <!-- Surveys will be populated here -->
+                    <div class="col-12 text-center">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading surveys...</span>
+                        </div>
+                        <p class="mt-2">Loading surveys...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Daily Question Modal -->
+        <div class="modal fade" id="dailyQuestionModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Daily Question</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h4 id="daily-question-text"></h4>
+                        <div id="daily-options" class="my-3">
+                            <!-- Options will be populated here -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" id="submit-daily-answer">Submit Answer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Survey Modal -->
+        <div class="modal fade" id="surveyModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="survey-modal-title">Survey</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="survey-form">
+                            <input type="hidden" id="survey-id">
+                            <div id="survey-questions-container">
+                                <!-- Survey questions will be loaded here -->
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-success" id="submit-survey-btn">
+                            <i class="fas fa-paper-plane me-1"></i> Submit Survey
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Ujjivana</h5>
+                    <p>Gamifying environmental education for a sustainable future.</p>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">About</a></li>
+                        <li><a href="modules.html" class="text-white text-decoration-none">Modules</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@ujjivana.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe for updates on new features and content.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-success" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2023 Ujjivana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        let currentDailyQuestion = null;
+        let selectedAnswer = null;
+        let quizMeta = {};
+        let generalQuizzes = [];
+        let moduleQuizzes = [];
+        let availableSurveys = [];
+        let completedSurveys = [];
+
+        // Load daily question
+        async function loadDailyQuestion() {
+          try {
+            const response = await apiCall('/quizzes/daily');
+            currentDailyQuestion = response.data;
+            const user = getCurrentUser();
+            if (user && user.streak) {
+              document.getElementById('current-streak').textContent = user.streak;
+            }
+          } catch (error) {
+            console.error('Error loading daily question:', error);
+          }
+        }
+
+        // Show daily question modal
+        async function showDailyQuestion() {
+          if (!currentDailyQuestion) {
+            await loadDailyQuestion();
+          }
+          if (currentDailyQuestion) {
+            document.getElementById('daily-question-text').textContent = currentDailyQuestion.question;
+            const optionsContainer = document.getElementById('daily-options');
+            optionsContainer.innerHTML = '';
+            
+            currentDailyQuestion.options.forEach((option, index) => {
+              const optionHtml = `
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="dailyOption" id="option-${index}" value="${index}">
+                  <label class="form-check-label" for="option-${index}">${option}</label>
+                </div>
+              `;
+              optionsContainer.innerHTML += optionHtml;
+            });
+
+            document.querySelectorAll('input[name="dailyOption"]').forEach(radio => {
+              radio.addEventListener('change', (e) => {
+                selectedAnswer = parseInt(e.target.value);
+              });
+            });
+
+            const modal = new bootstrap.Modal(document.getElementById('dailyQuestionModal'));
+            modal.show();
+          }
+        }
+
+        // Load all quizzes for student
+        async function loadStudentQuizzes() {
+          try {
+            const user = getCurrentUser();
+            let quizzesResponse;
+            
+            if (user && user.role === 'student') {
+              quizzesResponse = await getStudentQuizzes();
+            } else {
+              quizzesResponse = await getQuizzes();
+            }
+            
+            const allQuizzes = quizzesResponse.data;
+            
+            // Separate general quizzes and module quizzes
+            generalQuizzes = allQuizzes.filter(quiz => !quiz.module);
+            moduleQuizzes = allQuizzes.filter(quiz => quiz.module);
+            
+            displayGeneralQuizzes();
+            displayModuleQuizzes();
+          } catch (error) {
+            console.error('Error loading quizzes:', error);
+          }
+        }
+
+// Enhanced function to check if quiz is completed
+function isQuizCompleted(quizId) {
+  const user = getCurrentUser();
+  if (!user || !user.quizAttempts) return false;
+  
+  const attempts = user.quizAttempts instanceof Map ? 
+    Object.fromEntries(user.quizAttempts) : user.quizAttempts;
+  
+  const attemptValue = attempts[quizId];
+  // Consider quiz completed if there is any recorded attempt (even 0 score)
+  return attemptValue !== undefined && attemptValue !== null;
+}
+// Function to update quiz attempts and points
+async function updateQuizAttempt(quizId, score, points, type = 'quiz_completed', description = '') {
+    try {
+        console.log(`Updating quiz attempt: ${quizId}, score: ${score}, points: ${points}`);
+        
+        const response = await apiCall('/auth/update-quiz-attempt', {
+            method: 'POST',
+            body: {
+                quizId: quizId,
+                score: score,
+                points: points,
+                type: type,
+                description: description
+            }
+        });
+
+        if (response.success) {
+            // Update local user data
+            const currentUser = getCurrentUser();
+            const updatedUser = {
+                ...currentUser,
+                points: response.data.points,
+                monthlyPoints: response.data.monthlyPoints,
+                weeklyPoints: response.data.weeklyPoints,
+                quizAttempts: response.data.quizAttempts
+            };
+            
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            updatePointsDisplay(updatedUser);
+            
+            console.log('✅ Quiz attempt and points updated locally');
+            
+            // Trigger points update event
+            window.dispatchEvent(new CustomEvent('pointsEarned', {
+                detail: { 
+                    points: points,
+                    totalPoints: response.data.points,
+                    type: type
+                }
+            }));
+            
+            return response.data;
+        }
+    } catch (error) {
+        console.error('Error updating quiz attempt:', error);
+        throw error;
+    }
+}
+// Display general quizzes with proper "Review Quiz" logic
+function displayGeneralQuizzes() {
+  const container = document.getElementById('general-quizzes-container');
+  if (!container) return;
+  
+  if (generalQuizzes.length === 0) {
+    container.innerHTML = `
+      <div class="col-12">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>
+          No general quizzes available yet.
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = '';
+  generalQuizzes.forEach(quiz => {
+    const isCompleted = isQuizCompleted(quiz._id);
+    const attemptStatus = getQuizAttemptStatus(quiz._id);
+    
+    // Always show "Review Quiz" for completed quizzes
+    const buttonText = isCompleted ? 'Review Quiz' : 'Start Quiz';
+    const buttonClass = isCompleted ? 'btn-outline-info' : 'btn-success';
+    const buttonIcon = isCompleted ? 'fa-eye' : 'fa-play';
+    
+    html += `
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">${quiz.title}</h5>
+            <p class="card-text">${quiz.description || 'Test your environmental knowledge!'}</p>
+            <div class="mb-3">
+              <span class="badge bg-success">${quiz.questions ? quiz.questions.length : 0} questions</span>
+              <span class="badge bg-info ms-1">${quiz.totalPoints || 0} points</span>
+              ${isCompleted ? 
+                `<span class="badge bg-warning ms-1"><i class="fas fa-check me-1"></i>Completed</span>` : 
+                '<span class="badge bg-secondary ms-1">First attempt awards points</span>'
+              }
+            </div>
+            <button class="btn ${buttonClass}" onclick="startQuiz('${quiz._id}')">
+              <i class="fas ${buttonIcon} me-1"></i>
+              ${buttonText}
+            </button>
+            ${isCompleted ? 
+              `<small class="d-block mt-1 text-muted">
+                <i class="fas fa-info-circle me-1"></i>
+                Score: ${attemptStatus.score}/${quiz.totalPoints || 0} - Reviewing won't award additional points
+              </small>` : 
+              ''
+            }
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+// Display module-based quizzes with proper "Review Quiz" logic
+function displayModuleQuizzes() {
+  const container = document.getElementById('module-quizzes');
+  if (!container) return;
+  
+  const quizzesByModule = {};
+  moduleQuizzes.forEach(quiz => {
+    if (quiz.module) {
+      const moduleId = quiz.module._id;
+      if (!quizzesByModule[moduleId]) {
+        quizzesByModule[moduleId] = {
+          module: quiz.module,
+          quizzes: []
+        };
+      }
+      quizzesByModule[moduleId].quizzes.push(quiz);
+    }
+  });
+  
+  if (Object.keys(quizzesByModule).length === 0) {
+    container.innerHTML = `
+      <div class="col-12">
+        <div class="alert alert-warning">
+          No module-based quizzes available. Complete modules to unlock quizzes!
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = '';
+  Object.values(quizzesByModule).forEach(({ module, quizzes }) => {
+    const moduleQuizzesHtml = quizzes.map(quiz => {
+      const isCompleted = isQuizCompleted(quiz._id);
+      const attemptStatus = getQuizAttemptStatus(quiz._id);
+      const isLocked = !quiz.canAttempt;
+      
+      // Always show "Review Quiz" for completed quizzes
+      const buttonText = isCompleted ? 'Review Quiz' : (isLocked ? 'Locked' : 'Start Quiz');
+      const buttonClass = isCompleted ? 'btn-outline-info' : (isLocked ? 'btn-secondary' : 'btn-success');
+      
+      return `
+        <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded ${isLocked ? 'bg-light' : ''}">
+          <div>
+            <h6 class="mb-0">${quiz.title}</h6>
+            <small class="text-muted">${quiz.questions ? quiz.questions.length : 0} questions • ${quiz.totalPoints || 0} points</small>
+            ${isCompleted ? 
+              `<br><small class="text-success"><i class="fas fa-check me-1"></i>Completed - Score: ${attemptStatus.score}/${quiz.totalPoints || 0}</small>` : 
+              ''
+            }
+            ${isLocked && !isCompleted ? 
+              '<br><small class="text-danger"><i class="fas fa-lock me-1"></i>Complete the module first</small>' : 
+              ''
+            }
+          </div>
+          <button class="btn btn-sm ${buttonClass} ${isLocked ? 'disabled' : ''}" 
+                  ${isLocked ? 'disabled' : `onclick="startQuiz('${quiz._id}')"`}>
+            <i class="fas ${isCompleted ? 'fa-eye' : (isLocked ? 'fa-lock' : 'fa-play')} me-1"></i>
+            ${buttonText}
+          </button>
+        </div>
+      `;
+    }).join('');
+    
+    html += `
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">${module.title}</h6>
+            <span class="badge ${quizzes.every(q => q.canAttempt) ? 'bg-success' : 'bg-warning'}">
+              ${quizzes.every(q => q.canAttempt) ? 'Module Completed' : 'Module In Progress'}
+            </span>
+          </div>
+          <div class="card-body">
+            ${moduleQuizzesHtml}
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+        // Load surveys for student
+       async function loadStudentSurveys() {
+    try {
+        console.log('Loading surveys from backend...');
+        const response = await apiCall('/surveys');
+        availableSurveys = response.data || [];
+        
+        const user = getCurrentUser();
+        if (user && user.completedSurveys) {
+            completedSurveys = user.completedSurveys;
+        }
+        
+        displaySurveys();
+    } catch (error) {
+        console.error('Error loading surveys:', error);
+        // Fallback to empty array instead of mock data
+        availableSurveys = [];
+        displaySurveys();
+    }
+}
+
+        // Mock surveys data
+        function getMockSurveys() {
+            return [
+                {
+                    _id: 'survey1',
+                    title: 'Plastic Pollution Awareness Survey',
+                    description: 'Help Green Earth Initiative gather data on plastic usage habits and attitudes towards plastic pollution.',
+                    organization: 'Green Earth Initiative',
+                    category: 'waste-reduction',
+                    points: 30,
+                    duration: '10-15 minutes',
+                    questions: [
+                        {
+                            question: 'How often do you use single-use plastic items (bottles, bags, straws)?',
+                            type: 'multiple-choice',
+                            options: ['Daily', 'Several times a week', 'Once a week', 'Rarely', 'Never']
+                        },
+                        {
+                            question: 'What is your main source of drinking water?',
+                            type: 'multiple-choice',
+                            options: ['Bottled water', 'Filtered tap water', 'Direct tap water', 'Other']
+                        },
+                        {
+                            question: 'How concerned are you about plastic pollution in oceans and waterways?',
+                            type: 'scale',
+                            min: 1,
+                            max: 5,
+                            labels: ['Not concerned', 'Slightly concerned', 'Moderately concerned', 'Very concerned', 'Extremely concerned']
+                        },
+                        {
+                            question: 'What actions do you take to reduce plastic waste? (Select all that apply)',
+                            type: 'checkbox',
+                            options: [
+                                'Use reusable bags',
+                                'Carry reusable water bottle',
+                                'Avoid plastic straws',
+                                'Choose products with less packaging',
+                                'Participate in cleanup activities'
+                            ]
+                        },
+                        {
+                            question: 'Any additional comments or suggestions about plastic pollution?',
+                            type: 'text'
+                        }
+                    ]
+                },
+                {
+                    _id: 'survey2',
+                    title: 'Renewable Energy Adoption Study',
+                    description: 'Share your thoughts and experiences with clean energy solutions for Climate Action Network.',
+                    organization: 'Climate Action Network',
+                    category: 'energy-conservation',
+                    points: 25,
+                    duration: '8-12 minutes',
+                    questions: [
+                        {
+                            question: 'Which renewable energy sources are you familiar with?',
+                            type: 'checkbox',
+                            options: ['Solar power', 'Wind energy', 'Hydroelectric', 'Geothermal', 'Biomass']
+                        },
+                        {
+                            question: 'Would you consider installing solar panels at your home?',
+                            type: 'multiple-choice',
+                            options: ['Yes, definitely', 'Maybe', 'No', 'Already have them']
+                        },
+                        {
+                            question: 'How important is it for your electricity provider to use renewable sources?',
+                            type: 'scale',
+                            min: 1,
+                            max: 5,
+                            labels: ['Not important', 'Slightly important', 'Moderately important', 'Very important', 'Extremely important']
+                        }
+                    ]
+                },
+                {
+                    _id: 'survey3',
+                    title: 'Carbon Footprint Calculator',
+                    description: 'Calculate and understand your environmental impact with EcoWatch.',
+                    organization: 'EcoWatch',
+                    category: 'sustainable-living',
+                    points: 35,
+                    duration: '15-20 minutes',
+                    questions: [
+                        {
+                            question: 'How do you primarily commute?',
+                            type: 'multiple-choice',
+                            options: ['Personal car', 'Public transportation', 'Bicycle/Walking', 'Carpool', 'Work from home']
+                        },
+                        {
+                            question: 'Approximately how many kilometers do you travel by car per week?',
+                            type: 'number'
+                        },
+                        {
+                            question: 'How often do you eat meat?',
+                            type: 'multiple-choice',
+                            options: ['Daily', 'Several times a week', 'Once a week', 'Rarely', 'Never (vegetarian/vegan)']
+                        }
+                    ]
+                },
+                {
+                    _id: 'survey4',
+                    title: 'Sustainable Food Choices Survey',
+                    description: 'Share your eating habits and food choices with the Food Sustainability Network.',
+                    organization: 'Food Sustainability Network',
+                    category: 'sustainable-living',
+                    points: 20,
+                    duration: '5-8 minutes',
+                    questions: [
+                        {
+                            question: 'How often do you buy locally grown produce?',
+                            type: 'multiple-choice',
+                            options: ['Always', 'Often', 'Sometimes', 'Rarely', 'Never']
+                        },
+                        {
+                            question: 'Do you consider environmental impact when making food purchases?',
+                            type: 'multiple-choice',
+                            options: ['Always', 'Often', 'Sometimes', 'Rarely', 'Never']
+                        }
+                    ]
+                }
+            ];
+        }
+
+        // Display surveys
+        function displaySurveys() {
+            const container = document.getElementById('surveys-container');
+            if (!container) return;
+            
+            if (availableSurveys.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            No surveys available at the moment. Check back later for new surveys!
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            availableSurveys.forEach(survey => {
+                const isCompleted = completedSurveys.includes(survey._id);
+                const categoryBadge = getCategoryBadge(survey.category);
+                
+                html += `
+                    <div class="col-md-6 mb-4">
+                        <div class="card survey-card h-100">
+                            <div class="card-body position-relative">
+                                ${isCompleted ? 
+                                    `<span class="badge bg-success survey-completion-badge">
+                                        <i class="fas fa-check me-1"></i>Completed
+                                    </span>` : 
+                                    ''
+                                }
+                                <h5 class="card-title">${survey.title}</h5>
+                                <p class="card-text">${survey.description}</p>
+                                
+                                <div class="survey-meta mb-3">
+                                    <p class="survey-organization mb-1">
+                                        <i class="fas fa-building me-1"></i>${survey.organization}
+                                    </p>
+                                    <p class="survey-duration mb-2">
+                                        <i class="fas fa-clock me-1"></i>${survey.duration}
+                                    </p>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <span class="badge bg-warning">${survey.points} points</span>
+                                        <span class="badge ${categoryBadge.class} survey-category">
+                                            ${categoryBadge.text}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                ${!isCompleted ? 
+                                    `<button class="btn btn-success w-100" onclick="startSurvey('${survey._id}')">
+                                        <i class="fas fa-play me-1"></i> Start Survey
+                                    </button>` :
+                                    `<button class="btn btn-outline-success w-100" disabled>
+                                        <i class="fas fa-check me-1"></i> Survey Completed
+                                    </button>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Get category badge styling
+        function getCategoryBadge(category) {
+            const categories = {
+                'waste-reduction': { class: 'bg-info', text: 'Waste Reduction' },
+                'energy-conservation': { class: 'bg-warning', text: 'Energy' },
+                'water-preservation': { class: 'bg-primary', text: 'Water' },
+                'sustainable-living': { class: 'bg-success', text: 'Sustainable Living' }
+            };
+            return categories[category] || { class: 'bg-secondary', text: category };
+        }
+
+        // Start a survey
+        function startSurvey(surveyId) {
+            const survey = availableSurveys.find(s => s._id === surveyId);
+            if (!survey) {
+                alert('Survey not found');
+                return;
+            }
+
+            document.getElementById('survey-id').value = surveyId;
+            document.getElementById('survey-modal-title').textContent = survey.title;
+            
+            const questionsContainer = document.getElementById('survey-questions-container');
+            questionsContainer.innerHTML = '';
+
+            // Add survey description
+            questionsContainer.innerHTML += `
+                <div class="alert alert-info mb-4">
+                    <h6>About this survey:</h6>
+                    <p class="mb-2">${survey.description}</p>
+                    <p class="mb-0"><strong>Organization:</strong> ${survey.organization} | <strong>Duration:</strong> ${survey.duration}</p>
+                </div>
+            `;
+
+            // Add each question
+            survey.questions.forEach((question, index) => {
+                let questionHtml = `
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h6 class="card-title">${index + 1}. ${question.question}</h6>
+                `;
+
+                if (question.type === 'multiple-choice') {
+                    question.options.forEach((option, optIndex) => {
+                        questionHtml += `
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="question-${index}" id="q${index}-opt${optIndex}" value="${option}" required>
+                                <label class="form-check-label" for="q${index}-opt${optIndex}">${option}</label>
+                            </div>
+                        `;
+                    });
+                } else if (question.type === 'checkbox') {
+                    question.options.forEach((option, optIndex) => {
+                        questionHtml += `
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="question-${index}" id="q${index}-opt${optIndex}" value="${option}">
+                                <label class="form-check-label" for="q${index}-opt${optIndex}">${option}</label>
+                            </div>
+                        `;
+                    });
+                } else if (question.type === 'scale') {
+                    questionHtml += `
+                        <div class="scale-container mt-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                ${question.labels.map((label, i) => 
+                                    `<small>${label}</small>`
+                                ).join('')}
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                ${Array.from({length: question.max - question.min + 1}, (_, i) => 
+                                    `<input type="radio" name="question-${index}" value="${i + question.min}" class="btn-check" id="q${index}-scale${i}">
+                                     <label class="btn btn-outline-primary btn-sm" for="q${index}-scale${i}">${i + question.min}</label>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else if (question.type === 'text') {
+                    questionHtml += `
+                        <textarea class="form-control" name="question-${index}" rows="3" placeholder="Share your thoughts..."></textarea>
+                    `;
+                } else if (question.type === 'number') {
+                    questionHtml += `
+                        <input type="number" class="form-control" name="question-${index}" placeholder="Enter number...">
+                    `;
+                }
+
+                questionHtml += `
+                        </div>
+                    </div>
+                `;
+
+                questionsContainer.innerHTML += questionHtml;
+            });
+
+            const modal = new bootstrap.Modal(document.getElementById('surveyModal'));
+            modal.show();
+        }
+
+        // Submit survey
+        async function submitSurvey() {
+    const surveyId = document.getElementById('survey-id').value;
+    const survey = availableSurveys.find(s => s._id === surveyId);
+
+    if (!survey) {
+        alert('Survey not found');
+        return;
+    }
+
+    const responses = {};
+    let allAnswered = true;
+
+    survey.questions.forEach((question, index) => {
+        const questionName = `question-${index}`;
+        const elements = document.getElementsByName(questionName);
+        
+        if (question.type === 'checkbox') {
+            const selected = Array.from(elements)
+                .filter(el => el.checked)
+                .map(el => el.value);
+            responses[index] = selected;
+            if (question.required && selected.length === 0) {
+                allAnswered = false;
+            }
+        } else if (question.type === 'radio') {
+            const selected = Array.from(elements).find(el => el.checked);
+            if (selected) {
+                responses[index] = selected.value;
+            } else if (question.required) {
+                allAnswered = false;
+            }
+        } else {
+            const value = elements[0].value;
+            if (value && value.trim() !== '') {
+                responses[index] = value;
+            } else if (question.required) {
+                allAnswered = false;
+            }
+        }
+    });
+
+    if (!allAnswered) {
+        alert('Please answer all required questions before submitting the survey.');
+        return;
+    }
+
+    try {
+        const submitBtn = document.getElementById('submit-survey-btn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Submitting...';
+        submitBtn.disabled = true;
+
+        const response = await apiCall(`/surveys/${surveyId}/submit`, {
+            method: 'POST',
+            body: {
+                responses: responses
+            }
+        });
+
+        // Update local user data
+        const user = getCurrentUser();
+        if (user) {
+            user.points += survey.points;
+            if (!user.completedSurveys) {
+                user.completedSurveys = [];
+            }
+            user.completedSurveys.push(surveyId);
+            localStorage.setItem('user', JSON.stringify(user));
+            updateUIForLoginStatus();
+        }
+
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+
+        alert(`Thank you for completing the survey! You earned ${survey.points} points.`);
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('surveyModal'));
+        modal.hide();
+        
+        await loadStudentSurveys();
+        loadQuizStatistics();
+
+    } catch (error) {
+        console.error('Error submitting survey:', error);
+        alert('Error submitting survey: ' + error.message);
+        
+        const submitBtn = document.getElementById('submit-survey-btn');
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Submit Survey';
+        submitBtn.disabled = false;
+    }
+}
+
+        // Enhanced statistics calculation
+        function calculateUserLevel(points) {
+          const levels = [
+            { min: 0, max: 50, name: "Eco-Seed", color: "#95a5a6", next: 50 },
+            { min: 50, max: 150, name: "Eco-Sprout", color: "#27ae60", next: 150 },
+            { min: 150, max: 300, name: "Eco-Gardener", color: "#2ecc71", next: 300 },
+            { min: 300, max: 500, name: "Eco-Guardian", color: "#3498db", next: 500 },
+            { min: 500, max: 800, name: "Eco-Champion", color: "#9b59b6", next: 800 },
+            { min: 800, max: 1200, name: "Eco-Hero", color: "#e74c3c", next: 1200 },
+            { min: 1200, max: 2000, name: "Eco-Legend", color: "#f39c12", next: 2000 },
+            { min: 2000, max: Infinity, name: "Eco-Master", color: "#e67e22", next: 0 }
+          ];
+
+          const currentLevel = levels.find(level => points >= level.min && points < level.max) || levels[0];
+          const progress = ((points - currentLevel.min) / (currentLevel.next - currentLevel.min)) * 100;
+          
+          return {
+            name: currentLevel.name,
+            progress: Math.min(100, Math.max(0, progress)),
+            nextLevel: currentLevel.next,
+            color: currentLevel.color
+          };
+        }
+
+        // Calculate streak bonus
+        function calculateStreakBonus(streak) {
+          if (streak >= 30) return { bonus: 25, message: "Eco-Warrior! 🏆" };
+          if (streak >= 14) return { bonus: 15, message: "Incredible! 🌟" };
+          if (streak >= 7) return { bonus: 10, message: "Great job! 🔥" };
+          if (streak >= 3) return { bonus: 5, message: "Building momentum! 💪" };
+          return { bonus: 0, message: "Keep it up! 🌱" };
+        }
+
+        // Calculate mastery level
+        function calculateMasteryLevel(averageScore, quizzesCompleted) {
+          if (quizzesCompleted === 0) return { level: "Beginner", color: "#95a5a6" };
+          if (averageScore >= 90) return { level: "Expert", color: "#e74c3c" };
+          if (averageScore >= 80) return { level: "Advanced", color: "#9b59b6" };
+          if (averageScore >= 70) return { level: "Proficient", color: "#3498db" };
+          if (averageScore >= 60) return { level: "Intermediate", color: "#2ecc71" };
+          return { level: "Novice", color: "#f39c12" };
+        }
+
+// Enhanced statistics loading with proper quizzes completed count
+function loadEnhancedStatistics() {
+  const user = getCurrentUser();
+  if (!user) return;
+
+  const attempts = user.quizAttempts || {};
+  const attemptsObj = attempts instanceof Map ? Object.fromEntries(attempts) : attempts;
+  
+  // Count all quizzes where user has a score > 0 (completed quizzes)
+  let quizzesCompleted = 0;
+  const allQuizzes = [...generalQuizzes, ...moduleQuizzes];
+  
+  // Count both general and module quizzes that are completed
+  allQuizzes.forEach(quiz => {
+    const attemptValue = attemptsObj[quiz._id];
+    if (attemptValue !== undefined && attemptValue !== null) {
+      quizzesCompleted++;
+    }
+  });
+
+  const surveysCompleted = user.completedSurveys ? user.completedSurveys.length : 0;
+
+  // Update level and progress
+  const levelInfo = calculateUserLevel(user.points || 0);
+  document.getElementById('total-points').textContent = user.points || 0;
+  document.getElementById('current-level').textContent = levelInfo.name;
+  
+  // Update progress bar
+  const progressBar = document.querySelector('.overall-progress .progress-bar');
+  if (progressBar) {
+    progressBar.style.width = `${levelInfo.progress}%`;
+    progressBar.setAttribute('aria-valuenow', levelInfo.progress);
+  }
+
+  // Update streak information
+  const streak = typeof user.streak === 'number' ? user.streak : 0;
+  const streakBonus = calculateStreakBonus(streak);
+  document.getElementById('day-streak').textContent = streak;
+  document.getElementById('streak-bonus').textContent = streakBonus.bonus > 0 ? `+${streakBonus.bonus}% Bonus` : 'No bonus';
+  document.getElementById('streak-message').textContent = streakBonus.message;
+
+  // Update quizzes completed information
+  document.getElementById('quizzes-completed-count').textContent = quizzesCompleted;
+  const quizzesCompletedMessage = document.getElementById('quizzes-completed-message');
+  
+  if (quizzesCompleted === 0) {
+    quizzesCompletedMessage.textContent = 'Start your first quiz!';
+    quizzesCompletedMessage.className = 'text-muted';
+  } else if (quizzesCompleted < 3) {
+    quizzesCompletedMessage.textContent = 'Great start!';
+    quizzesCompletedMessage.className = 'text-success';
+  } else if (quizzesCompleted < 7) {
+    quizzesCompletedMessage.textContent = 'Making progress!';
+    quizzesCompletedMessage.className = 'text-success';
+  } else if (quizzesCompleted < 12) {
+    quizzesCompletedMessage.textContent = 'Quiz enthusiast!';
+    quizzesCompletedMessage.className = 'text-warning';
+  } else {
+    quizzesCompletedMessage.textContent = 'Quiz master!';
+    quizzesCompletedMessage.className = 'text-danger';
+  }
+
+  // Update impact information
+  document.getElementById('surveys-completed').textContent = surveysCompleted;
+  document.getElementById('impact-message').textContent = 
+    surveysCompleted >= 3 ? "Making a real impact! 🌍" : "Your opinion matters! 💚";
+
+  // Add highlight animation for high achievements
+  const statsCards = document.querySelectorAll('.stats-card');
+  statsCards.forEach(card => {
+    card.classList.remove('highlight');
+  });
+
+  console.log('Statistics updated:', {
+    points: user.points,
+    streak: streak,
+    quizzesCompleted: quizzesCompleted,
+    totalQuizzesAvailable: allQuizzes.length,
+    surveysCompleted: surveysCompleted
+  }); 
+}
+// Check and update daily question button state
+// Check and update daily question button state - FIXED VERSION
+function updateDailyQuestionButton() {
+  const button = document.querySelector('#daily-question-card button');
+  const user = getCurrentUser();
+  
+  if (!user) {
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-user me-1"></i> Please Login';
+    button.className = 'btn btn-secondary btn-lg';
+    return;
+  }
+
+  const now = new Date();
+  const today = new Date().toDateString();
+  
+  // Use the user's lastDailyQuestion from backend, not localStorage
+  const lastAttempt = user.lastDailyQuestion;
+  
+  console.log('Daily question check:', {
+    lastAttempt: lastAttempt,
+    today: today,
+    user: user
+  });
+
+  if (lastAttempt) {
+    const lastAttemptDate = new Date(lastAttempt).toDateString();
+    console.log('Last attempt date:', lastAttemptDate, 'Today:', today);
+    
+    // Check if last attempt was today
+    if (lastAttemptDate === today) {
+      // Attempted today - disable button
+      button.disabled = true;
+      button.innerHTML = '<i class="fas fa-clock me-1"></i> Come Back Tomorrow';
+      button.className = 'btn btn-secondary btn-lg';
+      
+      // Calculate time until midnight
+      const midnight = new Date();
+      midnight.setHours(24, 0, 0, 0); // Next midnight
+      const hoursUntilMidnight = (midnight - now) / (1000 * 60 * 60);
+      
+      const pointsBadge = document.querySelector('#daily-question-card .badge.bg-success');
+      if (pointsBadge) {
+        if (hoursUntilMidnight > 1) {
+          pointsBadge.innerHTML = `Available in ${Math.ceil(hoursUntilMidnight)} hours`;
+        } else {
+          const minutesUntilMidnight = Math.ceil(hoursUntilMidnight * 60);
+          pointsBadge.innerHTML = `Available in ${minutesUntilMidnight} minutes`;
+        }
+      }
+    } else {
+      // New day - enable button
+      button.disabled = false;
+      button.innerHTML = 'Answer Today\'s Question';
+      button.className = 'btn btn-success btn-lg';
+      const pointsBadge = document.querySelector('#daily-question-card .badge.bg-success');
+      if (pointsBadge) {
+        pointsBadge.innerHTML = '+5 points';
+      }
+      console.log('✅ Daily question available - last attempt was not today');
+    }
+  } else {
+    // No previous attempt - enable button
+    button.disabled = false;
+    button.innerHTML = 'Answer Today\'s Question';
+    button.className = 'btn btn-success btn-lg';
+    const pointsBadge = document.querySelector('#daily-question-card .badge.bg-success');
+    if (pointsBadge) {
+      pointsBadge.innerHTML = '+5 points';
+    }
+    console.log('✅ Daily question available - no previous attempts');
+  }
+}
+
+// Update daily question submission to track attempts
+async function submitDailyAnswer() {
+  if (selectedAnswer === null) {
+    alert('Please select an answer');
+    return;
+  }
+  
+  try {
+    const submitBtn = document.getElementById('submit-daily-answer');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Submitting...';
+    submitBtn.disabled = true;
+
+    const response = await apiCall('/quizzes/daily/submit', {
+      method: 'POST',
+      body: {
+        quizId: currentDailyQuestion.quizId,
+        answerIndex: selectedAnswer
+      }
+    });
+    
+    // Store attempt date in localStorage
+    localStorage.setItem('lastDailyQuestionAttempt', new Date().toISOString());
+    
+    alert(`You earned ${response.data.pointsEarned} points! Your streak is now ${response.data.streak} days.`);
+    document.getElementById('current-streak').textContent = response.data.streak;
+    
+    const modal = bootstrap.Modal.getInstance(document.getElementById('dailyQuestionModal'));
+    modal.hide();
+    selectedAnswer = null;
+    
+    const user = getCurrentUser();
+    if (user) {
+      user.points += response.data.pointsEarned;
+      user.streak = response.data.streak;
+      localStorage.setItem('user', JSON.stringify(user));
+      updateUIForLoginStatus();
+    }
+    
+    // Update button state immediately
+    updateDailyQuestionButton();
+    loadQuizStatistics();
+    
+  } catch (error) {
+    console.error('Error submitting daily answer:', error);
+    
+    if (error.message.includes('already answered') || error.message.includes('already attempted')) {
+      // Store attempt time even on error to prevent spam
+      localStorage.setItem('lastDailyQuestionAttempt', new Date().toISOString());
+      updateDailyQuestionButton();
+      alert('Daily question already attempted, come back tomorrow for a new question!');
+      const modal = bootstrap.Modal.getInstance(document.getElementById('dailyQuestionModal'));
+      modal.hide();
+    } else {
+      alert('Error submitting answer: ' + error.message);
+    }
+  } finally {
+    const submitBtn = document.getElementById('submit-daily-answer');
+    submitBtn.innerHTML = 'Submit Answer';
+    submitBtn.disabled = false;
+  }
+}
+        // Update the main loadQuizStatistics function
+        function loadQuizStatistics() {
+          loadEnhancedStatistics();
+        }
+
+        // Start quiz
+        function startQuiz(quizId) {
+          window.location.href = `quiz-detail.html?id=${quizId}`;
+        }
+
+       // Refresh quiz data after submission
+async function refreshQuizData() {
+  await loadStudentQuizzes();
+  loadQuizStatistics();
+}
+
+// Update the initialization to include proper refresh
+document.addEventListener('DOMContentLoaded', async function() {
+  updateUIForLoginStatus();
+  
+  if (checkLogin()) {
+    try { 
+      await getProfile(); 
+    } catch (e) { 
+      console.warn('Could not refresh profile before loading quizzes', e); 
+    }
+    
+    await loadDailyQuestion();
+    await loadStudentQuizzes();
+    await loadStudentSurveys();
+    
+    // Update daily question button state
+    updateDailyQuestionButton();
+    
+    loadQuizStatistics();
+    
+    // Event listeners
+    document.getElementById('submit-daily-answer').addEventListener('click', submitDailyAnswer);
+    document.getElementById('submit-survey-btn').addEventListener('click', submitSurvey);
+    
+    // Listen for quiz completion events
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'quizCompleted' || e.key === 'quizUpdated') {
+        refreshQuizData();
+      }
+    });
+
+    // Refresh when page becomes visible
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) {
+        refreshQuizData();
+        updateDailyQuestionButton();
+      }
+    });
+
+    // Check daily question button every minute and at midnight
+    setInterval(updateDailyQuestionButton, 60000);
+    
+    // Force refresh every 5 minutes to catch any state changes
+    setInterval(refreshQuizData, 300000);
+  }
+});
+// Update UI for student login status with profile dropdown
+function updateUIForLoginStatus() {
+    const user = getCurrentUser();
+    const authButtons = document.getElementById('auth-buttons');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (user) {
+        // Hide auth buttons, show user menu
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        // Update user information in dropdown
+        updateUserDropdown(user);
+        
+    } else {
+        // Show auth buttons, hide user menu
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// Update dropdown with student information
+function updateUserDropdown(user) {
+    // Safely get all elements
+    const navbarUsername = document.getElementById('navbar-username');
+    const navbarAvatar = document.getElementById('navbar-avatar');
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownAvatar = document.getElementById('dropdown-avatar');
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    
+    // Update basic user information
+    if (navbarUsername) navbarUsername.textContent = user.name || 'Student';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'Student';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    
+    // Update avatar with student color
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Student')}&background=20c997&color=fff&size=`;
+    
+    if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+    if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+    
+    // Update eco-points - ALWAYS show for student interface
+    const points = user.points || 0;
+    if (navbarPoints) navbarPoints.textContent = formatPoints(points);
+    if (dropdownPoints) dropdownPoints.textContent = formatPoints(points);
+    
+    // Update points level styling
+    updatePointsLevelStyling(points);
+}
+
+// Format points with commas
+function formatPoints(points) {
+    return points.toLocaleString();
+}
+function updatePointsLevelStyling(points) {
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    const ecoPointsBadge = document.querySelector('.eco-points-badge');
+    
+    if (!navbarPoints || !ecoPointsBadge) return;
+    
+    // Remove existing level classes
+    ecoPointsBadge.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    navbarPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    if (dropdownPoints) {
+        dropdownPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    }
+    
+    // Add appropriate level class
+    let levelClass = 'points-level-beginner';
+    if (points >= 1000) levelClass = 'points-level-intermediate';
+    if (points >= 5000) levelClass = 'points-level-advanced';
+    if (points >= 10000) levelClass = 'points-level-expert';
+    
+    ecoPointsBadge.classList.add(levelClass);
+    navbarPoints.classList.add(levelClass);
+    if (dropdownPoints) dropdownPoints.classList.add(levelClass);
+}
+
+// Update points in navbar if available
+function updatePointsDisplay(user) {
+    const pointsElement = document.getElementById('navbar-points');
+    if (pointsElement && user.points) {
+        pointsElement.textContent = user.points.toLocaleString();
+    }
+}
+
+// Enhanced logout for student
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize student dropdown
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForLoginStatus();
+    
+    // Update dropdown when user data changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user') {
+            const user = getCurrentUser();
+            if (user) {
+                updateUserDropdown(user);
+            }
+        }
+    });
+});
+    </script>
+</body>
+</html>

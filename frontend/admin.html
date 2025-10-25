@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .module-card, .quiz-card {
+            border-left: 4px solid #3498db;
+            transition: all 0.3s;
+        }
+        .module-card:hover, .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .nav-pills .nav-link.active {
+            background-color: #2ecc71;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        /* Update stats card styling for better fit */
+.stats-card {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  line-height: 1.2;
+  margin-bottom: 0;
+}
+
+/* Adjust for smaller screens */
+@media (max-width: 768px) {
+  .stats-card {
+    padding: 12px;
+    height: 110px;
+  }
+  
+  .stat-number {
+    font-size: 1.75rem;
+  }
+  
+  .stat-label {
+    font-size: 0.8rem;
+  }
+}
+/* Fix for Bootstrap modal focus issue */
+.modal {
+  backdrop-filter: none !important;
+}
+
+.modal-backdrop {
+  z-index: 1040 !important;
+}
+
+.modal {
+  z-index: 1050 !important;
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="admin-home.html">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="admin-home.html">Dashboard</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Take Actions
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="admin-reviews.html">Manage Reviews</a></li>
+                        <li><a class="dropdown-item active" href="admin.html">Manage Content</a></li>
+                        <li><a class="dropdown-item" href="admin-rewards.html">Manage Rewards</a></li>
+                        <li><a class="dropdown-item" href="admin-events.html">Manage Events</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Tools and Utilities
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="eco-map.html">Eco Map</a></li>
+                        <li><a class="dropdown-item" href="ngo-surveys.html">NGO Surveys</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=27ae60&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=27ae60&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                <span class="badge user-role-badge student-badge" id="dropdown-role">Student</span>
+            </div>
+        </li>        
+        <li>
+            <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+        </div>
+    </div>
+</nav>
+
+    <!-- Admin Content -->
+    <div class="admin-container py-5">
+        <h2 class="text-center mb-5">Admin Management Panel</h2>
+        
+        <!-- Statistics Cards -->
+<div class="row mb-5">
+  <div class="col-md-2">
+    <div class="stats-card text-center">
+      <p class="stat-number" id="total-modules">0</p>
+      <p class="stat-label">Total Modules</p>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="stats-card text-center">
+      <p class="stat-number" id="active-modules">0</p>
+      <p class="stat-label">Active Modules</p>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="stats-card text-center">
+      <p class="stat-number" id="total-quizzes">0</p>
+      <p class="stat-label">Total Quizzes</p>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="stats-card text-center">
+      <p class="stat-number" id="active-quizzes">0</p>
+      <p class="stat-label">Active Quizzes</p>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="stats-card text-center">
+      <p class="stat-number" id="total-challenges">0</p>
+      <p class="stat-label">Total Challenges</p>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="stats-card text-center">
+      <p class="stat-number" id="active-challenges">0</p>
+      <p class="stat-label">Active Challenges</p>
+    </div>
+  </div>
+</div>
+        
+        <!-- Tabs -->
+        <ul class="nav nav-pills mb-4">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="pill" href="#modules-tab">Modules</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="pill" href="#quizzes-tab">Quizzes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="pill" href="#challenges-tab">Challenges</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="pill" href="#daily-quiz-tab">Daily Quiz</a>
+            </li>
+        </ul>
+        
+        <div class="tab-content">
+            <!-- Modules Tab -->
+            <div class="tab-pane fade show active" id="modules-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Module Management</h3>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#moduleModal">
+                        <i class="fas fa-plus me-1"></i> Add New Module
+                    </button>
+                </div>
+                
+                <div class="row" id="modules-container">
+                    <!-- Modules will be populated here -->
+                    <div class="col-12 text-center">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading modules...</span>
+                        </div>
+                        <p class="mt-2">Loading modules...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quizzes Tab -->
+            <div class="tab-pane fade" id="quizzes-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Quiz Management</h3>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#quizModal">
+                        <i class="fas fa-plus me-1"></i> Add New Quiz
+                    </button>
+                </div>
+                
+                <div class="row" id="quizzes-container">
+                    <!-- Quizzes will be populated here -->
+                    <div class="col-12 text-center">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading quizzes...</span>
+                        </div>
+                        <p class="mt-2">Loading quizzes...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="challenges-tab">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Challenges Management</h3>
+    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#challengeModal">
+      <i class="fas fa-plus me-2"></i> Add New Challenge
+    </button>
+  </div>
+
+  
+
+  <div id="challenges-container">
+    <div class="text-center py-4">
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Loading challenges...</span>
+      </div>
+      <p class="mt-2">Loading challenges...</p>
+    </div>
+  </div>
+</div>
+            
+            <!-- Daily Quiz Tab -->
+            <!-- Enhanced Daily Quiz Setup -->
+<div class="tab-pane fade" id="daily-quiz-tab">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">Set Daily Question</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Select from Existing Quizzes</label>
+            <select class="form-select" id="daily-quiz-select">
+              <option value="">Choose a quiz...</option>
+            </select>
+          </div>
+          <button class="btn btn-success w-100" id="set-daily-quiz">
+            <i class="fas fa-calendar-day me-2"></i>Set as Daily Question
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Create General Quiz</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Quiz Title</label>
+            <input type="text" class="form-control" id="general-quiz-title" placeholder="Enter quiz title">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Question</label>
+            <input type="text" class="form-control" id="general-quiz-question" placeholder="Enter question">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Options (comma separated)</label>
+            <input type="text" class="form-control" id="general-quiz-options" placeholder="Option 1, Option 2, Option 3, Option 4">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Correct Answer Index (0-3)</label>
+            <input type="number" class="form-control" id="general-quiz-answer" min="0" max="3" value="0">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Points</label>
+            <input type="number" class="form-control" id="general-quiz-points" value="10">
+          </div>
+          <button class="btn btn-primary w-100" id="create-general-quiz">
+            <i class="fas fa-plus me-2"></i>Create & Set as Daily Question
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-info text-white">
+        </div>
+        <div class="card-body">
+          <div id="current-daily-quiz" class="alert alert-info">
+            Loading current daily quiz...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        </div>
+    </div>
+
+    <!-- Module Modal -->
+    <div class="modal fade" id="moduleModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="moduleModalTitle">Add New Module</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="module-form">
+                        <input type="hidden" id="module-id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="module-title" class="form-label">Module Title</label>
+                                    <input type="text" class="form-control" id="module-title" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="module-category" class="form-label">Category</label>
+                                    <select class="form-select" id="module-category" required>
+                                        <option value="">Select Category</option>
+                                        <option value="Green Habits">Green Habits</option>
+                                        <option value="Global Warming">Global Warming</option>
+                                        <option value="Biodiversity">Biodiversity</option>
+                                        <option value="Sustainable Development">Sustainable Development</option>
+                                        <option value="Renewable Energy">Renewable Energy</option>
+                                        <option value="Waste Management">Waste Management</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="module-description" class="form-label">Description</label>
+                            <textarea class="form-control" id="module-description" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="module-estimated-time" class="form-label">Estimated Time (minutes)</label>
+                                    <input type="number" class="form-control" id="module-estimated-time" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="module-points" class="form-label">Points Reward</label>
+                                    <input type="number" class="form-control" id="module-points" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="module-badge" class="form-label">Badge Name (optional)</label>
+                                    <input type="text" class="form-control" id="module-badge">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="module-active" checked>
+                            <label class="form-check-label" for="module-active">
+                                Active (published)
+                            </label>
+                        </div>
+                        
+                        <h5 class="mt-4">Lessons</h5>
+                        <div id="lessons-container">
+                            <div class="lesson-item card mb-3">
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Lesson Title</label>
+                                        <input type="text" class="form-control lesson-title" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Lesson Content</label>
+                                        <textarea class="form-control lesson-content" rows="3" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Duration (minutes)</label>
+                                        <input type="number" class="form-control lesson-duration" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Order</label>
+                                        <input type="number" class="form-control lesson-order" value="1" required>
+                                    </div>
+                                    <button type="button" class="btn btn-danger btn-sm remove-lesson">
+                                        <i class="fas fa-trash"></i> Remove Lesson
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" id="add-lesson" class="btn btn-secondary mt-3">
+                            <i class="fas fa-plus"></i> Add Another Lesson
+                        </button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="save-module">Save Module</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div class="modal fade" id="quizModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="quizModalTitle">Add New Quiz</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="quiz-form">
+                        <input type="hidden" id="quiz-id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="quiz-title" class="form-label">Quiz Title</label>
+                                    <input type="text" class="form-control" id="quiz-title" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="quiz-module" class="form-label">Module</label>
+                                    <select class="form-select" id="quiz-module" required>
+                                        <option value="">Select Module</option>
+                                        <!-- Modules will be populated here -->
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="quiz-description" class="form-label">Description</label>
+                            <textarea class="form-control" id="quiz-description" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="quiz-time-limit" class="form-label">Time Limit (minutes)</label>
+                                    <input type="number" class="form-control" id="quiz-time-limit" value="10">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-3 mt-4">
+                                    <input class="form-check-input" type="checkbox" id="quiz-requires-completion" checked>
+                                    <label class="form-check-label" for="quiz-requires-completion">
+                                        Require module completion
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="quiz-active" checked>
+                            <label class="form-check-label" for="quiz-active">
+                                Active (published)
+                            </label>
+                        </div>
+                        
+                        <h5 class="mt-4">Questions</h5>
+                        <div id="questions-container">
+                            <div class="question-item card mb-3">
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Question</label>
+                                        <input type="text" class="form-control question-text" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Options (separate with commas)</label>
+                                        <input type="text" class="form-control question-options" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Correct Answer Index (0-based)</label>
+                                        <input type="number" class="form-control question-answer" min="0" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Points</label>
+                                        <input type="number" class="form-control question-points" value="10" required>
+                                    </div>
+                                    <button type="button" class="btn btn-danger btn-sm remove-question">
+                                        <i class="fas fa-trash"></i> Remove Question
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" id="add-question" class="btn btn-secondary mt-3">
+                            <i class="fas fa-plus"></i> Add Question
+                        </button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="save-quiz">Save Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Challenge Modal -->
+<div class="modal fade" id="challengeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="challengeModalTitle">Add New Challenge</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="challenge-form">
+          <input type="hidden" id="challenge-id">
+          <div class="row">
+            <div class="col-md-8">
+              <div class="mb-3">
+                <label for="challenge-title" class="form-label">Challenge Title *</label>
+                <input type="text" class="form-control" id="challenge-title" required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="challenge-category" class="form-label">Category *</label>
+                <select class="form-select" id="challenge-category" required>
+                  <option value="waste-reduction">Waste Reduction</option>
+                  <option value="energy-conservation">Energy Conservation</option>
+                  <option value="water-preservation">Water Preservation</option>
+                  <option value="biodiversity">Biodiversity</option>
+                  <option value="sustainable-living">Sustainable Living</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="challenge-description" class="form-label">Description *</label>
+            <textarea class="form-control" id="challenge-description" rows="3" required></textarea>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="challenge-points" class="form-label">Points Reward *</label>
+                <input type="number" class="form-control" id="challenge-points" min="1" value="100" required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="challenge-duration" class="form-label">Duration (days) *</label>
+                <input type="number" class="form-control" id="challenge-duration" min="1" value="7" required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="challenge-type" class="form-label">Completion Type *</label>
+                <select class="form-select" id="challenge-type" required>
+                  <option value="custom">Custom Challenge</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="challenge-target" class="form-label">Target *</label>
+                <input type="number" class="form-control" id="challenge-target" min="1" value="10" required>
+                <small class="form-text text-muted">Number of modules/quizzes/points needed</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="challenge-start-date" class="form-label">Start Date</label>
+                <input type="date" class="form-control" id="challenge-start-date">
+              </div>
+            </div>
+          </div>
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="challenge-active" checked>
+            <label class="form-check-label" for="challenge-active">Active</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" id="save-challenge-btn">
+          <span class="loading-text">Save Challenge</span>
+          <div class="spinner-border spinner-border-sm loading-spinner" role="status">
+            <span class="visually-hidden">Saving...</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Ujjivana</h5>
+                    <p>Gamifying environmental education for a sustainable future.</p>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">About</a></li>
+                        <li><a href="modules.html" class="text-white text-decoration-none">Modules</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@ujjivana.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe for updates on new features and content.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-success" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2023 Ujjivana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+      // Update UI based on login status with profile dropdown
+function updateUIForLoginStatus() {
+    const user = getCurrentUser();
+    const authButtons = document.getElementById('auth-buttons');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (user) {
+        // Hide auth buttons, show user menu
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        // Update user information in dropdown
+        updateUserDropdown(user);
+        
+        // Show/hide role-specific links
+        toggleRoleSpecificLinks(user.role);
+        
+    } else {
+        // Show auth buttons, hide user menu
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// Update dropdown with user information
+function updateUserDropdown(user) {
+    // Navbar elements
+    const navbarUsername = document.getElementById('navbar-username');
+    const navbarAvatar = document.getElementById('navbar-avatar');
+    
+    // Dropdown elements
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownAvatar = document.getElementById('dropdown-avatar');
+    const dropdownRole = document.getElementById('dropdown-role');
+    
+    if (navbarUsername) navbarUsername.textContent = user.name || 'User';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'User';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    
+    // Update avatars based on role
+    const avatarColor = getAvatarColorByRole(user.role);
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=${avatarColor}&color=fff&size=`;
+    
+    if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+    if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+    
+    // Update role badge
+    if (dropdownRole) {
+        dropdownRole.textContent = user.role || 'Student';
+        dropdownRole.className = 'badge user-role-badge ' + getRoleBadgeClass(user.role);
+    }
+}
+
+// Get avatar background color based on role
+function getAvatarColorByRole(role) {
+    const colors = {
+        'student': '20c997',
+        'teacher': '6f42c1', 
+        'admin': 'dc3545'
+    };
+    return colors[role] || '27ae60';
+}
+
+// Get badge class based on role
+function getRoleBadgeClass(role) {
+    const classes = {
+        'student': 'student-badge',
+        'teacher': 'teacher-badge',
+        'admin': 'admin-badge'
+    };
+    return classes[role] || 'student-badge';
+}
+
+// Show/hide role-specific links
+function toggleRoleSpecificLinks(role) {
+    const teacherAdminLinks = document.getElementById('teacher-admin-links');
+    const teacherDashboardLink = document.getElementById('teacher-dashboard-link');
+    const adminPanelLink = document.getElementById('admin-panel-link');
+    
+    if (teacherAdminLinks) {
+        if (role === 'teacher' || role === 'admin') {
+            teacherAdminLinks.style.display = 'block';
+        } else {
+            teacherAdminLinks.style.display = 'none';
+        }
+    }
+    
+    // Show/hide specific links based on role
+    if (teacherDashboardLink) {
+        teacherDashboardLink.style.display = role === 'teacher' ? 'block' : 'none';
+    }
+    
+    if (adminPanelLink) {
+        adminPanelLink.style.display = role === 'admin' ? 'block' : 'none';
+    }
+}
+
+// Enhanced logout function
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize dropdown on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForLoginStatus();
+    
+    // Update dropdown when user data changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user') {
+            const user = getCurrentUser();
+            if (user) {
+                updateUserDropdown(user);
+            }
+        }
+    });
+});
+    </script>
+</body>
+</html>

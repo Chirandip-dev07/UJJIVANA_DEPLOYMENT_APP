@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Rewards - Ujjivana Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        .stat-breakdown {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+        .stats-card .badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+        }
+        .reward-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .reward-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .product-badge {
+            background-color: #2ecc71;
+        }
+        .coupon-badge {
+            background-color: #e67e22;
+        }
+        .action-buttons {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .reward-card:hover .action-buttons {
+            opacity: 1;
+        }
+        .redemption-item {
+            border-left: 4px solid #3498db;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .redemption-item.completed {
+            border-left-color: #2ecc71;
+        }
+        .redemption-item.cancelled {
+            border-left-color: #e74c3c;
+        }
+        .filter-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .tab-pane {
+            padding-top: 20px;
+        }
+        .loading-spinner {
+            display: none;
+        }
+        .loading .loading-spinner {
+            display: inline-block;
+        }
+        .loading .loading-text {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="admin-home.html">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="admin-home.html">Dashboard</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Take Actions
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="admin-reviews.html">Manage Reviews</a></li>
+                        <li><a class="dropdown-item" href="admin.html">Manage Content</a></li>
+                        <li><a class="dropdown-item active" href="admin-rewards.html">Manage Rewards</a></li>
+                        <li><a class="dropdown-item" href="admin-events.html">Manage Events</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Tools and Utilities
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="eco-map.html">Eco Map</a></li>
+                        <li><a class="dropdown-item" href="ngo-surveys.html">NGO Surveys</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=27ae60&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=27ae60&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                <span class="badge user-role-badge student-badge" id="dropdown-role">Student</span>
+            </div>
+        </li>        
+        <li>
+            <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+        </div>
+    </div>
+</nav>
+    <!-- Admin Rewards Content -->
+    <div class="admin-container py-5">
+        <h2 class="text-center mb-5">Manage Rewards & Redemptions</h2>
+        
+        <!-- Statistics Cards -->
+        <div class="row mb-5">
+            <div class="col-md-4">
+                <div class="stats-card text-center">
+                    <div class="stat-number" id="total-active-rewards">0</div>
+                    <div class="stat-label">Total Active Rewards</div>
+                    <div class="stat-breakdown mt-2">
+                        <small>
+                            <span class="badge product-badge me-1" id="active-products">0 products</span>
+                            <span class="badge coupon-badge" id="active-coupons">0 coupons</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card text-center">
+                    <div class="stat-number" id="total-redemptions">0</div>
+                    <div class="stat-label">Total Redemptions</div>
+                    <div class="stat-breakdown mt-2">
+                        <small>
+                            <span class="badge bg-success me-1" id="completed-redemptions">0 completed</span>
+                            <span class="badge bg-warning" id="pending-redemptions">0 pending</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card text-center">
+                    <div class="stat-number" id="total-inactive-rewards">0</div>
+                    <div class="stat-label">Total Inactive Rewards</div>
+                    <div class="stat-breakdown mt-2">
+                        <small>
+                            <span class="text-light">All inactive rewards</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Stats Row -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h5 class="text-success" id="total-points-spent">0</h5>
+                        <p class="mb-0">Total Points Spent</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h5 class="text-success" id="total-rewards">0</h5>
+                        <p class="mb-0">Total Rewards</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Tabs -->
+        <ul class="nav nav-pills mb-4" id="rewardsTabs">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#products-tab">
+                    <i class="fas fa-shopping-bag me-2"></i>Eco Products
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#coupons-tab">
+                    <i class="fas fa-ticket-alt me-2"></i>Discount Coupons
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#redemptions-tab">
+                    <i class="fas fa-history me-2"></i>Redemption History
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Eco Products Tab -->
+            <div class="tab-pane fade show active" id="products-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4>Eco Products Management</h4>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#productModal">
+                        <i class="fas fa-plus me-2"></i>Add New Product
+                    </button>
+                </div>
+
+                <div class="filter-section">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label">Filter by Status</label>
+                            <select class="form-select" id="product-status-filter">
+                                <option value="">All Status</option>
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Filter by Category</label>
+                            <select class="form-select" id="product-category-filter">
+                                <option value="">All Categories</option>
+                                <option value="Eco Product">Eco Product</option>
+                                <option value="Merchandise">Merchandise</option>
+                                <option value="Experience">Experience</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-outline-success w-100" onclick="loadProducts()">
+                                <i class="fas fa-filter me-2"></i>Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="products-container">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading products...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discount Coupons Tab -->
+            <div class="tab-pane fade" id="coupons-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4>Discount Coupons Management</h4>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#couponModal">
+                        <i class="fas fa-plus me-2"></i>Add New Coupon
+                    </button>
+                </div>
+
+                <div class="filter-section">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label">Filter by Status</label>
+                            <select class="form-select" id="coupon-status-filter">
+                                <option value="">All Status</option>
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Filter by Category</label>
+                            <select class="form-select" id="coupon-category-filter">
+                                <option value="">All Categories</option>
+                                <option value="Discount Coupon">Discount Coupon</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-outline-success w-100" onclick="loadCoupons()">
+                                <i class="fas fa-filter me-2"></i>Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="coupons-container">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading coupons...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Redemption History Tab -->
+            <div class="tab-pane fade" id="redemptions-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4>Redemption History</h4>
+                    <button class="btn btn-outline-success" onclick="loadRedemptions()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
+                    </button>
+                </div>
+
+                <div class="filter-section">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label">Filter by Status</label>
+                            <select class="form-select" id="redemption-status-filter">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Filter by Type</label>
+                            <select class="form-select" id="redemption-type-filter">
+                                <option value="">All Types</option>
+                                <option value="product">Eco Products</option>
+                                <option value="coupon">Discount Coupons</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Items per page</label>
+                            <select class="form-select" id="redemption-limit-filter">
+                                <option value="20">20 items</option>
+                                <option value="50">50 items</option>
+                                <option value="100">100 items</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-success w-100" onclick="loadRedemptions()">
+                                <i class="fas fa-filter me-2"></i>Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="redemptions-container">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading redemption history...</p>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <nav id="redemption-pagination" class="mt-4 d-none">
+                    <ul class="pagination justify-content-center">
+                        <!-- Pagination will be dynamically generated -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalTitle">Add New Eco Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="product-form">
+                        <input type="hidden" id="product-id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="product-name" class="form-label">Product Name *</label>
+                                    <input type="text" class="form-control" id="product-name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="product-category" class="form-label">Category *</label>
+                                    <select class="form-select" id="product-category" required>
+                                        <option value="Eco Product">Eco Product</option>
+                                        <option value="Merchandise">Merchandise</option>
+                                        <option value="Experience">Experience</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product-description" class="form-label">Description *</label>
+                            <textarea class="form-control" id="product-description" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="product-points" class="form-label">Points Required *</label>
+                                    <input type="number" class="form-control" id="product-points" min="1" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="product-cost" class="form-label">Cost (₹) *</label>
+                                    <input type="number" class="form-control" id="product-cost" min="0" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="product-stock" class="form-label">Stock *</label>
+                                    <input type="number" class="form-control" id="product-stock" min="0" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="product-image" class="form-label">Image URL</label>
+                                    <input type="url" class="form-control" id="product-image">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="product-expiry" class="form-label">Expiry Date</label>
+                                    <input type="date" class="form-control" id="product-expiry">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="product-active" checked>
+                            <label class="form-check-label" for="product-active">Active</label>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="product-limited">
+                            <label class="form-check-label" for="product-limited">Limited Availability</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="save-product-btn">
+                        <span class="loading-text">Save Product</span>
+                        <div class="spinner-border spinner-border-sm loading-spinner" role="status">
+                            <span class="visually-hidden">Saving...</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coupon Modal -->
+    <div class="modal fade" id="couponModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="couponModalTitle">Add New Discount Coupon</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="coupon-form">
+                        <input type="hidden" id="coupon-id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="coupon-name" class="form-label">Coupon Name *</label>
+                                    <input type="text" class="form-control" id="coupon-name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="coupon-code" class="form-label">Coupon Code</label>
+                                    <input type="text" class="form-control" id="coupon-code" placeholder="Auto-generated if left empty">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="coupon-description" class="form-label">Description *</label>
+                            <textarea class="form-control" id="coupon-description" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="coupon-points" class="form-label">Points Required *</label>
+                                    <input type="number" class="form-control" id="coupon-points" min="1" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="coupon-discount" class="form-label">Discount (%) *</label>
+                                    <input type="number" class="form-control" id="coupon-discount" min="1" max="100" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="coupon-stock" class="form-label">Stock *</label>
+                                    <input type="number" class="form-control" id="coupon-stock" min="0" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="coupon-image" class="form-label">Image URL</label>
+                                    <input type="url" class="form-control" id="coupon-image">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="coupon-expiry" class="form-label">Expiry Date *</label>
+                                    <input type="date" class="form-control" id="coupon-expiry" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="coupon-active" checked>
+                            <label class="form-check-label" for="coupon-active">Active</label>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="coupon-limited">
+                            <label class="form-check-label" for="coupon-limited">Limited Availability</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="save-coupon-btn">
+                        <span class="loading-text">Save Coupon</span>
+                        <div class="spinner-border spinner-border-sm loading-spinner" role="status">
+                            <span class="visually-hidden">Saving...</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Global variables
+        let currentEditingProduct = null;
+        let currentEditingCoupon = null;
+        let currentRedemptionPage = 1;
+        let redemptionFilters = {};
+
+        // Check if user is admin
+        function checkAdmin() {
+            const user = getCurrentUser();
+            return user && user.role === 'admin';
+        }
+
+        // Load initial data
+        async function loadInitialData() {
+            try {
+                await loadRedemptionStats();
+                await loadProducts();
+                await loadCoupons();
+                await loadRedemptions();
+            } catch (error) {
+                console.error('Error loading initial data:', error);
+                alert('Error loading data. Please try again.');
+            }
+        }
+
+        // Load redemption statistics
+        async function loadRedemptionStats() {
+            try {
+                const response = await getRedemptionStats();
+                const stats = response.data;
+
+                // Update main statistics cards
+                document.getElementById('total-active-rewards').textContent = stats.totalActiveRewards;
+                document.getElementById('total-redemptions').textContent = stats.totalRedemptions;
+                document.getElementById('total-inactive-rewards').textContent = stats.totalInactiveRewards;
+                
+                // Update breakdowns
+                document.getElementById('active-products').textContent = `${stats.productRewards} products`;
+                document.getElementById('active-coupons').textContent = `${stats.couponRewards} coupons`;
+                document.getElementById('completed-redemptions').textContent = `${stats.completedRedemptions} completed`;
+                document.getElementById('pending-redemptions').textContent = `${stats.pendingRedemptions} pending`;
+                
+                // Update additional stats
+                document.getElementById('total-points-spent').textContent = stats.totalPointsSpent;
+                document.getElementById('total-rewards').textContent = stats.totalRewards;
+            } catch (error) {
+                console.error('Error loading redemption stats:', error);
+            }
+        }
+
+        // Load products
+        async function loadProducts() {
+            try {
+                const statusFilter = document.getElementById('product-status-filter').value;
+                const categoryFilter = document.getElementById('product-category-filter').value;
+
+                const filters = {
+                    type: 'product'
+                };
+                if (statusFilter) filters.isActive = statusFilter;
+                if (categoryFilter) filters.category = categoryFilter;
+
+                const response = await getAllRewards(filters);
+                displayProducts(response.data);
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('products-container').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading products. Please try again.
+                    </div>
+                `;
+            }
+        }
+
+        // Display products
+        function displayProducts(products) {
+            const container = document.getElementById('products-container');
+
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No products found. Create your first eco product!
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            products.forEach(product => {
+                html += `
+                    <div class="card reward-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h5 class="card-title mb-0 me-3">${product.name}</h5>
+                                        <span class="badge product-badge">${product.category}</span>
+                                        <span class="badge ${product.isActive ? 'bg-success' : 'bg-secondary'} ms-2">
+                                            ${product.isActive ? 'Active' : 'Inactive'}
+                                        </span>
+                                        ${product.isLimited ? '<span class="badge bg-warning ms-2">Limited</span>' : ''}
+                                    </div>
+                                    <p class="card-text">${product.description}</p>
+                                    <div class="row text-muted small">
+                                        <div class="col-md-3">
+                                            <strong>Product ID:</strong> ${product.productId}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Points:</strong> ${product.pointsRequired}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Cost:</strong> ₹${product.cost}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Stock:</strong> ${product.stock}
+                                        </div>
+                                    </div>
+                                    ${product.expiryDate ? `
+                                        <div class="mt-2">
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock me-1"></i>
+                                                Expires: ${new Date(product.expiryDate).toLocaleDateString()}
+                                            </small>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div class="action-buttons ms-3">
+                                    <button class="btn btn-sm btn-outline-primary mb-1" onclick="editProduct('${product._id}')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct('${product._id}')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Load coupons
+        async function loadCoupons() {
+            try {
+                const statusFilter = document.getElementById('coupon-status-filter').value;
+                const categoryFilter = document.getElementById('coupon-category-filter').value;
+
+                const filters = {
+                    type: 'coupon'
+                };
+                if (statusFilter) filters.isActive = statusFilter;
+                if (categoryFilter) filters.category = categoryFilter;
+
+                const response = await getAllRewards(filters);
+                displayCoupons(response.data);
+            } catch (error) {
+                console.error('Error loading coupons:', error);
+                document.getElementById('coupons-container').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading coupons. Please try again.
+                    </div>
+                `;
+            }
+        }
+
+        // Display coupons
+        function displayCoupons(coupons) {
+            const container = document.getElementById('coupons-container');
+
+            if (coupons.length === 0) {
+                container.innerHTML = `
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No coupons found. Create your first discount coupon!
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            coupons.forEach(coupon => {
+                html += `
+                    <div class="card reward-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h5 class="card-title mb-0 me-3">${coupon.name}</h5>
+                                        <span class="badge coupon-badge">${coupon.category}</span>
+                                        <span class="badge ${coupon.isActive ? 'bg-success' : 'bg-secondary'} ms-2">
+                                            ${coupon.isActive ? 'Active' : 'Inactive'}
+                                        </span>
+                                        ${coupon.isLimited ? '<span class="badge bg-warning ms-2">Limited</span>' : ''}
+                                    </div>
+                                    <p class="card-text">${coupon.description}</p>
+                                    <div class="row text-muted small">
+                                        <div class="col-md-3">
+                                            <strong>Coupon Code:</strong> ${coupon.couponCode}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Points:</strong> ${coupon.pointsRequired}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Discount:</strong> ${coupon.discountPercentage}%
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Stock:</strong> ${coupon.stock}
+                                        </div>
+                                    </div>
+                                    ${coupon.expiryDate ? `
+                                        <div class="mt-2">
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock me-1"></i>
+                                                Expires: ${new Date(coupon.expiryDate).toLocaleDateString()}
+                                            </small>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div class="action-buttons ms-3">
+                                    <button class="btn btn-sm btn-outline-primary mb-1" onclick="editCoupon('${coupon._id}')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteCoupon('${coupon._id}')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Load redemptions
+        async function loadRedemptions(page = 1) {
+            try {
+                const statusFilter = document.getElementById('redemption-status-filter').value;
+                const typeFilter = document.getElementById('redemption-type-filter').value;
+                const limitFilter = document.getElementById('redemption-limit-filter').value;
+
+                currentRedemptionPage = page;
+                redemptionFilters = {};
+
+                if (statusFilter) redemptionFilters.status = statusFilter;
+                if (typeFilter) redemptionFilters.rewardType = typeFilter;
+                redemptionFilters.page = page;
+                redemptionFilters.limit = limitFilter;
+
+                const response = await getAllRedemptions(redemptionFilters);
+                displayRedemptions(response);
+            } catch (error) {
+                console.error('Error loading redemptions:', error);
+                document.getElementById('redemptions-container').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading redemption history. Please try again.
+                    </div>
+                `;
+            }
+        }
+
+        // Display redemptions
+        function displayRedemptions(response) {
+            const container = document.getElementById('redemptions-container');
+            const redemptions = response.data;
+
+            if (redemptions.length === 0) {
+                container.innerHTML = `
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No redemption history found.
+                    </div>
+                `;
+                document.getElementById('redemption-pagination').classList.add('d-none');
+                return;
+            }
+
+            let html = '';
+            redemptions.forEach(redemption => {
+                const redemptionDate = new Date(redemption.redeemedAt).toLocaleDateString();
+                const completionDate = redemption.completedAt ? new Date(redemption.completedAt).toLocaleDateString() : 'N/A';
+                
+                html += `
+                    <div class="redemption-item ${redemption.status}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center mb-2">
+                                    <h6 class="mb-0 me-3">${redemption.user.name}</h6>
+                                    <span class="badge ${getStatusBadgeClass(redemption.status)}">${redemption.status}</span>
+                                    <span class="badge ${redemption.reward.type === 'product' ? 'product-badge' : 'coupon-badge'} ms-2">
+                                        ${redemption.reward.type}
+                                    </span>
+                                </div>
+                                <p class="mb-1"><strong>Reward:</strong> ${redemption.reward.name}</p>
+                                <p class="mb-1"><strong>Points Spent:</strong> ${redemption.pointsSpent}</p>
+                                <p class="mb-1"><strong>Redeemed:</strong> ${redemptionDate}</p>
+                                ${redemption.status === 'completed' ? `<p class="mb-1"><strong>Completed:</strong> ${completionDate}</p>` : ''}
+                                ${redemption.reward.type === 'coupon' ? `<p class="mb-1"><strong>Coupon Code:</strong> ${redemption.reward.couponCode}</p>` : ''}
+                                <p class="mb-0 text-muted"><small>${redemption.user.email} • ${redemption.user.school || 'No school'}</small></p>
+                            </div>
+                            <div class="action-buttons ms-3">
+                                ${redemption.status === 'pending' ? `
+                                    <button class="btn btn-sm btn-success mb-1" onclick="updateRedemptionStatus('${redemption._id}', 'completed')">
+                                        <i class="fas fa-check"></i> Complete
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="updateRedemptionStatus('${redemption._id}', 'cancelled')">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            updatePagination(response);
+        }
+
+        // Update pagination
+        function updatePagination(response) {
+            const pagination = document.getElementById('redemption-pagination');
+            const totalPages = response.pages;
+            const currentPage = response.currentPage;
+
+            if (totalPages <= 1) {
+                pagination.classList.add('d-none');
+                return;
+            }
+
+            pagination.classList.remove('d-none');
+
+            let html = '';
+
+            // Previous button
+            html += `
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="loadRedemptions(${currentPage - 1})">Previous</a>
+                </li>
+            `;
+
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `
+                        <li class="page-item ${i === currentPage ? 'active' : ''}">
+                            <a class="page-link" href="#" onclick="loadRedemptions(${i})">${i}</a>
+                        </li>
+                    `;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+            }
+
+            // Next button
+            html += `
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="loadRedemptions(${currentPage + 1})">Next</a>
+                </li>
+            `;
+
+            pagination.querySelector('ul').innerHTML = html;
+        }
+
+        // Get status badge class
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'pending': return 'bg-warning';
+                case 'completed': return 'bg-success';
+                case 'cancelled': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
+        }
+
+        // Edit product
+        async function editProduct(productId) {
+            try {
+                const response = await getAllRewards({ type: 'product' });
+                const product = response.data.find(p => p._id === productId);
+                
+                if (!product) {
+                    alert('Product not found');
+                    return;
+                }
+
+                currentEditingProduct = product;
+
+                document.getElementById('product-id').value = product._id;
+                document.getElementById('product-name').value = product.name;
+                document.getElementById('product-category').value = product.category;
+                document.getElementById('product-description').value = product.description;
+                document.getElementById('product-points').value = product.pointsRequired;
+                document.getElementById('product-cost').value = product.cost;
+                document.getElementById('product-stock').value = product.stock;
+                document.getElementById('product-image').value = product.image || '';
+                document.getElementById('product-expiry').value = product.expiryDate ? new Date(product.expiryDate).toISOString().split('T')[0] : '';
+                document.getElementById('product-active').checked = product.isActive;
+                document.getElementById('product-limited').checked = product.isLimited;
+
+                document.getElementById('productModalTitle').textContent = 'Edit Eco Product';
+                const modal = new bootstrap.Modal(document.getElementById('productModal'));
+                modal.show();
+            } catch (error) {
+                console.error('Error loading product for edit:', error);
+                alert('Error loading product details');
+            }
+        }
+
+        // Edit coupon
+        async function editCoupon(couponId) {
+            try {
+                const response = await getAllRewards({ type: 'coupon' });
+                const coupon = response.data.find(c => c._id === couponId);
+                
+                if (!coupon) {
+                    alert('Coupon not found');
+                    return;
+                }
+
+                currentEditingCoupon = coupon;
+
+                document.getElementById('coupon-id').value = coupon._id;
+                document.getElementById('coupon-name').value = coupon.name;
+                document.getElementById('coupon-code').value = coupon.couponCode;
+                document.getElementById('coupon-description').value = coupon.description;
+                document.getElementById('coupon-points').value = coupon.pointsRequired;
+                document.getElementById('coupon-discount').value = coupon.discountPercentage;
+                document.getElementById('coupon-stock').value = coupon.stock;
+                document.getElementById('coupon-image').value = coupon.image || '';
+                document.getElementById('coupon-expiry').value = coupon.expiryDate ? new Date(coupon.expiryDate).toISOString().split('T')[0] : '';
+                document.getElementById('coupon-active').checked = coupon.isActive;
+                document.getElementById('coupon-limited').checked = coupon.isLimited;
+
+                document.getElementById('couponModalTitle').textContent = 'Edit Discount Coupon';
+                const modal = new bootstrap.Modal(document.getElementById('couponModal'));
+                modal.show();
+            } catch (error) {
+                console.error('Error loading coupon for edit:', error);
+                alert('Error loading coupon details');
+            }
+        }
+
+        // Save product
+        async function saveProduct() {
+            const saveBtn = document.getElementById('save-product-btn');
+            const productId = document.getElementById('product-id').value;
+            
+            const productData = {
+                name: document.getElementById('product-name').value,
+                description: document.getElementById('product-description').value,
+                category: document.getElementById('product-category').value,
+                pointsRequired: parseInt(document.getElementById('product-points').value),
+                cost: parseFloat(document.getElementById('product-cost').value),
+                stock: parseInt(document.getElementById('product-stock').value),
+                type: 'product',
+                image: document.getElementById('product-image').value,
+                expiryDate: document.getElementById('product-expiry').value || undefined,
+                isActive: document.getElementById('product-active').checked,
+                isLimited: document.getElementById('product-limited').checked
+            };
+
+            // Validate required fields
+            if (!productData.name || !productData.description || !productData.pointsRequired || !productData.cost || !productData.stock) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            try {
+                saveBtn.classList.add('loading');
+                
+                let response;
+                if (productId) {
+                    response = await updateReward(productId, productData);
+                } else {
+                    response = await createReward(productData);
+                }
+                
+                alert(response.message);
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+                modal.hide();
+                
+                // Reset form and reload data
+                document.getElementById('product-form').reset();
+                document.getElementById('product-id').value = '';
+                document.getElementById('productModalTitle').textContent = 'Add New Eco Product';
+                
+                await loadProducts();
+                await loadRedemptionStats();
+                
+            } catch (error) {
+                console.error('Error saving product:', error);
+                alert('Error saving product: ' + (error.message || 'Please try again.'));
+            } finally {
+                saveBtn.classList.remove('loading');
+            }
+        }
+
+        // Save coupon
+        async function saveCoupon() {
+            const saveBtn = document.getElementById('save-coupon-btn');
+            const couponId = document.getElementById('coupon-id').value;
+            
+            const couponData = {
+                name: document.getElementById('coupon-name').value,
+                description: document.getElementById('coupon-description').value,
+                category: 'Discount Coupon',
+                pointsRequired: parseInt(document.getElementById('coupon-points').value),
+                discountPercentage: parseInt(document.getElementById('coupon-discount').value),
+                stock: parseInt(document.getElementById('coupon-stock').value),
+                type: 'coupon',
+                couponCode: document.getElementById('coupon-code').value || undefined,
+                image: document.getElementById('coupon-image').value,
+                expiryDate: document.getElementById('coupon-expiry').value,
+                isActive: document.getElementById('coupon-active').checked,
+                isLimited: document.getElementById('coupon-limited').checked
+            };
+
+            // Validate required fields
+            if (!couponData.name || !couponData.description || !couponData.pointsRequired || !couponData.discountPercentage || !couponData.stock || !couponData.expiryDate) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            try {
+                saveBtn.classList.add('loading');
+                
+                let response;
+                if (couponId) {
+                    response = await updateReward(couponId, couponData);
+                } else {
+                    response = await createReward(couponData);
+                }
+                
+                alert(response.message);
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('couponModal'));
+                modal.hide();
+                
+                // Reset form and reload data
+                document.getElementById('coupon-form').reset();
+                document.getElementById('coupon-id').value = '';
+                document.getElementById('couponModalTitle').textContent = 'Add New Discount Coupon';
+                
+                await loadCoupons();
+                await loadRedemptionStats();
+                
+            } catch (error) {
+                console.error('Error saving coupon:', error);
+                alert('Error saving coupon: ' + (error.message || 'Please try again.'));
+            } finally {
+                saveBtn.classList.remove('loading');
+            }
+        }
+
+        // Delete product
+        async function deleteProduct(productId) {
+            if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                await deleteReward(productId);
+                alert('Product deleted successfully!');
+                await loadProducts();
+                await loadRedemptionStats();
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                alert('Error deleting product: ' + (error.message || 'Please try again.'));
+            }
+        }
+
+        // Delete coupon
+        async function deleteCoupon(couponId) {
+            if (!confirm('Are you sure you want to delete this coupon? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                await deleteReward(couponId);
+                alert('Coupon deleted successfully!');
+                await loadCoupons();
+                await loadRedemptionStats();
+            } catch (error) {
+                console.error('Error deleting coupon:', error);
+                alert('Error deleting coupon: ' + (error.message || 'Please try again.'));
+            }
+        }
+
+        // Update redemption status
+        async function updateRedemptionStatus(redemptionId, status) {
+            if (!confirm(`Are you sure you want to mark this redemption as ${status}?`)) {
+                return;
+            }
+
+            try {
+                await updateRedemptionStatus(redemptionId, status);
+                alert(`Redemption marked as ${status} successfully!`);
+                await loadRedemptions(currentRedemptionPage);
+                await loadRedemptionStats();
+            } catch (error) {
+                console.error('Error updating redemption status:', error);
+                alert('Error updating redemption status: ' + (error.message || 'Please try again.'));
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAdmin()) {
+                alert('Admin access required. Redirecting to home page.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            loadInitialData();
+            updateUIForLoginStatus();
+
+            // Event listeners for save buttons
+            document.getElementById('save-product-btn').addEventListener('click', saveProduct);
+            document.getElementById('save-coupon-btn').addEventListener('click', saveCoupon);
+
+            // Reset form when modal is hidden
+            document.getElementById('productModal').addEventListener('hidden.bs.modal', function() {
+                document.getElementById('product-form').reset();
+                document.getElementById('product-id').value = '';
+                document.getElementById('productModalTitle').textContent = 'Add New Eco Product';
+            });
+
+            document.getElementById('couponModal').addEventListener('hidden.bs.modal', function() {
+                document.getElementById('coupon-form').reset();
+                document.getElementById('coupon-id').value = '';
+                document.getElementById('couponModalTitle').textContent = 'Add New Discount Coupon';
+            });
+        });
+        // Update UI based on login status with profile dropdown
+function updateUIForLoginStatus() {
+    const user = getCurrentUser();
+    const authButtons = document.getElementById('auth-buttons');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (user) {
+        // Hide auth buttons, show user menu
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        // Update user information in dropdown
+        updateUserDropdown(user);
+        
+        // Show/hide role-specific links
+        toggleRoleSpecificLinks(user.role);
+        
+    } else {
+        // Show auth buttons, hide user menu
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// Update dropdown with user information
+function updateUserDropdown(user) {
+    // Navbar elements
+    const navbarUsername = document.getElementById('navbar-username');
+    const navbarAvatar = document.getElementById('navbar-avatar');
+    
+    // Dropdown elements
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownAvatar = document.getElementById('dropdown-avatar');
+    const dropdownRole = document.getElementById('dropdown-role');
+    
+    if (navbarUsername) navbarUsername.textContent = user.name || 'User';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'User';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    
+    // Update avatars based on role
+    const avatarColor = getAvatarColorByRole(user.role);
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=${avatarColor}&color=fff&size=`;
+    
+    if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+    if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+    
+    // Update role badge
+    if (dropdownRole) {
+        dropdownRole.textContent = user.role || 'Student';
+        dropdownRole.className = 'badge user-role-badge ' + getRoleBadgeClass(user.role);
+    }
+}
+
+// Get avatar background color based on role
+function getAvatarColorByRole(role) {
+    const colors = {
+        'student': '20c997',
+        'teacher': '6f42c1', 
+        'admin': 'dc3545'
+    };
+    return colors[role] || '27ae60';
+}
+
+// Get badge class based on role
+function getRoleBadgeClass(role) {
+    const classes = {
+        'student': 'student-badge',
+        'teacher': 'teacher-badge',
+        'admin': 'admin-badge'
+    };
+    return classes[role] || 'student-badge';
+}
+
+// Show/hide role-specific links
+function toggleRoleSpecificLinks(role) {
+    const teacherAdminLinks = document.getElementById('teacher-admin-links');
+    const teacherDashboardLink = document.getElementById('teacher-dashboard-link');
+    const adminPanelLink = document.getElementById('admin-panel-link');
+    
+    if (teacherAdminLinks) {
+        if (role === 'teacher' || role === 'admin') {
+            teacherAdminLinks.style.display = 'block';
+        } else {
+            teacherAdminLinks.style.display = 'none';
+        }
+    }
+    
+    // Show/hide specific links based on role
+    if (teacherDashboardLink) {
+        teacherDashboardLink.style.display = role === 'teacher' ? 'block' : 'none';
+    }
+    
+    if (adminPanelLink) {
+        adminPanelLink.style.display = role === 'admin' ? 'block' : 'none';
+    }
+}
+
+// Enhanced logout function
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize dropdown on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForLoginStatus();
+    
+    // Update dropdown when user data changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user') {
+            const user = getCurrentUser();
+            if (user) {
+                updateUserDropdown(user);
+            }
+        }
+    });
+});
+    </script>
+</body>
+</html>

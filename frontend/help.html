@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & Support - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .help-hero {
+            background: linear-gradient(135deg, #20c997 0%, #3DD4AF 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .help-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        
+        .help-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .help-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .faq-item {
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            background: #f8f9fa;
+            padding: 1.25rem;
+            border: none;
+            text-align: left;
+            width: 100%;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            background: #e9ecef;
+        }
+        
+        .faq-answer {
+            padding: 1.25rem;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .role-specific {
+            border-left: 4px solid #20c997;
+            background: rgba(32, 201, 151, 0.05);
+        }
+        
+        .contact-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+        
+        .support-channel {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: background 0.3s ease;
+        }
+        
+        .support-channel:hover {
+            background: #f8f9fa;
+        }
+        
+        .support-icon {
+            font-size: 1.5rem;
+            width: 50px;
+            text-align: center;
+            margin-right: 1rem;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            padding-right: 50px;
+        }
+        
+        .search-box button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #6c757d;
+        }
+        
+        .help-nav {
+            position: sticky;
+            top: 100px;
+        }
+        
+        .help-nav .nav-link {
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem 1rem;
+            color: #495057;
+            transition: all 0.3s ease;
+        }
+        
+        .help-nav .nav-link.active, .help-nav .nav-link:hover {
+            background: #20c997;
+            color: white;
+        }
+        
+        .quick-action-card {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .quick-action-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .help-nav {
+                position: static;
+                margin-bottom: 2rem;
+            }
+            
+            .help-nav .nav {
+                flex-direction: row;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+            
+            .help-nav .nav-link {
+                white-space: nowrap;
+            }
+        }
+        .help-hero p{
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation (same as other pages) -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="#" id="logo-link">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+             <ul class="navbar-nav me-auto"></ul>
+            
+            <!-- Profile Dropdown -->
+<div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                <span class="badge user-role-badge student-badge" id="dropdown-role">Student</span>
+            </div>
+        </li>
+       
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item active" href="help.html">
+                <i class="fas fa-question-circle"></i>Help & Support
+            </a>
+        </li>
+        <li>
+           <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+        </div>
+    </div>
+</nav>
+
+    <!-- Hero Section -->
+    <section class="help-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-3">Help & Support Center</h1>
+                    <p class="lead mb-4">Find answers to common questions, get troubleshooting help, and learn how to make the most of Ujjivana.</p>
+                    
+                    <!-- Search Box -->
+                    <div class="search-box">
+                        <input type="text" class="form-control form-control-lg" placeholder="Search for help topics..." id="helpSearch">
+                        <button type="button" onclick="searchHelp()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-headset fa-8x opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row g-3">
+                <div class="col-md-3 col-6">
+                    <div class="quick-action-card bg-white" onclick="scrollToSection('faq')">
+                        <div class="help-icon text-primary">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <h5>FAQ</h5>
+                        <p class="text-muted small">Common questions answered</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="quick-action-card bg-white" onclick="scrollToSection('troubleshooting')">
+                        <div class="help-icon text-warning">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h5>Troubleshooting</h5>
+                        <p class="text-muted small">Fix common issues</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="quick-action-card bg-white" onclick="scrollToSection('contact')">
+                        <div class="help-icon text-success">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h5>Contact Us</h5>
+                        <p class="text-muted small">Get in touch with support</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="quick-action-card bg-white" onclick="scrollToSection('resources')">
+                        <div class="help-icon text-info">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h5>Resources</h5>
+                        <p class="text-muted small">Guides and tutorials</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Help Navigation -->
+                <div class="col-lg-3 mb-4">
+                    <div class="help-nav">
+                        <h5 class="mb-3">Help Topics</h5>
+                        <nav class="nav flex-column">
+                            <a class="nav-link active" href="#getting-started">Getting Started</a>
+                            <a class="nav-link" href="#account-management">Account Management</a>
+                            <a class="nav-link" href="#learning-features">Learning Features</a>
+                            <a class="nav-link" href="#community-features">Community Features</a>
+                            <a class="nav-link" href="#troubleshooting">Troubleshooting</a>
+                            <a class="nav-link" href="#contact">Contact Support</a>
+                            <a class="nav-link" href="#resources">Resources</a>
+                        </nav>
+                        
+                        <div class="mt-4">
+                            <h6 class="mb-3">Role-Specific Help</h6>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-success" id="studentHelpBtn">Student Help</button>
+                                <button class="btn btn-outline-primary" id="teacherHelpBtn">Teacher Help</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Content -->
+                <div class="col-lg-9">
+                    <!-- Getting Started -->
+                    <div class="mb-5" id="getting-started">
+                        <h2 class="mb-4">Getting Started with Ujjivana</h2>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <div class="card help-card">
+                                    <div class="card-body text-center p-4">
+                                        <div class="help-icon text-primary">
+                                            <i class="fas fa-user-plus"></i>
+                                        </div>
+                                        <h4>Create Account</h4>
+                                        <p>Sign up and set up your profile to start your environmental education journey.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card help-card">
+                                    <div class="card-body text-center p-4">
+                                        <div class="help-icon text-success">
+                                            <i class="fas fa-compass"></i>
+                                        </div>
+                                        <h4>Take Tour</h4>
+                                        <p>Explore the platform features with our interactive guided tour.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(1)">
+                                How do I create an account?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer" id="faq-1">
+                                <p>To create an account:</p>
+                                <ol>
+                                    <li>Click on the "Sign Up" button in the top navigation</li>
+                                    <li>Fill in your details (name, email, password)</li>
+                                    <li>Select your role (Student or Teacher)</li>
+                                    <li>Verify your email address</li>
+                                    <li>Complete your profile setup</li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(2)">
+                                Is Ujjivana free to use?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer" id="faq-2">
+                                <p>Yes! Ujjivana is completely free for students and teachers. Our mission is to make environmental education accessible to everyone.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Account Management -->
+                    <div class="mb-5" id="account-management">
+                        <h2 class="mb-4">Account Management</h2>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(3)">
+                                How do I reset my password?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer" id="faq-3">
+                                <p>If you've forgotten your password:</p>
+                                <ol>
+                                    <li>Go to the login page</li>
+                                    <li>Click on "Forgot Password"</li>
+                                    <li>Enter your email address</li>
+                                    <li>Check your email for a password reset link</li>
+                                    <li>Follow the instructions to set a new password</li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(4)">
+                                How can I update my profile information?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer" id="faq-4">
+                                <p>To update your profile:</p>
+                                <ol>
+                                    <li>Click on your profile picture in the top navigation</li>
+                                    <li>Select "My Profile" from the dropdown menu</li>
+                                    <li>Click the "Edit Profile" button</li>
+                                    <li>Update your information and click "Save Changes"</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Learning Features -->
+                    <div class="mb-5" id="learning-features">
+                        <h2 class="mb-4">Learning Features</h2>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(5)">
+                                How do learning modules work?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer" id="faq-5">
+                                <p>Learning modules are structured educational content on various environmental topics:</p>
+                                <ul>
+                                    <li>Each module contains multiple lessons</li>
+                                    <li>Complete lessons in sequence or skip around</li>
+                                    <li>Take quizzes to test your knowledge</li>
+                                    <li>Earn points and badges for completion</li>
+                                    <li>Track your progress in your dashboard</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(6)">
+                                How are points and rewards calculated?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer" id="faq-6">
+                                <p>You earn points through various activities:</p>
+                                <ul>
+                                    <li>Completing lessons: 10-50 points each</li>
+                                    <li>Passing quizzes: 20-100 points each</li>
+                                    <li>Participating in events: 50-200 points each</li>
+                                    <li>Completing challenges: 100-500 points each</li>
+                                    <li>Daily login bonus: 5 points</li>
+                                </ul>
+                                <p>Points can be redeemed for rewards in the Rewards section.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Teacher-specific content (hidden by default) -->
+                        <div class="faq-item role-specific teacher-content" style="display: none;">
+                            <button class="faq-question" onclick="toggleFAQ(7)">
+                                How do I create learning modules for my students?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer" id="faq-7">
+                                <p>As a teacher, you can create custom learning modules:</p>
+                                <ol>
+                                    <li>Go to your Teacher Dashboard</li>
+                                    <li>Click on "Create New Module"</li>
+                                    <li>Add module title, description, and category</li>
+                                    <li>Create lessons with text, images, and videos</li>
+                                    <li>Add quizzes and assessments</li>
+                                    <li>Publish the module for your students</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Community Features -->
+                    <div class="mb-5" id="community-features">
+                        <h2 class="mb-4">Community Features</h2>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(8)">
+                                How do I participate in challenges?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer" id="faq-8">
+                                <p>To participate in challenges:</p>
+                                <ol>
+                                    <li>Go to the Challenges section</li>
+                                    <li>Browse available challenges</li>
+                                    <li>Click on a challenge to view details</li>
+                                    <li>Click "Join Challenge" to participate</li>
+                                    <li>Complete the challenge requirements</li>
+                                    <li>Submit your completion for verification</li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(9)">
+                                How does the leaderboard work?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer" id="faq-9">
+                                <p>The leaderboard ranks users based on:</p>
+                                <ul>
+                                    <li>Total points earned</li>
+                                    <li>Modules completed</li>
+                                    <li>Challenges completed</li>
+                                    <li>Events attended</li>
+                                    <li>Consistent participation</li>
+                                </ul>
+                                <p>Leaderboards are updated in real-time and there are different categories (weekly, monthly, all-time).</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(10)">
+                                How do I register for events?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer" id="faq-10">
+                                <p>To register for events:</p>
+                                <ol>
+                                    <li>Go to the Events section</li>
+                                    <li>Browse upcoming events</li>
+                                    <li>Click on an event to view details</li>
+                                    <li>Click "Register Now" if registration is open</li>
+                                    <li>Complete any required registration forms</li>
+                                    <li>You'll receive a confirmation and event details</li>
+                                </ol>
+                                <p>Some events may have limited spots, so register early!</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Troubleshooting -->
+                    <div class="mb-5" id="troubleshooting">
+                        <h2 class="mb-4">Troubleshooting</h2>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(11)">
+                                The website is loading slowly. What can I do?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer" id="faq-11">
+                                <p>If Ujjivana is loading slowly, try these solutions:</p>
+                                <ul>
+                                    <li>Refresh the page</li>
+                                    <li>Clear your browser cache and cookies</li>
+                                    <li>Try using a different browser</li>
+                                    <li>Check your internet connection</li>
+                                    <li>Disable browser extensions that might be interfering</li>
+                                </ul>
+                                <p>If the problem persists, please contact our support team.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(12)">
+                                I can't log in to my account. What should I do?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer" id="faq-12">
+                                <p>If you're having trouble logging in:</p>
+                                <ol>
+                                    <li>Make sure you're using the correct email and password</li>
+                                    <li>Check if Caps Lock is on (passwords are case-sensitive)</li>
+                                    <li>Try resetting your password using the "Forgot Password" link</li>
+                                    <li>Clear your browser cache and cookies</li>
+                                    <li>Try logging in from a different browser or device</li>
+                                </ol>
+                                <p>If none of these work, contact our support team for assistance.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(13)">
+                                My progress isn't saving. How can I fix this?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer" id="faq-13">
+                                <p>If your progress isn't being saved:</p>
+                                <ul>
+                                    <li>Make sure you have a stable internet connection</li>
+                                    <li>Don't close the browser tab until you see a confirmation message</li>
+                                    <li>Complete lessons and quizzes in one session when possible</li>
+                                    <li>Check if you're logged in (your username should appear in the top right)</li>
+                                    <li>Try refreshing the page and checking your progress again</li>
+                                </ul>
+                                <p>If the issue continues, contact support with details about what you were trying to save.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Support -->
+                    <div class="mb-5" id="contact">
+                        <h2 class="mb-4">Contact Support</h2>
+                        
+                        <div class="contact-card">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h4 class="mb-4">Get in Touch</h4>
+                                    <p>Our support team is here to help you with any issues or questions you might have.</p>
+                                    
+                                    <div class="support-channel">
+                                        <div class="support-icon text-primary">
+                                            <i class="fas fa-envelope"></i>
+                                        </div>
+                                        <div>
+                                            <h6>Email Support</h6>
+                                            <p class="mb-0">support@ujjivana.com</p>
+                                            <small class="text-muted">Response within 24 hours</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="support-channel">
+                                        <div class="support-icon text-success">
+                                            <i class="fas fa-comments"></i>
+                                        </div>
+                                        <div>
+                                            <h6>Live Chat</h6>
+                                            <p class="mb-0">Available Mon-Fri, 9AM-5PM</p>
+                                            <small class="text-muted">Click the chat icon in the bottom right</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="support-channel">
+                                        <div class="support-icon text-info">
+                                            <i class="fas fa-phone"></i>
+                                        </div>
+                                        <div>
+                                            <h6>Phone Support</h6>
+                                            <p class="mb-0">+1 (555) 123-HELP</p>
+                                            <small class="text-muted">Mon-Fri, 9AM-5PM EST</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <h4 class="mb-4">Send us a Message</h4>
+                                    <form id="supportForm">
+                                        <div class="mb-3">
+                                            <label for="supportName" class="form-label">Your Name</label>
+                                            <input type="text" class="form-control" id="supportName" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="supportEmail" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" id="supportEmail" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="supportSubject" class="form-label">Subject</label>
+                                            <select class="form-select" id="supportSubject" required>
+                                                <option value="">Select a topic</option>
+                                                <option value="technical">Technical Issue</option>
+                                                <option value="account">Account Problem</option>
+                                                <option value="content">Content Question</option>
+                                                <option value="feedback">Feedback/Suggestion</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="supportMessage" class="form-label">Message</label>
+                                            <textarea class="form-control" id="supportMessage" rows="5" required></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-success">Send Message</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resources -->
+                    <div class="mb-5" id="resources">
+                        <h2 class="mb-4">Resources</h2>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-4">
+                                <div class="card help-card">
+                                    <div class="card-body text-center p-4">
+                                        <div class="help-icon text-info">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </div>
+                                        <h4>User Guides</h4>
+                                        <p>Comprehensive guides for all platform features.</p>
+                                        <button class="btn btn-outline-info mt-2">Download PDF</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-4">
+                                <div class="card help-card">
+                                    <div class="card-body text-center p-4">
+                                        <div class="help-icon text-warning">
+                                            <i class="fas fa-video"></i>
+                                        </div>
+                                        <h4>Video Tutorials</h4>
+                                        <p>Step-by-step video guides for common tasks.</p>
+                                        <button class="btn btn-outline-warning mt-2">Watch Videos</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-4">
+                                <div class="card help-card">
+                                    <div class="card-body text-center p-4">
+                                        <div class="help-icon text-success">
+                                            <i class="fas fa-graduation-cap"></i>
+                                        </div>
+                                        <h4>Teacher Resources</h4>
+                                        <p>Special resources for educators using Ujjivana.</p>
+                                        <button class="btn btn-outline-success mt-2">Access Resources</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="teacher-content" style="display: none;">
+                            <h4 class="mt-4 mb-3">Teacher-Specific Resources</h4>
+                            <div class="list-group">
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-download me-2"></i>Classroom Implementation Guide
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-download me-2"></i>Curriculum Alignment Documents
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-download me-2"></i>Student Progress Tracking Guide
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-download me-2"></i>Creating Custom Content Tutorial
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Ujjivana</h5>
+                    <p>Gamifying environmental education for a sustainable future.</p>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">About</a></li>
+                        <li><a href="modules.html" class="text-white text-decoration-none">Modules</a></li>
+                        <li><a href="help.html" class="text-white text-decoration-none">Help</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> support@ujjivana.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe for updates on new features and content.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-success" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2023 Ujjivana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Check if user is logged in and redirect if not
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = getCurrentUser();
+            
+            // If no user is logged in, redirect to login page
+            if (!user) {
+                window.location.href = 'index.html?login=true';
+                return;
+            }
+            
+            // Set up logo redirect based on user role
+            const logoLink = document.getElementById('logo-link');
+            if (user.role === 'student') {
+                logoLink.href = 'index.html';
+            } else if (user.role === 'teacher') {
+                logoLink.href = 'teacher-dashboard.html';
+            }
+            
+            // Close all FAQ answers by default
+            for (let i = 1; i <= 20; i++) {
+                const answer = document.getElementById(`faq-${i}`);
+                if (answer) {
+                    answer.style.display = 'none';
+                }
+            }
+            
+            // Set up role-specific content based on current user
+            if (user && user.role === 'teacher') {
+                showTeacherContent();
+            }
+            
+            // Set up navigation scroll
+            setupNavigation();
+            
+            // Set up role toggle buttons
+            document.getElementById('studentHelpBtn').addEventListener('click', showStudentContent);
+            document.getElementById('teacherHelpBtn').addEventListener('click', showTeacherContent);
+            
+            // Set up search functionality
+            document.getElementById('helpSearch').addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    searchHelp();
+                }
+            });
+            
+            // Set up form submission
+            document.getElementById('supportForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitSupportForm();
+            });
+            
+            // Update UI for login status
+            updateUIForLoginStatus();
+        });
+        
+        // FAQ toggle functionality
+        function toggleFAQ(id) {
+            const answer = document.getElementById(`faq-${id}`);
+            const icon = answer.previousElementSibling.querySelector('i');
+            
+            if (answer.style.display === 'block') {
+                answer.style.display = 'none';
+                icon.className = 'fas fa-chevron-down';
+            } else {
+                answer.style.display = 'block';
+                icon.className = 'fas fa-chevron-up';
+            }
+        }
+        
+        // Show teacher-specific content
+        function showTeacherContent() {
+            document.querySelectorAll('.teacher-content').forEach(el => {
+                el.style.display = 'block';
+            });
+            document.getElementById('studentHelpBtn').classList.remove('btn-success');
+            document.getElementById('studentHelpBtn').classList.add('btn-outline-success');
+            document.getElementById('teacherHelpBtn').classList.remove('btn-outline-primary');
+            document.getElementById('teacherHelpBtn').classList.add('btn-primary');
+        }
+        
+        // Show student-specific content (default)
+        function showStudentContent() {
+            document.querySelectorAll('.teacher-content').forEach(el => {
+                el.style.display = 'none';
+            });
+            document.getElementById('studentHelpBtn').classList.remove('btn-outline-success');
+            document.getElementById('studentHelpBtn').classList.add('btn-success');
+            document.getElementById('teacherHelpBtn').classList.remove('btn-primary');
+            document.getElementById('teacherHelpBtn').classList.add('btn-outline-primary');
+        }
+        
+        // Smooth scroll to section
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+        
+        // Set up navigation highlighting
+        function setupNavigation() {
+            const sections = document.querySelectorAll('.mb-5');
+            const navLinks = document.querySelectorAll('.help-nav .nav-link');
+            
+            window.addEventListener('scroll', function() {
+                let current = '';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 100)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        }
+        
+        // Search help content
+        function searchHelp() {
+            const searchTerm = document.getElementById('helpSearch').value.toLowerCase();
+            
+            if (searchTerm.trim() === '') {
+                alert('Please enter a search term');
+                return;
+            }
+            
+            // Simple search implementation - in a real app, this would be more sophisticated
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            let found = false;
+            
+            faqQuestions.forEach(question => {
+                const questionText = question.textContent.toLowerCase();
+                if (questionText.includes(searchTerm)) {
+                    // Scroll to and open this FAQ
+                    const answer = question.nextElementSibling;
+                    if (answer.style.display !== 'block') {
+                        question.click();
+                    }
+                    question.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    found = true;
+                }
+            });
+            
+            if (!found) {
+                alert('No results found for "' + searchTerm + '". Try different keywords or contact support.');
+            }
+        }
+        
+        // Submit support form
+        function submitSupportForm() {
+            const name = document.getElementById('supportName').value;
+            const email = document.getElementById('supportEmail').value;
+            const subject = document.getElementById('supportSubject').value;
+            const message = document.getElementById('supportMessage').value;
+            
+            // In a real application, this would send the data to a server
+            // For now, we'll just show a confirmation message
+            alert(`Thank you, ${name}! Your message has been sent. We'll get back to you at ${email} within 24 hours.`);
+            
+            // Reset form
+            document.getElementById('supportForm').reset();
+        }
+        
+        // Helper function to get current user (from script.js)
+        function getCurrentUser() {
+            try {
+                const userStr = localStorage.getItem('user');
+                return userStr ? JSON.parse(userStr) : null;
+            } catch (error) {
+                console.error('Error getting current user:', error);
+                return null;
+            }
+        }
+        
+        // Update UI for student login status with profile dropdown
+        function updateUIForLoginStatus() {
+            const user = getCurrentUser();
+            const authButtons = document.getElementById('auth-buttons');
+            const userMenu = document.getElementById('user-menu');
+            
+            if (user) {
+                // Hide auth buttons, show user menu
+                if (authButtons) authButtons.style.display = 'none';
+                if (userMenu) userMenu.style.display = 'block';
+                
+                // Update user information in dropdown
+                updateUserDropdown(user);
+                
+            } else {
+                // Show auth buttons, hide user menu
+                if (authButtons) authButtons.style.display = 'flex';
+                if (userMenu) userMenu.style.display = 'none';
+            }
+        }
+
+        // Update dropdown with student information
+        function updateUserDropdown(user) {
+            // Navbar elements
+            const navbarUsername = document.getElementById('navbar-username');
+            const navbarAvatar = document.getElementById('navbar-avatar');
+            
+            // Dropdown elements
+            const dropdownUsername = document.getElementById('dropdown-username');
+            const dropdownEmail = document.getElementById('dropdown-email');
+            const dropdownAvatar = document.getElementById('dropdown-avatar');
+            const dropdownRole = document.getElementById('dropdown-role');
+            
+            if (navbarUsername) navbarUsername.textContent = user.name || 'Student';
+            if (dropdownUsername) dropdownUsername.textContent = user.name || 'Student';
+            if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+            
+            // Update avatars with student color
+            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Student')}&background=20c997&color=fff&size=`;
+            
+            if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+            if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+            
+            // Update role badge
+            if (dropdownRole) {
+                dropdownRole.textContent = user.role === 'teacher' ? 'Teacher' : 'Student';
+                dropdownRole.className = 'badge user-role-badge ' + (user.role === 'teacher' ? 'teacher-badge' : 'student-badge');
+            }
+            
+            // Update points display if exists
+            updatePointsDisplay(user);
+        }
+
+        // Update points in navbar if available
+        function updatePointsDisplay(user) {
+            const pointsElement = document.getElementById('navbar-points');
+            if (pointsElement && user.points) {
+                pointsElement.textContent = user.points.toLocaleString();
+            }
+        }
+
+        // Enhanced logout for student
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('user');
+                localStorage.removeItem('token');
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>

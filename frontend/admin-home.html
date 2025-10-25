@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .school-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .school-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .user-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .user-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+        }
+        .user-item:hover {
+            background-color: #f8f9fa;
+        }
+        .teacher-badge {
+            background-color: #6f42c1;
+        }
+        .student-badge {
+            background-color: #20c997;
+        }
+        .admin-badge {
+            background-color: #dc3545;
+        }
+        .action-buttons {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .user-item:hover .action-buttons {
+            opacity: 1;
+        }
+        .school-info-card {
+            background-color: #f8f9fa;
+            border-left: 4px solid #2ecc71;
+        }
+        .loading-spinner {
+            display: none;
+        }
+        .loading .loading-spinner {
+            display: inline-block;
+        }
+        .loading .loading-text {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+   <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="admin-home.html">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="admin-home.html">Dashboard</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Take Actions
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="admin-reviews.html">Manage Reviews</a></li>
+                        <li><a class="dropdown-item" href="admin.html">Manage Content</a></li>
+                        <li><a class="dropdown-item" href="admin-rewards.html">Manage Rewards</a></li>
+                        <li><a class="dropdown-item" href="admin-events.html">Manage Events</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Tools and Utilities
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="eco-map.html">Eco Map</a></li>
+                        <li><a class="dropdown-item" href="ngo-surveys.html">NGO Surveys</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=27ae60&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=27ae60&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                <span class="badge user-role-badge student-badge" id="dropdown-role">Student</span>
+            </div>
+        </li>        
+        <li>
+            <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+        </div>
+    </div>
+</nav>
+
+    <!-- Admin Dashboard Content -->
+    <div class="admin-container py-5">
+        <h2 class="text-center mb-5">Admin Dashboard</h2>
+        
+        <!-- Statistics Cards -->
+        <div class="row mb-5">
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stat-number" id="total-schools">0</div>
+                    <div class="stat-label">Total Schools</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stat-number" id="total-teachers">0</div>
+                    <div class="stat-label">Total Teachers</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stat-number" id="total-students">0</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stat-number" id="total-users">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- School Selection and User Management -->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-school me-2"></i>Select School</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="school-select" class="form-label">Choose a School:</label>
+                            <select class="form-select" id="school-select">
+                                <option value="">Loading schools...</option>
+                            </select>
+                        </div>
+                        <div id="selected-school-info" class="school-info-card p-3 rounded d-none">
+                            <h6>School Information</h6>
+                            <p class="mb-1"><strong>Total Teachers:</strong> <span id="school-teachers">0</span></p>
+                            <p class="mb-1"><strong>Total Students:</strong> <span id="school-students">0</span></p>
+                            <p class="mb-1"><strong>Total Points:</strong> <span id="school-points">0</span></p>
+                            <p class="mb-0"><strong>Average Points:</strong> <span id="school-avg-points">0</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card mt-4">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-outline-success w-100 mb-2" onclick="refreshData()">
+                            <i class="fas fa-sync-alt me-2"></i>Refresh Data
+                        </button>
+                        <button class="btn btn-outline-info w-100" onclick="exportSchoolData()">
+                            <i class="fas fa-download me-2"></i>Export Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>School Users</h5>
+                        <span id="selected-school-name" class="badge bg-light text-dark"></span>
+                    </div>
+                    <div class="card-body">
+                        <div id="no-school-selected" class="text-center py-5">
+                            <i class="fas fa-school fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Please select a school to view users</p>
+                        </div>
+                        
+                        <div id="users-container" class="d-none">
+                            <ul class="nav nav-pills mb-3" id="userTypeTabs">
+                                <li class="nav-item">
+                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#teachers-tab">
+                                        <i class="fas fa-chalkboard-teacher me-1"></i>
+                                        Teachers <span id="teachers-count" class="badge bg-secondary">0</span>
+                                    </button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#students-tab">
+                                        <i class="fas fa-user-graduate me-1"></i>
+                                        Students <span id="students-count" class="badge bg-secondary">0</span>
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="teachers-tab">
+                                    <div class="user-list" id="teachers-list">
+                                        <!-- Teachers will be loaded here -->
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="students-tab">
+                                    <div class="user-list" id="students-list">
+                                        <!-- Students will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="loading-users" class="text-center py-4 d-none">
+                            <div class="spinner-border text-success" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Loading users...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-user-form">
+                        <input type="hidden" id="edit-user-id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="edit-user-name" class="form-label">Name *</label>
+                                    <input type="text" class="form-control" id="edit-user-name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="edit-user-email" class="form-label">Email *</label>
+                                    <input type="email" class="form-control" id="edit-user-email" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="edit-user-phone" class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" id="edit-user-phone">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="edit-user-school" class="form-label">School</label>
+                                    <input type="text" class="form-control" id="edit-user-school">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="edit-user-rollnumber" class="form-label">Roll Number</label>
+                                    <input type="text" class="form-control" id="edit-user-rollnumber">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="edit-user-role" class="form-label">Role *</label>
+                                    <select class="form-select" id="edit-user-role" required>
+                                        <option value="student">Student</option>
+                                        <option value="teacher">Teacher</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Points</label>
+                                    <input type="text" class="form-control" id="edit-user-points" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Modules Completed</label>
+                                    <input type="text" class="form-control" id="edit-user-modules" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Streak</label>
+                                    <input type="text" class="form-control" id="edit-user-streak" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger me-auto" id="delete-user-btn">Delete User</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="save-user-changes">
+                        <span class="loading-text">Save Changes</span>
+                        <div class="spinner-border spinner-border-sm loading-spinner" role="status">
+                            <span class="visually-hidden">Saving...</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Global variables
+        let allUsers = [];
+        let schools = [];
+        let selectedSchool = null;
+        let currentEditingUser = null;
+
+        // Check if user is admin
+        function checkAdmin() {
+            const user = getCurrentUser();
+            return user && user.role === 'admin';
+        }
+
+        // Load all data for admin dashboard
+        async function loadDashboardData() {
+            try {
+                await loadSchools();
+                await loadAllUsers();
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                alert('Error loading dashboard data. Please try again.');
+            }
+        }
+
+        // Load all schools
+        async function loadSchools() {
+            try {
+                const response = await getAllSchools();
+                schools = response.data;
+                populateSchoolsDropdown();
+                updateStatistics();
+            } catch (error) {
+                console.error('Error loading schools:', error);
+                document.getElementById('school-select').innerHTML = '<option value="">Error loading schools</option>';
+            }
+        }
+
+        // Load all users
+        async function loadAllUsers() {
+            try {
+                const response = await getAllUsers();
+                allUsers = response.data;
+                updateStatistics();
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const teachers = allUsers.filter(user => user.role === 'teacher');
+            const students = allUsers.filter(user => user.role === 'student');
+
+            document.getElementById('total-schools').textContent = schools.length;
+            document.getElementById('total-teachers').textContent = teachers.length;
+            document.getElementById('total-students').textContent = students.length;
+            document.getElementById('total-users').textContent = allUsers.length;
+        }
+
+        // Populate schools dropdown
+        function populateSchoolsDropdown() {
+            const schoolSelect = document.getElementById('school-select');
+            
+            if (schools.length === 0) {
+                schoolSelect.innerHTML = '<option value="">No schools found</option>';
+                return;
+            }
+
+            schoolSelect.innerHTML = '<option value="">Select a school...</option>';
+            schools.forEach(school => {
+                const option = document.createElement('option');
+                option.value = school._id;
+                option.textContent = `${school._id} (${school.userCount} users)`;
+                schoolSelect.appendChild(option);
+            });
+        }
+
+        // Load users for selected school
+        async function loadSchoolUsers(schoolName) {
+            try {
+                document.getElementById('loading-users').classList.remove('d-none');
+                document.getElementById('users-container').classList.add('d-none');
+
+                const response = await getUsersBySchool(schoolName);
+                const schoolUsers = response.data;
+                
+                displaySchoolUsers(schoolName, schoolUsers);
+                
+            } catch (error) {
+                console.error('Error loading school users:', error);
+                alert('Error loading users for this school. Please try again.');
+            } finally {
+                document.getElementById('loading-users').classList.add('d-none');
+            }
+        }
+
+        // Display users for selected school
+        function displaySchoolUsers(schoolName, schoolUsers) {
+            const teachers = schoolUsers.filter(user => user.role === 'teacher');
+            const students = schoolUsers.filter(user => user.role === 'student');
+            const schoolData = schools.find(s => s._id === schoolName);
+
+            // Update school info
+            if (schoolData) {
+                document.getElementById('school-teachers').textContent = schoolData.teacherCount;
+                document.getElementById('school-students').textContent = schoolData.studentCount;
+                document.getElementById('school-points').textContent = schoolData.totalPoints;
+                document.getElementById('school-avg-points').textContent = schoolData.userCount > 0 ? 
+                    Math.round(schoolData.totalPoints / schoolData.userCount) : 0;
+            }
+
+            document.getElementById('selected-school-info').classList.remove('d-none');
+            document.getElementById('selected-school-name').textContent = schoolName;
+
+            // Update tab counts
+            document.getElementById('teachers-count').textContent = teachers.length;
+            document.getElementById('students-count').textContent = students.length;
+
+            // Display teachers
+            const teachersList = document.getElementById('teachers-list');
+            if (teachers.length === 0) {
+                teachersList.innerHTML = '<div class="text-center text-muted py-4">No teachers found in this school</div>';
+            } else {
+                teachersList.innerHTML = teachers.map(teacher => `
+                    <div class="user-item d-flex justify-content-between align-items-center">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center mb-1">
+                                <h6 class="mb-0 me-2">${teacher.name}</h6>
+                                <span class="badge ${teacher.role === 'admin' ? 'admin-badge' : 'teacher-badge'}">${teacher.role}</span>
+                            </div>
+                            <div class="text-muted small">
+                                <div>${teacher.email}</div>
+                                ${teacher.phone ? `<div><i class="fas fa-phone me-1"></i>${teacher.phone}</div>` : ''}
+                                <div class="mt-1">
+                                    <span class="badge bg-light text-dark me-2">Points: ${teacher.points || 0}</span>
+                                    <span class="badge bg-light text-dark">Modules: ${teacher.modulesCompleted || 0}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-outline-primary" onclick="editUser('${teacher._id}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Display students
+            const studentsList = document.getElementById('students-list');
+            if (students.length === 0) {
+                studentsList.innerHTML = '<div class="text-center text-muted py-4">No students found in this school</div>';
+            } else {
+                studentsList.innerHTML = students.map(student => `
+                    <div class="user-item d-flex justify-content-between align-items-center">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center mb-1">
+                                <h6 class="mb-0 me-2">${student.name}</h6>
+                                <span class="badge student-badge">${student.role}</span>
+                            </div>
+                            <div class="text-muted small">
+                                <div>${student.email}</div>
+                                ${student.phone ? `<div><i class="fas fa-phone me-1"></i>${student.phone}</div>` : ''}
+                                ${student.rollNumber ? `<div><i class="fas fa-id-card me-1"></i>${student.rollNumber}</div>` : ''}
+                                <div class="mt-1">
+                                    <span class="badge bg-light text-dark me-2">Points: ${student.points || 0}</span>
+                                    <span class="badge bg-light text-dark me-2">Modules: ${student.modulesCompleted || 0}</span>
+                                    <span class="badge bg-light text-dark">Streak: ${student.streak || 0}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-outline-primary" onclick="editUser('${student._id}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('no-school-selected').classList.add('d-none');
+            document.getElementById('users-container').classList.remove('d-none');
+        }
+
+        // Edit user function
+        function editUser(userId) {
+            const user = allUsers.find(u => u._id === userId);
+            if (!user) {
+                user = allUsers.find(u => u.id === userId); // Fallback for different ID field
+            }
+            
+            if (!user) {
+                alert('User not found');
+                return;
+            }
+
+            currentEditingUser = user;
+
+            document.getElementById('edit-user-id').value = user._id || user.id;
+            document.getElementById('edit-user-name').value = user.name || '';
+            document.getElementById('edit-user-email').value = user.email || '';
+            document.getElementById('edit-user-phone').value = user.phone || '';
+            document.getElementById('edit-user-school').value = user.school || '';
+            document.getElementById('edit-user-rollnumber').value = user.rollNumber || '';
+            document.getElementById('edit-user-role').value = user.role || 'student';
+            document.getElementById('edit-user-points').value = user.points || 0;
+            document.getElementById('edit-user-modules').value = user.modulesCompleted || 0;
+            document.getElementById('edit-user-streak').value = user.streak || 0;
+
+            const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+            modal.show();
+        }
+
+        // Save user changes
+        async function saveUserChanges() {
+            const saveBtn = document.getElementById('save-user-changes');
+            const userId = document.getElementById('edit-user-id').value;
+            
+            const userData = {
+                name: document.getElementById('edit-user-name').value,
+                email: document.getElementById('edit-user-email').value,
+                phone: document.getElementById('edit-user-phone').value,
+                school: document.getElementById('edit-user-school').value,
+                rollNumber: document.getElementById('edit-user-rollnumber').value,
+                role: document.getElementById('edit-user-role').value
+            };
+
+            // Validate required fields
+            if (!userData.name || !userData.email) {
+                alert('Name and email are required fields.');
+                return;
+            }
+
+            try {
+                saveBtn.classList.add('loading');
+                
+                const response = await updateUser(userId, userData);
+                
+                alert('User updated successfully!');
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                modal.hide();
+                
+                // Reload data to reflect changes
+                await loadDashboardData();
+                if (selectedSchool) {
+                    await loadSchoolUsers(selectedSchool);
+                }
+                
+            } catch (error) {
+                console.error('Error updating user:', error);
+                alert('Error updating user: ' + (error.message || 'Please try again.'));
+            } finally {
+                saveBtn.classList.remove('loading');
+            }
+        }
+
+        // Delete user
+        async function deleteUserHandler() {
+            if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                return;
+            }
+
+            const userId = document.getElementById('edit-user-id').value;
+
+            try {
+                await deleteUser(userId);
+                alert('User deleted successfully!');
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                modal.hide();
+                
+                // Reload data
+                await loadDashboardData();
+                if (selectedSchool) {
+                    await loadSchoolUsers(selectedSchool);
+                }
+                
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                alert('Error deleting user: ' + (error.message || 'Please try again.'));
+            }
+        }
+
+        // Refresh data
+        async function refreshData() {
+            await loadDashboardData();
+            if (selectedSchool) {
+                await loadSchoolUsers(selectedSchool);
+            }
+            alert('Data refreshed successfully!');
+        }
+
+        // Export school data (placeholder)
+        function exportSchoolData() {
+            if (!selectedSchool) {
+                alert('Please select a school first.');
+                return;
+            }
+            alert('Export functionality would be implemented here. Selected school: ' + selectedSchool);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAdmin()) {
+                alert('Admin access required. Redirecting to home page.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            loadDashboardData();
+            updateUIForLoginStatus();
+
+            // School selection event
+            document.getElementById('school-select').addEventListener('change', function() {
+                selectedSchool = this.options[this.selectedIndex].text.split(' (')[0]; // Get school name without count
+                if (selectedSchool && selectedSchool !== 'Select a school...') {
+                    loadSchoolUsers(selectedSchool);
+                } else {
+                    document.getElementById('no-school-selected').classList.remove('d-none');
+                    document.getElementById('users-container').classList.add('d-none');
+                    document.getElementById('selected-school-info').classList.add('d-none');
+                }
+            });
+
+            // Save user changes event
+            document.getElementById('save-user-changes').addEventListener('click', saveUserChanges);
+
+            // Delete user event
+            document.getElementById('delete-user-btn').addEventListener('click', deleteUserHandler);
+        });
+        // Update UI based on login status with profile dropdown
+function updateUIForLoginStatus() {
+    const user = getCurrentUser();
+    const authButtons = document.getElementById('auth-buttons');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (user) {
+        // Hide auth buttons, show user menu
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        // Update user information in dropdown
+        updateUserDropdown(user);
+        
+        // Show/hide role-specific links
+        toggleRoleSpecificLinks(user.role);
+        
+    } else {
+        // Show auth buttons, hide user menu
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// Update dropdown with user information
+function updateUserDropdown(user) {
+    // Navbar elements
+    const navbarUsername = document.getElementById('navbar-username');
+    const navbarAvatar = document.getElementById('navbar-avatar');
+    
+    // Dropdown elements
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownAvatar = document.getElementById('dropdown-avatar');
+    const dropdownRole = document.getElementById('dropdown-role');
+    
+    if (navbarUsername) navbarUsername.textContent = user.name || 'User';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'User';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    
+    // Update avatars based on role
+    const avatarColor = getAvatarColorByRole(user.role);
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=${avatarColor}&color=fff&size=`;
+    
+    if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+    if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+    
+    // Update role badge
+    if (dropdownRole) {
+        dropdownRole.textContent = user.role || 'Student';
+        dropdownRole.className = 'badge user-role-badge ' + getRoleBadgeClass(user.role);
+    }
+}
+
+// Get avatar background color based on role
+function getAvatarColorByRole(role) {
+    const colors = {
+        'student': '20c997',
+        'teacher': '6f42c1', 
+        'admin': 'dc3545'
+    };
+    return colors[role] || '27ae60';
+}
+
+// Get badge class based on role
+function getRoleBadgeClass(role) {
+    const classes = {
+        'student': 'student-badge',
+        'teacher': 'teacher-badge',
+        'admin': 'admin-badge'
+    };
+    return classes[role] || 'student-badge';
+}
+
+// Show/hide role-specific links
+function toggleRoleSpecificLinks(role) {
+    const teacherAdminLinks = document.getElementById('teacher-admin-links');
+    const teacherDashboardLink = document.getElementById('teacher-dashboard-link');
+    const adminPanelLink = document.getElementById('admin-panel-link');
+    
+    if (teacherAdminLinks) {
+        if (role === 'teacher' || role === 'admin') {
+            teacherAdminLinks.style.display = 'block';
+        } else {
+            teacherAdminLinks.style.display = 'none';
+        }
+    }
+    
+    // Show/hide specific links based on role
+    if (teacherDashboardLink) {
+        teacherDashboardLink.style.display = role === 'teacher' ? 'block' : 'none';
+    }
+    
+    if (adminPanelLink) {
+        adminPanelLink.style.display = role === 'admin' ? 'block' : 'none';
+    }
+}
+
+// Enhanced logout function
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize dropdown on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForLoginStatus();
+    
+    // Update dropdown when user data changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user') {
+            const user = getCurrentUser();
+            if (user) {
+                updateUserDropdown(user);
+            }
+        }
+    });
+});
+    </script>
+</body>
+</html>

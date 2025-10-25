@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Profile - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .profile-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .teacher-badge {
+            background-color: #6f42c1;
+            color: white;
+        }
+        .stats-card {
+            background-color: #f8f9fa;
+            border-left: 4px solid #6f42c1;
+        }
+        .module-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        /* Profile Dropdown Styles */
+.user-dropdown .dropdown-toggle {
+    border: none;
+    background: transparent;
+    color: var(--dark-text) !important;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+}
+
+.user-dropdown .dropdown-toggle:hover {
+    background: rgba(46, 139, 87, 0.1);
+    color: var(--primary-green) !important;
+}
+
+.user-dropdown .dropdown-toggle::after {
+    margin-left: 0.5rem;
+}
+
+.user-dropdown .dropdown-menu {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-strong);
+    padding: 0.5rem;
+    min-width: 200px;
+}
+
+.user-dropdown .dropdown-item {
+    border-radius: var(--border-radius-sm);
+    padding: 0.75rem 1rem;
+    margin: 0.1rem 0;
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.user-dropdown .dropdown-item:hover {
+    background: rgba(46, 139, 87, 0.1);
+    transform: translateX(5px);
+}
+
+.user-dropdown .dropdown-item i {
+    width: 20px;
+    text-align: center;
+    margin-right: 0.5rem;
+    color: var(--primary-green);
+}
+
+.user-dropdown .dropdown-divider {
+    margin: 0.5rem 0;
+}
+
+/* Role-specific badge in dropdown */
+.user-role-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    margin-left: 0.5rem;
+}
+
+/* Teacher specific styles */
+.teacher-badge {
+    background: linear-gradient(135deg, #6f42c1, #8B5FBF);
+    color: white;
+}
+
+/* Admin specific styles */
+.admin-badge {
+    background: linear-gradient(135deg, #dc3545, #e35d6a);
+    color: white;
+}
+
+/* Student specific styles */
+.student-badge {
+    background: linear-gradient(135deg, #20c997, #3DD4AF);
+    color: white;
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-leaf me-2"></i>Ujjivana
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="teacher-dashboard.html">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="manageContentDropdown" role="button" data-bs-toggle="dropdown">
+                            Manage Content
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="teacher-modules.html">Your Modules</a></li>
+                            <li><a class="dropdown-item" href="teacher-quizzes.html">Your Quizzes</a></li>
+                            <li><a class="dropdown-item" href="teacher-challenges.html">Your Challenges</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=27ae60&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=27ae60&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                <span class="badge user-role-badge student-badge" id="dropdown-role">Student</span>
+            </div>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="teacher-profile.html">
+                <i class="fas fa-user"></i>My Profile
+            </a>
+        </li>
+        
+        <!-- Teacher/Admin Specific Links -->
+        <div id="teacher-admin-links" style="display: none;">
+            
+            <li>
+                <a class="dropdown-item" href="admin-panel.html" id="admin-panel-link">
+                    <i class="fas fa-tools"></i>Admin Panel
+                </a>
+            </li>
+        </div>
+        
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="help.html">
+                <i class="fas fa-question-circle"></i>Help & Support
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Teacher Profile Content -->
+    <div class="container py-5">
+        <h2 class="text-center mb-5">Teacher Profile</h2>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="profile-card card">
+                    <div class="card-body text-center">
+                        <img src="https://ui-avatars.com/api/?name=Teacher+Name&background=6f42c1&color=fff&size=100" class="rounded-circle mb-3" alt="Profile" id="profile-avatar">
+                        <h4 id="profile-name">Teacher Name</h4>
+                        <p class="text-muted" id="profile-school">Green University</p>
+                        <div class="mb-3">
+                            <span class="badge teacher-badge">Teacher</span>
+                        </div>
+                        <div class="d-flex justify-content-center mb-3">
+                            <a href="#" class="text-primary mx-2"><i class="fab fa-facebook fa-lg"></i></a>
+                            <a href="#" class="text-primary mx-2"><i class="fab fa-twitter fa-lg"></i></a>
+                            <a href="#" class="text-primary mx-2"><i class="fab fa-instagram fa-lg"></i></a>
+                            <a href="#" class="text-primary mx-2"><i class="fab fa-linkedin fa-lg"></i></a>
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#avatarModal">Change Avatar</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-card card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Teaching Stats</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Modules Created
+                                <span class="badge bg-primary rounded-pill" id="modules-created">5</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Active Students
+                                <span class="badge bg-primary rounded-pill" id="active-students">42</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Total Lessons
+                                <span class="badge bg-primary rounded-pill" id="total-lessons">35</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Student Completion Rate
+                                <span class="badge bg-primary rounded-pill" id="completion-rate">78%</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="profile-card card">
+                    <div class="card-body">
+                        <h5 class="card-title">Edit Profile</h5>
+                        <form id="profile-form">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="profile-name-input" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="profile-name-input" value="Teacher Name">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="profile-email" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="profile-email" value="teacher@example.com" disabled>
+                                    <div class="form-text">Email cannot be changed</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="profile-phone" class="form-label">Contact Number</label>
+                                    <input type="tel" class="form-control" id="profile-phone" value="+1 (555) 123-4567">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="profile-school-input" class="form-label">School/College</label>
+                                    <input type="text" class="form-control" id="profile-school-input" value="Green University">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="profile-bio" class="form-label">Bio</label>
+                                <textarea class="form-control" id="profile-bio" rows="3">Environmental science teacher passionate about sustainability education.</textarea>
+                            </div>
+                            
+                            <h6 class="mt-4 mb-3">Professional Links</h6>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="profile-linkedin" class="form-label">LinkedIn</label>
+                                    <input type="url" class="form-control" id="profile-linkedin" placeholder="https://linkedin.com/in/username">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="profile-website" class="form-label">Personal Website</label>
+                                    <input type="url" class="form-control" id="profile-website" placeholder="https://yourwebsite.com">
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="profile-card card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">My Modules</h5>
+                        <div class="module-list" id="teacher-modules">
+                            <p class="text-center">Loading your modules...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-card card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Change Password</h5>
+                        <form id="password-form">
+                            <div class="mb-3">
+                                <label for="current-password" class="form-label">Current Password</label>
+                                <input type="password" class="form-control" id="current-password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="new-password" class="form-label">New Password</label>
+                                <input type="password" class="form-control" id="new-password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirm-password" class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirm-password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Ujjivana</h5>
+                    <p>Gamifying environmental education for a sustainable future.</p>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">About</a></li>
+                        <li><a href="teacher.html" class="text-white text-decoration-none">Teacher Dashboard</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@ujjivana.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Teacher Resources</h5>
+                    <p>Subscribe for teaching resources and updates.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-primary" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2023 Ujjivana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div class="modal fade" id="avatarModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Avatar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img src="https://ui-avatars.com/api/?name=Teacher+Name&background=6f42c1&color=fff&size=100" class="rounded-circle mb-3" alt="Profile">
+                        <p>Upload a new profile image</p>
+                        <input type="file" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Load teacher data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = getCurrentUser();
+            
+            if (user && user.role === 'teacher') {
+                // Update profile information
+                document.getElementById('profile-name').textContent = user.name;
+                document.getElementById('profile-name-input').value = user.name;
+                document.getElementById('username-display').textContent = user.name;
+                document.getElementById('profile-email').value = user.email;
+                document.getElementById('profile-phone').value = user.phone || '';
+                document.getElementById('profile-school').textContent = user.school || 'Not specified';
+                document.getElementById('profile-school-input').value = user.school || '';
+                
+                // Update avatar
+                const avatar = document.getElementById('profile-avatar');
+                avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6f42c1&color=fff&size=100`;
+                
+                // Load teacher modules
+                loadTeacherModules();
+                
+                // Load teacher stats
+                loadTeacherStats();
+            } else {
+                // Redirect to login if not a teacher
+                alert('Teacher access required');
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Load teacher modules
+        async function loadTeacherModules() {
+            try {
+                const response = await apiCall('/modules/teacher/list');
+                const modules = response.data;
+                
+                const modulesContainer = document.getElementById('teacher-modules');
+                
+                if (modules.length === 0) {
+                    modulesContainer.innerHTML = '<p class="text-center">You haven\'t created any modules yet.</p>';
+                    return;
+                }
+                
+                let html = '<div class="list-group">';
+                
+                modules.forEach(module => {
+                    html += `
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">${module.title}</h6>
+                                <small class="text-muted">${module.lessons.length} lessons • ${module.estimatedTime} min</small>
+                            </div>
+                            <div>
+                                <span class="badge ${module.isActive ? 'bg-success' : 'bg-secondary'} me-1">
+                                    ${module.isActive ? 'Published' : 'Draft'}
+                                </span>
+                                <a href="teacher.html" class="btn btn-sm btn-outline-primary">Edit</a>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                modulesContainer.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error loading teacher modules:', error);
+                document.getElementById('teacher-modules').innerHTML = '<p class="text-center text-danger">Error loading modules</p>';
+            }
+        }
+
+        // Load teacher stats (this would typically come from the backend)
+        async function loadTeacherStats() {
+            try {
+                // This is a placeholder - in a real app, you'd fetch this from an API
+                document.getElementById('modules-created').textContent = '5';
+                document.getElementById('active-students').textContent = '42';
+                document.getElementById('total-lessons').textContent = '35';
+                document.getElementById('completion-rate').textContent = '78%';
+                
+            } catch (error) {
+                console.error('Error loading teacher stats:', error);
+            }
+        }
+
+        // Form submissions
+        document.getElementById('profile-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('profile-name-input').value;
+            const phone = document.getElementById('profile-phone').value;
+            const school = document.getElementById('profile-school-input').value;
+            const bio = document.getElementById('profile-bio').value;
+            const linkedin = document.getElementById('profile-linkedin').value;
+            const website = document.getElementById('profile-website').value;
+            
+            // Update profile information
+            updateProfile({ name, phone, school, bio, linkedin, website })
+                .then(response => {
+                    document.getElementById('profile-name').textContent = response.user.name;
+                    document.getElementById('profile-school').textContent = response.user.school;
+                    document.getElementById('username-display').textContent = response.user.name;
+                    
+                    // Update avatar with new name
+                    const user = getCurrentUser();
+                    const avatar = document.getElementById('profile-avatar');
+                    avatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(response.user.name)}&background=6f42c1&color=fff&size=100`;
+                    
+                    alert('Profile updated successfully!');
+                })
+                .catch(error => {
+                    console.error('Error updating profile:', error);
+                    alert('Error updating profile: ' + error.message);
+                });
+        });
+        
+        document.getElementById('password-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match!');
+                return;
+            }
+            
+            updatePassword(currentPassword, newPassword)
+                .then(response => {
+                    alert('Password updated successfully!');
+                    document.getElementById('password-form').reset();
+                })
+                .catch(error => {
+                    console.error('Error updating password:', error);
+                    alert('Error updating password: ' + error.message);
+                });
+        });
+        // Update UI based on login status with profile dropdown
+function updateUIForLoginStatus() {
+    const user = getCurrentUser();
+    const authButtons = document.getElementById('auth-buttons');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (user) {
+        // Hide auth buttons, show user menu
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        // Update user information in dropdown
+        updateUserDropdown(user);
+        
+        // Show/hide role-specific links
+        toggleRoleSpecificLinks(user.role);
+        
+    } else {
+        // Show auth buttons, hide user menu
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// Update dropdown with user information
+function updateUserDropdown(user) {
+    // Navbar elements
+    const navbarUsername = document.getElementById('navbar-username');
+    const navbarAvatar = document.getElementById('navbar-avatar');
+    
+    // Dropdown elements
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownAvatar = document.getElementById('dropdown-avatar');
+    const dropdownRole = document.getElementById('dropdown-role');
+    
+    if (navbarUsername) navbarUsername.textContent = user.name || 'User';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'User';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    
+    // Update avatars based on role
+    const avatarColor = getAvatarColorByRole(user.role);
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=${avatarColor}&color=fff&size=`;
+    
+    if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+    if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+    
+    // Update role badge
+    if (dropdownRole) {
+        dropdownRole.textContent = user.role || 'Student';
+        dropdownRole.className = 'badge user-role-badge ' + getRoleBadgeClass(user.role);
+    }
+}
+
+// Get avatar background color based on role
+function getAvatarColorByRole(role) {
+    const colors = {
+        'student': '20c997',
+        'teacher': '6f42c1', 
+        'admin': 'dc3545'
+    };
+    return colors[role] || '27ae60';
+}
+
+// Get badge class based on role
+function getRoleBadgeClass(role) {
+    const classes = {
+        'student': 'student-badge',
+        'teacher': 'teacher-badge',
+        'admin': 'admin-badge'
+    };
+    return classes[role] || 'student-badge';
+}
+
+// Show/hide role-specific links
+function toggleRoleSpecificLinks(role) {
+    const teacherAdminLinks = document.getElementById('teacher-admin-links');
+    const teacherDashboardLink = document.getElementById('teacher-dashboard-link');
+    const adminPanelLink = document.getElementById('admin-panel-link');
+    
+    if (teacherAdminLinks) {
+        if (role === 'teacher' || role === 'admin') {
+            teacherAdminLinks.style.display = 'block';
+        } else {
+            teacherAdminLinks.style.display = 'none';
+        }
+    }
+    
+    // Show/hide specific links based on role
+    if (teacherDashboardLink) {
+        teacherDashboardLink.style.display = role === 'teacher' ? 'block' : 'none';
+    }
+    
+    if (adminPanelLink) {
+        adminPanelLink.style.display = role === 'admin' ? 'block' : 'none';
+    }
+}
+
+// Enhanced logout function
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize dropdown on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForLoginStatus();
+    
+    // Update dropdown when user data changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user') {
+            const user = getCurrentUser();
+            if (user) {
+                updateUserDropdown(user);
+            }
+        }
+    });
+});
+    </script>
+</body>
+</html>

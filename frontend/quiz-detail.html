@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .question-card {
+            border-left: 4px solid #27ae60;
+            margin-bottom: 20px;
+        }
+        .timer-container {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
+            padding: 10px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .option-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-item:hover {
+            background-color: #f8f9fa;
+        }
+        .option-item.selected {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+                        Learning
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="modules.html">Modules</a></li>
+                        <li><a class="dropdown-item active" href="quiz.html">Assessments</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Community
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="challenges.html">Challenges</a></li>
+                        <li><a class="dropdown-item" href="leaderboard.html">Leaderboard</a></li>
+                        <li><a class="dropdown-item" href="eco-map-student.html">Eco-Map</a></li>
+                        <li><a class="dropdown-item" href="events.html">Events</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="redeem.html">Rewards</a>
+                </li>
+            </ul>
+            
+            <!-- Profile Dropdown -->
+<div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                
+                <!-- Eco-points display in dropdown -->
+                <div class="eco-points-display mt-2">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="fas fa-leaf text-success me-2"></i>
+                        <span class="fw-bold text-success" id="dropdown-points">0</span>
+                        <span class="text-muted ms-1">Eco-Points</span>
+                    </div>
+                </div>
+                
+                <span class="badge user-role-badge student-badge mt-2">Student</span>
+            </div>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="profile.html">
+                <i class="fas fa-user"></i>My Profile
+            </a>
+        </li>
+       
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="help.html">
+                <i class="fas fa-question-circle"></i>Help & Support
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+        </div>
+    </div>
+</nav>
+
+    <!-- Quiz Detail Content -->
+    <div class="quiz-container py-5">
+        <div id="quiz-not-found" class="alert alert-danger d-none">
+            <i class="fas fa-exclamation-triangle me-2"></i> 
+            Quiz not found. Please return to the <a href="quiz.html">quizzes page</a>.
+        </div>
+        
+        <div id="quiz-content" class="d-none">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                            <li class="breadcrumb-item"><a href="quiz.html">Quizzes</a></li>
+                            <li class="breadcrumb-item active" id="quiz-breadcrumb">Quiz Details</li>
+                        </ol>
+                    </nav>
+                    <h1 id="quiz-title" class="mb-0">Quiz Title</h1>
+                    <p class="text-muted" id="quiz-module">Module: Loading...</p>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-info" id="questions-count">0 questions</span>
+                    <span class="badge bg-success ms-1" id="quiz-points">0 points</span>
+                </div>
+            </div>
+            
+            <div class="timer-container mb-4 text-center">
+                <h4>Time Remaining: <span id="timer" class="text-danger">10:00</span></h4>
+            </div>
+            
+            <div id="questions-container">
+                <!-- Questions will be dynamically added here -->
+            </div>
+            
+            <div class="d-flex justify-content-between mt-5">
+                <a href="quiz.html" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Quizzes
+                </a>
+                <button id="submit-quiz-btn" class="btn btn-success">
+                    <i class="fas fa-paper-plane me-1"></i> Submit Quiz
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Modal -->
+        <div class="modal fade" id="resultsModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Quiz Results</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
+                            <h3>Quiz Completed!</h3>
+                            <p>You scored <span id="result-score" class="fw-bold">0</span> out of <span id="result-total" class="fw-bold">0</span> points</p>
+                            <p id="result-message" class="text-muted"></p>
+                        </div>
+                        
+                        <div class="progress mb-3" style="height: 20px;">
+                            <div class="progress-bar" role="progressbar" id="result-progress" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        </div>
+                        
+                        <div id="result-details">
+                            <!-- Result details will be added here -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Ujjivana</h5>
+                    <p>Gamifying environmental education for a sustainable future.</p>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">About</a></li>
+                        <li><a href="modules.html" class="text-white text-decoration-none">Modules</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@ujjivana.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe for updates on new features and content.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-success" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2023 Ujjivana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Global variables
+        let currentQuiz = null;
+        let userAnswers = {};
+        let timerInterval = null;
+        let timeRemaining = 0;
+
+        // Get quiz ID from URL parameters
+        function getQuizId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        // Format time in seconds to MM:SS format
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Start the timer
+        function startTimer(duration) {
+            timeRemaining = duration;
+            
+            // Update timer immediately
+            document.getElementById('timer').textContent = formatTime(timeRemaining);
+            
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Start new timer
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                    alert('Time is up! Your quiz has been submitted.');
+                }
+                
+                document.getElementById('timer').textContent = formatTime(timeRemaining);
+                
+                // Change color when time is running low
+                if (timeRemaining <= 60) {
+                    document.getElementById('timer').className = 'text-danger';
+                }
+            }, 1000);
+        }
+
+        // Load quiz details
+        async function loadQuizDetails() {
+            const quizId = getQuizId();
+            
+            if (!quizId) {
+                document.getElementById('quiz-not-found').classList.remove('d-none');
+                return;
+            }
+            
+            try {
+                // Get quiz details
+                const response = await apiCall(`/quizzes/${quizId}`);
+                currentQuiz = response.data;
+                
+                // Update UI with quiz details
+                document.getElementById('quiz-title').textContent = currentQuiz.title;
+                document.getElementById('quiz-breadcrumb').textContent = currentQuiz.title;
+                
+                if (currentQuiz.module) {
+                    document.getElementById('quiz-module').textContent = `Module: ${currentQuiz.module.title}`;
+                }
+                
+                document.getElementById('questions-count').textContent = `${currentQuiz.questions.length} questions`;
+                document.getElementById('quiz-points').textContent = `${currentQuiz.totalPoints} points`;
+                
+                // Start timer if time limit exists
+                if (currentQuiz.timeLimit) {
+                    startTimer(currentQuiz.timeLimit * 60); // Convert minutes to seconds
+                } else {
+                    document.querySelector('.timer-container').style.display = 'none';
+                }
+                
+                // Display questions
+                displayQuestions();
+                
+                // Show quiz content
+                document.getElementById('quiz-content').classList.remove('d-none');
+                
+            } catch (error) {
+                console.error('Error loading quiz:', error);
+                document.getElementById('quiz-not-found').classList.remove('d-none');
+            }
+        }
+
+        // Display questions
+        function displayQuestions() {
+            const questionsContainer = document.getElementById('questions-container');
+            questionsContainer.innerHTML = '';
+            
+            currentQuiz.questions.forEach((question, index) => {
+                const questionHtml = `
+                    <div class="card question-card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Question ${index + 1}</h5>
+                            <p class="card-text">${question.question}</p>
+                            
+                            <div class="options-container">
+                                ${question.options.map((option, optionIndex) => `
+                                    <div class="option-item" data-question="${index}" data-option="${optionIndex}">
+                                        ${option}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                questionsContainer.innerHTML += questionHtml;
+            });
+            
+            // Add event listeners to option items
+            document.querySelectorAll('.option-item').forEach(option => {
+                option.addEventListener('click', function() {
+                    const questionIndex = parseInt(this.dataset.question);
+                    const optionIndex = parseInt(this.dataset.option);
+                    
+                    // Remove selected class from all options in this question
+                    document.querySelectorAll(`.option-item[data-question="${questionIndex}"]`).forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Store user's answer
+                    userAnswers[questionIndex] = optionIndex;
+                });
+            });
+        }
+
+        // Submit quiz
+        function showResults(results) {
+  document.getElementById('result-score').textContent = results.score;
+  document.getElementById('result-total').textContent = results.totalPoints;
+  const percentage = (results.score / results.totalPoints) * 100;
+  
+  document.getElementById('result-progress').style.width = `${percentage}%`;
+  document.getElementById('result-progress').textContent = `${Math.round(percentage)}%`;
+  document.getElementById('result-progress').setAttribute('aria-valuenow', percentage);
+  
+  const resultMessage = document.getElementById('result-message');
+  
+  // Check if this was a revisit (no points awarded)
+  if (results.pointsAwarded === 0 && results.score > 0) {
+    resultMessage.innerHTML = `
+      <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Quiz Completed</strong> - No new points awarded as you've already completed this quiz.
+        <br>Score: ${results.score}/${results.totalPoints} (${Math.round(percentage)}%)
+      </div>
+    `;
+  } else if (percentage >= 80) {
+    resultMessage.innerHTML = `<span class="text-success"><i class="fas fa-check-circle me-1"></i> Excellent work! You scored ${results.score}/${results.totalPoints} points and earned ${results.pointsAwarded || 0} points.</span>`;
+  } else if (percentage >= 60) {
+    resultMessage.innerHTML = `<span class="text-info"><i class="fas fa-info-circle me-1"></i> Good job! You scored ${results.score}/${results.totalPoints} points and earned ${results.pointsAwarded || 0} points.</span>`;
+  } else {
+    resultMessage.innerHTML = `<span class="text-warning"><i class="fas fa-exclamation-circle me-1"></i> Keep practicing! You scored ${results.score}/${results.totalPoints} points and earned ${results.pointsAwarded || 0} points.</span>`;
+  }
+  
+  const resultDetails = document.getElementById('result-details');
+  resultDetails.innerHTML = '';
+  
+  if (results.answers && Array.isArray(results.answers)) {
+    results.answers.forEach((result, index) => {
+      const isCorrect = result.isCorrect;
+      const question = currentQuiz.questions[result.questionIndex];
+      
+      if (!question) {
+        console.error(`Question not found at index ${result.questionIndex}`);
+        return;
+      }
+      
+      const userAnswerText = result.answerIndex !== -1 ? 
+        question.options[result.answerIndex] : 'Not answered';
+      const correctAnswerText = question.options[question.correctAnswer];
+      
+      const resultHtml = `
+        <div class="card mb-2 ${isCorrect ? 'border-success' : 'border-danger'}">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="card-title">Question ${result.questionIndex + 1}</h6>
+                <p class="card-text mb-1">${question.question}</p>
+                <small class="text-muted">
+                  Your answer: ${userAnswerText}<br>
+                  ${!isCorrect ? `Correct answer: ${correctAnswerText}<br>` : ''}
+                </small>
+              </div>
+              <div>
+                <span class="badge ${isCorrect ? 'bg-success' : 'bg-danger'}">
+                  ${isCorrect ? 'Correct' : 'Incorrect'}
+                </span>
+                <br>
+                <small>${result.points} points</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      resultDetails.innerHTML += resultHtml;
+    });
+  } else {
+    resultDetails.innerHTML = '<p class="text-muted">No detailed results available.</p>';
+  }
+  
+  const resultsModal = new bootstrap.Modal(document.getElementById('resultsModal'));
+  resultsModal.show();
+}
+async function submitQuiz() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+  }
+
+  // Check if all questions are answered
+  const unansweredQuestions = [];
+  currentQuiz.questions.forEach((question, index) => {
+    if (userAnswers[index] === undefined) {
+      unansweredQuestions.push(index + 1);
+    }
+  });
+
+  if (unansweredQuestions.length > 0) {
+    const proceed = confirm(`You haven't answered questions: ${unansweredQuestions.join(', ')}. Do you want to submit anyway?`);
+    if (!proceed) {
+      return;
+    }
+  }
+
+  const answers = Object.keys(userAnswers).map(questionIndex => ({
+    questionIndex: parseInt(questionIndex),
+    answerIndex: userAnswers[questionIndex]
+  }));
+
+  try {
+    const submitBtn = document.getElementById('submit-quiz-btn');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Submitting...';
+    submitBtn.disabled = true;
+
+    const response = await apiCall(`/quizzes/${currentQuiz._id}/submit`, {
+      method: 'POST',
+      body: { answers }
+    });
+
+    if (response.success) {
+      showResults(response.data);
+    } else {
+      alert('Error submitting quiz: ' + response.message);
+    }
+
+    submitBtn.innerHTML = originalText;
+    submitBtn.disabled = false;
+  } catch (error) {
+    console.error('Error submitting quiz:', error);
+    alert('Error submitting quiz. Please try again.');
+    const submitBtn = document.getElementById('submit-quiz-btn');
+    submitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Submit Quiz';
+    submitBtn.disabled = false;
+  }
+}
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            if (!checkLogin()) {
+                alert('Please login to take quizzes.');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load quiz details
+            loadQuizDetails();
+            
+            // Add event listener to submit button
+            document.getElementById('submit-quiz-btn').addEventListener('click', submitQuiz);
+            
+            // Update UI based on login status
+            updateUIForLoginStatus();
+        });
+    </script>
+    <script>
+        // Update UI for student login status with profile dropdown
+function updateUIForLoginStatus() {
+    const user = getCurrentUser();
+    const authButtons = document.getElementById('auth-buttons');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (user) {
+        // Hide auth buttons, show user menu
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        // Update user information in dropdown
+        updateUserDropdown(user);
+        
+    } else {
+        // Show auth buttons, hide user menu
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// Update dropdown with student information
+function updateUserDropdown(user) {
+    // Safely get all elements
+    const navbarUsername = document.getElementById('navbar-username');
+    const navbarAvatar = document.getElementById('navbar-avatar');
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownAvatar = document.getElementById('dropdown-avatar');
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    
+    // Update basic user information
+    if (navbarUsername) navbarUsername.textContent = user.name || 'Student';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'Student';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    
+    // Update avatar with student color
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Student')}&background=20c997&color=fff&size=`;
+    
+    if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+    if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+    
+    // Update eco-points - ALWAYS show for student interface
+    const points = user.points || 0;
+    if (navbarPoints) navbarPoints.textContent = formatPoints(points);
+    if (dropdownPoints) dropdownPoints.textContent = formatPoints(points);
+    
+    // Update points level styling
+    updatePointsLevelStyling(points);
+}
+
+// Format points with commas
+function formatPoints(points) {
+    return points.toLocaleString();
+}
+function updatePointsLevelStyling(points) {
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    const ecoPointsBadge = document.querySelector('.eco-points-badge');
+    
+    if (!navbarPoints || !ecoPointsBadge) return;
+    
+    // Remove existing level classes
+    ecoPointsBadge.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    navbarPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    if (dropdownPoints) {
+        dropdownPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    }
+    
+    // Add appropriate level class
+    let levelClass = 'points-level-beginner';
+    if (points >= 1000) levelClass = 'points-level-intermediate';
+    if (points >= 5000) levelClass = 'points-level-advanced';
+    if (points >= 10000) levelClass = 'points-level-expert';
+    
+    ecoPointsBadge.classList.add(levelClass);
+    navbarPoints.classList.add(levelClass);
+    if (dropdownPoints) dropdownPoints.classList.add(levelClass);
+}
+
+// Update points in navbar if available
+function updatePointsDisplay(user) {
+    const pointsElement = document.getElementById('navbar-points');
+    if (pointsElement && user.points) {
+        pointsElement.textContent = user.points.toLocaleString();
+    }
+}
+
+// Enhanced logout for student
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize student dropdown
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForLoginStatus();
+    
+    // Update dropdown when user data changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user') {
+            const user = getCurrentUser();
+            if (user) {
+                updateUserDropdown(user);
+            }
+        }
+    });
+});
+    </script>
+</body>
+</html>

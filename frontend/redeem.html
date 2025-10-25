@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rewards - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Student hero (shared) */
+        .student-hero {
+            background: linear-gradient(135deg, #20c997 0%, #3DD4AF 100%);
+            color: white;
+            padding: 2.25rem 0;
+            margin-bottom: 1.5rem;
+        }
+        .student-hero .lead { color: rgba(255,255,255,0.95); }
+        .reward-card {
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            height: 100%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .reward-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .reward-image {
+            height: 200px;
+            object-fit: cover;
+        }
+        .points-badge {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .out-of-stock {
+            opacity: 0.7;
+            position: relative;
+        }
+        .out-of-stock::after {
+            content: "Out of Stock";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #2ecc71;
+        }
+        .admin-panel {
+            border-left: 4px solid #6f42c1;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .discount-coupon {
+            border-left: 4px solid #3498db;
+        }
+        .eco-product {
+            border-left: 4px solid #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Learning
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="modules.html">Modules</a></li>
+                        <li><a class="dropdown-item" href="quiz.html">Assessments</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Community
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="challenges.html">Challenges</a></li>
+                        <li><a class="dropdown-item" href="leaderboard.html">Leaderboard</a></li>
+                        <li><a class="dropdown-item" href="eco-map-student.html">Eco-Map</a></li>
+                        <li><a class="dropdown-item" href="events.html">Events</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="redeem.html">Rewards</a>
+                </li>
+            </ul>
+            
+            <!-- Profile Dropdown -->
+<div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                
+                <!-- Eco-points display in dropdown -->
+                <div class="eco-points-display mt-2">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="fas fa-leaf text-success me-2"></i>
+                        <span class="fw-bold text-success" id="dropdown-points">0</span>
+                        <span class="text-muted ms-1">Eco-Points</span>
+                    </div>
+                </div>
+                
+                <span class="badge user-role-badge student-badge mt-2">Student</span>
+            </div>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="profile.html">
+                <i class="fas fa-user"></i>My Profile
+            </a>
+        </li>
+       
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="help.html">
+                <i class="fas fa-question-circle"></i>Help & Support
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+
+        </div>
+    </div>
+</nav>
+
+    <!-- Hero Section -->
+    <section class="student-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-2">Rewards & Redemption</h1>
+                    <p class="lead mb-3">Use your hard-earned eco-points to redeem rewards and support sustainable partners.</p>
+                </div>
+                <div class="col-lg-4 text-center d-none d-lg-block">
+                    <i class="fas fa-gift fa-6x opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Redeem Content -->
+    <div class="container py-5">
+        
+        <div class="row mb-5">
+            <div class="col-md-8 mx-auto">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">Your Eco-Points Balance</h4>
+                        <h2 class="display-4 text-success" id="points-balance">0</h2>
+                        <p class="card-text">Earn more points by completing modules, quizzes, and challenges!</p>
+                        <div class="mt-3">
+                            <a href="modules.html" class="btn btn-success me-2">Explore Modules</a>
+                            <a href="quiz.html" class="btn btn-outline-success">Take Quizzes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel (only visible to admins) -->
+        <div class="admin-panel mb-5 d-none" id="admin-panel">
+            <h4 class="mb-3"><i class="fas fa-cog me-2"></i>Admin Panel</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Add New Reward</h5>
+                            <form id="add-reward-form">
+                                <div class="mb-3">
+                                    <label class="form-label">Reward Type</label>
+                                    <select class="form-select" id="reward-type" required>
+                                        <option value="Discount Coupon">Discount Coupon</option>
+                                        <option value="Eco Product">Eco Product</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="reward-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" id="reward-description" rows="2" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Points Required</label>
+                                    <input type="number" class="form-control" id="reward-points" min="1" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Stock Quantity (0 for unlimited)</label>
+                                    <input type="number" class="form-control" id="reward-stock" min="0" value="0">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Image URL</label>
+                                    <input type="url" class="form-control" id="reward-image" placeholder="https://example.com/image.jpg">
+                                </div>
+                                <button type="submit" class="btn btn-success">Add Reward</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Manage Rewards</h5>
+                            <p class="text-muted">Click on a reward to edit or restock</p>
+                            <div id="admin-rewards-list">
+                                <!-- Admin rewards list will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <ul class="nav nav-pills mb-4 justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="pill" href="#discount-coupons">Discount Coupons</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="pill" href="#eco-products">Eco Products</a>
+            </li>
+        </ul>
+        
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="discount-coupons">
+                <h3 class="mb-4">Discount Coupons</h3>
+                <p class="text-muted">Redeem your points for exclusive discount coupons from our eco-friendly partners.</p>
+                <div class="row" id="discount-coupons-container">
+                    <!-- Discount coupons will be populated here -->
+                </div>
+            </div>
+            <div class="tab-pane fade" id="eco-products">
+                <h3 class="mb-4">Eco Products</h3>
+                <p class="text-muted">Get sustainable products delivered to your door by redeeming your eco-points.</p>
+                <div class="row" id="eco-products-container">
+                    <!-- Eco products will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Redemption History -->
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Your Redemption History</h4>
+                        <div id="redemption-history">
+                            <p class="text-center text-muted">No redemption history yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Ujjivana</h5>
+                    <p>Gamifying environmental education for a sustainable future.</p>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">About</a></li>
+                        <li><a href="modules.html" class="text-white text-decoration-none">Modules</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@ujjivana.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe for updates on new features and content.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-success" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2023 Ujjivana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Redemption Modal -->
+    <div class="modal fade" id="redemptionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Redemption</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to redeem <span id="modal-reward-name" class="fw-bold"></span> for <span id="modal-reward-points" class="text-success fw-bold"></span> points?</p>
+                    <p>Your current balance: <span id="modal-current-points" class="fw-bold"></span> points</p>
+                    <p>After redemption: <span id="modal-new-balance" class="fw-bold"></span> points</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="confirm-redemption">Confirm Redemption</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Reward Modal (Admin Only) -->
+    <div class="modal fade" id="editRewardModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Reward</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-reward-form">
+                        <input type="hidden" id="edit-reward-id">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" id="edit-reward-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="edit-reward-description" rows="2" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Points Required</label>
+                            <input type="number" class="form-control" id="edit-reward-points" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stock Quantity (0 for unlimited)</label>
+                            <input type="number" class="form-control" id="edit-reward-stock" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Image URL</label>
+                            <input type="url" class="form-control" id="edit-reward-image">
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="edit-reward-active">
+                            <label class="form-check-label" for="edit-reward-active">Active (available for redemption)</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="save-reward-changes">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Global variables
+        let currentUser = null;
+        let currentRewards = [];
+        let selectedReward = null;
+        let redemptionHistory = [];
+
+        // Format numbers with commas
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // Load user points balance
+        function updatePointsBalance() {
+            if (currentUser) {
+                document.getElementById('points-balance').textContent = formatNumber(currentUser.points || 0);
+            }
+        }
+
+        // Load rewards from backend
+        async function loadRewards() {
+            try {
+                const response = await apiCall('/redeem');
+                currentRewards = response.data;
+                
+                displayRewards();
+                
+                // If user is admin, also load admin view
+                if (currentUser && currentUser.role === 'admin') {
+                    displayAdminRewards();
+                    loadAllRedemptions();
+                }
+                
+                // Load user's redemption history
+                if (currentUser) {
+                    loadRedemptionHistory();
+                }
+            } catch (error) {
+                console.error('Error loading rewards:', error);
+                document.getElementById('discount-coupons-container').innerHTML = 
+                    '<div class="col-12"><div class="alert alert-danger">Error loading rewards. Please try again later.</div></div>';
+                document.getElementById('eco-products-container').innerHTML = 
+                    '<div class="col-12"><div class="alert alert-danger">Error loading rewards. Please try again later.</div></div>';
+            }
+        }
+
+        // Load user's redemption history
+        async function loadRedemptionHistory() {
+            try {
+                const response = await apiCall('/redeem/history');
+                redemptionHistory = response.data;
+                displayRedemptionHistory();
+            } catch (error) {
+                console.error('Error loading redemption history:', error);
+                document.getElementById('redemption-history').innerHTML = 
+                    '<div class="alert alert-danger">Error loading redemption history.</div>';
+            }
+        }
+
+        // Load all redemptions (admin only)
+        async function loadAllRedemptions() {
+            try {
+                const response = await apiCall('/redeem/admin/redemptions');
+                const allRedemptions = response.data;
+                
+                // Display in admin panel if needed
+                console.log('All redemptions:', allRedemptions);
+            } catch (error) {
+                console.error('Error loading all redemptions:', error);
+            }
+        }
+
+        // Display redemption history
+        function displayRedemptionHistory() {
+            const historyContainer = document.getElementById('redemption-history');
+            historyContainer.innerHTML = '';
+            
+            if (redemptionHistory.length === 0) {
+                historyContainer.innerHTML = '<p class="text-center text-muted">No redemption history yet.</p>';
+                return;
+            }
+            
+            redemptionHistory.forEach(redemption => {
+                const historyItem = `
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0">${redemption.reward.name}</h6>
+                                    <p class="mb-0 text-muted">${redemption.reward.description}</p>
+                                    <small class="text-muted">Redeemed on ${new Date(redemption.redeemedAt).toLocaleDateString()}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="text-danger">-${redemption.pointsSpent} points</span>
+                                    <span class="badge ${redemption.status === 'completed' ? 'bg-success' : redemption.status === 'pending' ? 'bg-warning' : 'bg-danger'} ms-1">
+                                        ${redemption.status}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                historyContainer.innerHTML += historyItem;
+            });
+        }
+
+        // Display rewards in the appropriate sections
+        function displayRewards() {
+            const discountCouponsContainer = document.getElementById('discount-coupons-container');
+            const ecoProductsContainer = document.getElementById('eco-products-container');
+            
+            discountCouponsContainer.innerHTML = '';
+            ecoProductsContainer.innerHTML = '';
+            
+            if (currentRewards.length === 0) {
+                discountCouponsContainer.innerHTML = '<div class="col-12"><p class="text-center text-muted">No discount coupons available at the moment.</p></div>';
+                ecoProductsContainer.innerHTML = '<div class="col-12"><p class="text-center text-muted">No eco products available at the moment.</p></div>';
+                return;
+            }
+            
+            // Filter and display discount coupons (category: Discount Coupon)
+            const discountCoupons = currentRewards.filter(reward => reward.category === 'Discount Coupon' && reward.isActive);
+            if (discountCoupons.length === 0) {
+                discountCouponsContainer.innerHTML = '<div class="col-12"><p class="text-center text-muted">No discount coupons available at the moment.</p></div>';
+            } else {
+                discountCoupons.forEach(reward => {
+                    const rewardCard = createRewardCard(reward);
+                    discountCouponsContainer.innerHTML += rewardCard;
+                });
+            }
+            
+            // Filter and display eco products (category: Eco Product)
+            const ecoProducts = currentRewards.filter(reward => reward.category === 'Eco Product' && reward.isActive);
+            if (ecoProducts.length === 0) {
+                ecoProductsContainer.innerHTML = '<div class="col-12"><p class="text-center text-muted">No eco products available at the moment.</p></div>';
+            } else {
+                ecoProducts.forEach(reward => {
+                    const rewardCard = createRewardCard(reward);
+                    ecoProductsContainer.innerHTML += rewardCard;
+                });
+            }
+            
+            // Add event listeners to redeem buttons
+            document.querySelectorAll('.redeem-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const rewardId = this.dataset.rewardId;
+                    const reward = currentRewards.find(r => r._id === rewardId);
+                    if (reward) {
+                        showRedemptionConfirmation(reward);
+                    }
+                });
+            });
+        }
+
+        // Create reward card HTML
+        function createRewardCard(reward) {
+            const isOutOfStock = reward.stock !== null && reward.stock <= 0;
+            const canAfford = currentUser && currentUser.points >= reward.pointsRequired;
+            const cardClass = isOutOfStock ? 'out-of-stock' : '';
+            const categoryClass = reward.category === 'Discount Coupon' ? 'discount-coupon' : 'eco-product';
+            
+            return `
+                <div class="col-md-4 mb-4">
+                    <div class="reward-card card ${cardClass} ${categoryClass}">
+                        <img src="${reward.image || 'https://via.placeholder.com/300x200?text=Eco+Reward'}" class="card-img-top reward-image" alt="${reward.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${reward.name}</h5>
+                            <p class="card-text">${reward.description}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge points-badge">${formatNumber(reward.pointsRequired)} points</span>
+                                ${reward.stock !== null ? `<small class="text-muted">${reward.stock} left in stock</small>` : ''}
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            ${isOutOfStock ? 
+                                '<button class="btn btn-secondary w-100" disabled>Out of Stock</button>' : 
+                                !currentUser ? 
+                                    '<a href="login.html" class="btn btn-success w-100">Login to Redeem</a>' :
+                                    !canAfford ?
+                                        '<button class="btn btn-secondary w-100" disabled>Not Enough Points</button>' :
+                                        `<button class="btn btn-success w-100 redeem-btn" data-reward-id="${reward._id}">Redeem Now</button>`
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Show redemption confirmation modal
+        function showRedemptionConfirmation(reward) {
+            selectedReward = reward;
+            
+            document.getElementById('modal-reward-name').textContent = reward.name;
+            document.getElementById('modal-reward-points').textContent = formatNumber(reward.pointsRequired);
+            document.getElementById('modal-current-points').textContent = formatNumber(currentUser.points);
+            document.getElementById('modal-new-balance').textContent = formatNumber(currentUser.points - reward.pointsRequired);
+            
+            const modal = new bootstrap.Modal(document.getElementById('redemptionModal'));
+            modal.show();
+        }
+
+        // Process redemption
+        async function processRedemption() {
+            if (!selectedReward) return;
+            
+            try {
+                const response = await apiCall(`/redeem/${selectedReward._id}`, {
+                    method: 'POST'
+                });
+                
+                // Update user points
+                currentUser.points = response.data.remainingPoints;
+                localStorage.setItem('user', JSON.stringify(currentUser));
+                
+                // Update UI
+                updatePointsBalance();
+                
+                // Show success message
+                alert(`Success! ${response.message}`);
+                
+                // Reload rewards to update stock and history
+                loadRewards();
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('redemptionModal'));
+                modal.hide();
+                
+            } catch (error) {
+                console.error('Error redeeming reward:', error);
+                alert('Error redeeming reward: ' + error.message);
+            }
+        }
+
+        // Display admin rewards list
+        function displayAdminRewards() {
+            const adminRewardsList = document.getElementById('admin-rewards-list');
+            adminRewardsList.innerHTML = '';
+            
+            if (currentRewards.length === 0) {
+                adminRewardsList.innerHTML = '<p class="text-muted">No rewards found.</p>';
+                return;
+            }
+            
+            currentRewards.forEach(reward => {
+                const rewardItem = `
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0">${reward.name}</h6>
+                                    <small class="text-muted">${reward.category} • ${formatNumber(reward.pointsRequired)} points</small>
+                                    <br>
+                                    <small class="text-muted">Stock: ${reward.stock !== null ? reward.stock : 'Unlimited'} • Status: ${reward.isActive ? 'Active' : 'Inactive'}</small>
+                                </div>
+                                <div>
+                                    <span class="badge ${reward.isActive ? 'bg-success' : 'bg-secondary'} me-1">
+                                        ${reward.isActive ? 'Active' : 'Inactive'}
+                                    </span>
+                                    <button class="btn btn-sm btn-outline-primary edit-reward-btn" data-reward-id="${reward._id}">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                adminRewardsList.innerHTML += rewardItem;
+            });
+            
+            // Add event listeners to edit buttons
+            document.querySelectorAll('.edit-reward-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const rewardId = this.dataset.rewardId;
+                    const reward = currentRewards.find(r => r._id === rewardId);
+                    if (reward) {
+                        showEditRewardModal(reward);
+                    }
+                });
+            });
+        }
+
+        // Show edit reward modal
+        function showEditRewardModal(reward) {
+            document.getElementById('edit-reward-id').value = reward._id;
+            document.getElementById('edit-reward-name').value = reward.name;
+            document.getElementById('edit-reward-description').value = reward.description;
+            document.getElementById('edit-reward-points').value = reward.pointsRequired;
+            document.getElementById('edit-reward-stock').value = reward.stock !== null ? reward.stock : 0;
+            document.getElementById('edit-reward-image').value = reward.image || '';
+            document.getElementById('edit-reward-active').checked = reward.isActive;
+            
+            // Set category if available
+            if (document.getElementById('edit-reward-category')) {
+                document.getElementById('edit-reward-category').value = reward.category;
+            }
+            
+            const modal = new bootstrap.Modal(document.getElementById('editRewardModal'));
+            modal.show();
+        }
+
+        // Save reward changes
+        async function saveRewardChanges() {
+            const rewardId = document.getElementById('edit-reward-id').value;
+            const rewardData = {
+                name: document.getElementById('edit-reward-name').value,
+                description: document.getElementById('edit-reward-description').value,
+                pointsRequired: parseInt(document.getElementById('edit-reward-points').value),
+                stock: parseInt(document.getElementById('edit-reward-stock').value) || null,
+                image: document.getElementById('edit-reward-image').value || undefined,
+                isActive: document.getElementById('edit-reward-active').checked
+            };
+            
+            // Add category if available
+            if (document.getElementById('edit-reward-category')) {
+                rewardData.category = document.getElementById('edit-reward-category').value;
+            }
+            
+            try {
+                const response = await apiCall(`/redeem/admin/rewards/${rewardId}`, {
+                    method: 'PUT',
+                    body: rewardData
+                });
+                
+                alert('Reward updated successfully!');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editRewardModal'));
+                modal.hide();
+                
+                // Reload rewards
+                loadRewards();
+                
+            } catch (error) {
+                console.error('Error updating reward:', error);
+                alert('Error updating reward: ' + error.message);
+            }
+        }
+
+        // Add new reward
+        async function addNewReward(event) {
+            event.preventDefault();
+            
+            const rewardData = {
+                name: document.getElementById('reward-name').value,
+                description: document.getElementById('reward-description').value,
+                category: document.getElementById('reward-type').value,
+                pointsRequired: parseInt(document.getElementById('reward-points').value),
+                stock: parseInt(document.getElementById('reward-stock').value) || null,
+                image: document.getElementById('reward-image').value || undefined,
+                isActive: true
+            };
+            
+            try {
+                const response = await apiCall('/redeem/admin/rewards', {
+                    method: 'POST',
+                    body: rewardData
+                });
+                
+                alert('Reward added successfully!');
+                document.getElementById('add-reward-form').reset();
+                
+                // Reload rewards
+                loadRewards();
+                
+            } catch (error) {
+                console.error('Error adding reward:', error);
+                alert('Error adding reward: ' + error.message);
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            updateUIForLoginStatus();
+            
+            // Get current user
+            currentUser = getCurrentUser();
+            
+            if (currentUser) {
+                // Update points balance
+                updatePointsBalance();
+                
+                // Load rewards
+                await loadRewards();
+                
+                // Show admin panel if user is admin
+                if (currentUser.role === 'admin') {
+                    document.getElementById('admin-panel').classList.remove('d-none');
+                    
+                    // Set up admin event listeners
+                    document.getElementById('add-reward-form').addEventListener('submit', addNewReward);
+                    document.getElementById('save-reward-changes').addEventListener('click', saveRewardChanges);
+                }
+                
+                // Set up redemption confirmation
+                document.getElementById('confirm-redemption').addEventListener('click', processRedemption);
+            } else {
+                // Show message for guests
+                document.getElementById('discount-coupons-container').innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> 
+                            Please <a href="login.html">login</a> to redeem rewards.
+                        </div>
+                    </div>
+                `;
+                document.getElementById('eco-products-container').innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> 
+                            Please <a href="login.html">login</a> to redeem rewards.
+                        </div>
+                    </div>
+                `;
+            }
+        });
+        // Update UI for student login status with profile dropdown
+function updateUIForLoginStatus() {
+    const user = getCurrentUser();
+    const authButtons = document.getElementById('auth-buttons');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (user) {
+        // Hide auth buttons, show user menu
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        // Update user information in dropdown
+        updateUserDropdown(user);
+        
+    } else {
+        // Show auth buttons, hide user menu
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// Update dropdown with student information
+function updateUserDropdown(user) {
+    // Safely get all elements
+    const navbarUsername = document.getElementById('navbar-username');
+    const navbarAvatar = document.getElementById('navbar-avatar');
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownAvatar = document.getElementById('dropdown-avatar');
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    
+    // Update basic user information
+    if (navbarUsername) navbarUsername.textContent = user.name || 'Student';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'Student';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    
+    // Update avatar with student color
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Student')}&background=20c997&color=fff&size=`;
+    
+    if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+    if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+    
+    // Update eco-points - ALWAYS show for student interface
+    const points = user.points || 0;
+    if (navbarPoints) navbarPoints.textContent = formatPoints(points);
+    if (dropdownPoints) dropdownPoints.textContent = formatPoints(points);
+    
+    // Update points level styling
+    updatePointsLevelStyling(points);
+}
+
+// Format points with commas
+function formatPoints(points) {
+    return points.toLocaleString();
+}
+function updatePointsLevelStyling(points) {
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    const ecoPointsBadge = document.querySelector('.eco-points-badge');
+    
+    if (!navbarPoints || !ecoPointsBadge) return;
+    
+    // Remove existing level classes
+    ecoPointsBadge.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    navbarPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    if (dropdownPoints) {
+        dropdownPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    }
+    
+    // Add appropriate level class
+    let levelClass = 'points-level-beginner';
+    if (points >= 1000) levelClass = 'points-level-intermediate';
+    if (points >= 5000) levelClass = 'points-level-advanced';
+    if (points >= 10000) levelClass = 'points-level-expert';
+    
+    ecoPointsBadge.classList.add(levelClass);
+    navbarPoints.classList.add(levelClass);
+    if (dropdownPoints) dropdownPoints.classList.add(levelClass);
+}
+
+// Update points in navbar if available
+function updatePointsDisplay(user) {
+    const pointsElement = document.getElementById('navbar-points');
+    if (pointsElement && user.points) {
+        pointsElement.textContent = user.points.toLocaleString();
+    }
+}
+
+// Enhanced logout for student
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize student dropdown
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForLoginStatus();
+    
+    // Update dropdown when user data changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user') {
+            const user = getCurrentUser();
+            if (user) {
+                updateUserDropdown(user);
+            }
+        }
+    });
+});
+    </script>
+</body>
+</html>

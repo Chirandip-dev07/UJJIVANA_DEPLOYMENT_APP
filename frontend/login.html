@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --primary-green: #2ecc71;
+            --secondary-green: #27ae60;
+            --light-green: #d5f4e6;
+            --dark-green: #1e8449;
+            --accent-yellow: #f1c40f;
+            --accent-blue: #3498db;
+            --accent-orange: #e67e22;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .brand-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, var(--primary-green), var(--accent-blue));
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .logo i {
+            font-size: 1.8rem;
+            margin-right: 10px;
+            animation: leaf-grow 2s infinite alternate;
+        }
+        
+        @keyframes leaf-grow {
+            0% { transform: scale(1) rotate(0deg); }
+            100% { transform: scale(1.1) rotate(5deg); }
+        }
+        
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .auth-form {
+            padding: 40px;
+        }
+        
+        .auth-quote {
+            background: linear-gradient(45deg, var(--primary-green), var(--accent-blue), var(--accent-orange));
+            background-size: 400% 400%;
+            animation: gradientShift 10s ease infinite;
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .quote-header {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quote-text {
+            font-size: 1.4rem;
+            font-style: italic;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .quote-author {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 0.2rem rgba(46, 204, 113, 0.25);
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, var(--primary-green), var(--secondary-green));
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+        
+        .password-toggle {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border: 1px solid #e0e0e0;
+            border-left: none;
+            background-color: white;
+        }
+        
+        .password-toggle:hover {
+            background-color: #f8f9fa;
+        }
+        
+        footer {
+            background: linear-gradient(to right, #2c3e50, #34495e);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 40px;
+        }
+        
+        .form-title {
+            color: var(--dark-green);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .form-subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        
+        .role-selection .form-check {
+            flex: 1;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 10px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .role-selection .form-check-input {
+            display: none;
+        }
+        
+        .role-selection .form-check-label {
+            width: 100%;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .role-selection .form-check-input:checked + .form-check-label {
+            color: var(--primary-green);
+        }
+        
+        .role-selection .form-check-input:checked ~ .form-check-label {
+            border-color: var(--primary-green);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary-green);
+            border-color: var(--primary-green);
+        }
+        /* Login Animation Styles */
+.login-animation-container {
+    height: 150px;
+    position: relative;
+    margin-bottom: 2rem;
+    background: linear-gradient(180deg, #e3f2fd 0%, #f5f7fa 100%);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid #e0e0e0;
+}
+
+.animated-scene {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* Background Elements */
+.scene-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.tree {
+    position: absolute;
+    bottom: 0;
+    width: 30px;
+    background: linear-gradient(90deg, #5d4037, #4e342e);
+}
+
+.tree-left {
+    left: 20%;
+    height: 60px;
+}
+
+.tree-right {
+    right: 20%;
+    height: 80px;
+}
+
+.tree::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: -15px;
+    width: 60px;
+    height: 40px;
+    background: #2e7d32;
+    border-radius: 50% 50% 40% 40%;
+    box-shadow: 0 0 10px rgba(46, 125, 50, 0.3);
+}
+
+.sun {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    width: 30px;
+    height: 30px;
+    background: #ffeb3b;
+    border-radius: 50%;
+    box-shadow: 0 0 20px #ffeb3b;
+    animation: sun-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes sun-glow {
+    0% { box-shadow: 0 0 20px #ffeb3b; }
+    100% { box-shadow: 0 0 30px #ffeb3b, 0 0 40px #ff9800; }
+}
+
+.cloud {
+    position: absolute;
+    background: white;
+    border-radius: 50px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.cloud-1 {
+    top: 30px;
+    left: 10%;
+    width: 40px;
+    height: 20px;
+    animation: cloud-drift 20s linear infinite;
+}
+
+.cloud-2 {
+    top: 50px;
+    left: 40%;
+    width: 60px;
+    height: 25px;
+    animation: cloud-drift 25s linear infinite;
+}
+
+@keyframes cloud-drift {
+    0% { transform: translateX(-100px); }
+    100% { transform: translateX(400px); }
+}
+
+/* Door Styles */
+.login-door {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+.door-frame {
+    width: 80px;
+    height: 120px;
+    background: linear-gradient(45deg, #8d6e63, #5d4037);
+    border-radius: 10px 10px 0 0;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.door {
+    width: 70px;
+    height: 110px;
+    background: linear-gradient(45deg, #795548, #4e342e);
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    border-radius: 5px 5px 0 0;
+    transform-origin: left center;
+    transition: transform 1s ease-in-out;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.door-handle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background: #ffd54f;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #ffd54f;
+}
+
+.door-opening {
+    transform: perspective(500px) rotateY(-45deg);
+}
+
+.door-welcoming {
+    transform: perspective(500px) rotateY(-60deg);
+}
+
+/* Character Styles */
+.login-character {
+    position: absolute;
+    bottom: 10px;
+    right: -50px;
+    z-index: 5;
+    transition: all 2s ease-in-out;
+}
+
+.character-body {
+    position: relative;
+    width: 40px;
+    height: 60px;
+}
+
+.head {
+    position: absolute;
+    top: 0;
+    left: 15px;
+    width: 20px;
+    height: 20px;
+    background: #ffb74d;
+    border-radius: 50%;
+    z-index: 3;
+}
+
+.body {
+    position: absolute;
+    top: 18px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    background: #4fc3f7;
+    border-radius: 10px;
+    z-index: 2;
+}
+
+.arm {
+    position: absolute;
+    top: 20px;
+    width: 8px;
+    height: 20px;
+    background: #ffb74d;
+    border-radius: 4px;
+    transform-origin: top center;
+}
+
+.arm-left {
+    left: 5px;
+    transform: rotate(20deg);
+    animation: arm-swing 2s ease-in-out infinite;
+}
+
+.arm-right {
+    right: 5px;
+    transform: rotate(-20deg);
+    animation: arm-swing 2s ease-in-out infinite 0.5s;
+}
+
+.leg {
+    position: absolute;
+    top: 45px;
+    width: 8px;
+    height: 25px;
+    background: #1976d2;
+    border-radius: 4px;
+    transform-origin: top center;
+}
+
+.leg-left {
+    left: 12px;
+    animation: leg-walk 1s ease-in-out infinite;
+}
+
+.leg-right {
+    right: 12px;
+    animation: leg-walk 1s ease-in-out infinite 0.5s;
+}
+
+@keyframes arm-swing {
+    0%, 100% { transform: rotate(20deg); }
+    50% { transform: rotate(-10deg); }
+}
+
+@keyframes leg-walk {
+    0%, 100% { transform: rotate(15deg); }
+    50% { transform: rotate(-15deg); }
+}
+
+.character-walking {
+    animation: character-walk 2s ease-in-out;
+}
+
+@keyframes character-walk {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-280px); }
+}
+
+.character-entering {
+    animation: character-enter 1s ease-in-out forwards;
+}
+
+@keyframes character-enter {
+    0% { transform: translateX(-280px); }
+    100% { transform: translateX(-320px) scale(0.8); }
+}
+
+/* Welcome Effect */
+.welcome-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+.sparkle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ffeb3b;
+    border-radius: 50%;
+    animation: sparkle-pop 0.6s ease-out;
+}
+
+.sparkle-1 {
+    top: -20px;
+    left: -20px;
+    animation-delay: 0.1s;
+}
+
+.sparkle-2 {
+    top: -30px;
+    right: -10px;
+    animation-delay: 0.3s;
+}
+
+.sparkle-3 {
+    bottom: -25px;
+    left: 0;
+    animation-delay: 0.5s;
+}
+
+@keyframes sparkle-pop {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2) rotate(180deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.welcome-active {
+    opacity: 1;
+}
+
+/* Progress Indicator */
+.login-progress {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 2s ease-in-out;
+}
+
+.progress-text {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.progress-active {
+    opacity: 1;
+}
+
+.progress-complete .progress-fill {
+    width: 100%;
+}
+
+/* Button States */
+.login-btn.animating .btn-text {
+    display: none;
+}
+
+.login-btn.animating .btn-loading {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Success State */
+.login-success .login-character {
+    animation: success-bounce 0.5s ease-in-out;
+}
+
+@keyframes success-bounce {
+    0%, 100% { transform: translateX(-320px) scale(0.8); }
+    50% { transform: translateX(-320px) scale(0.9); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .login-animation-container {
+        height: 120px;
+    }
+    
+    .door-frame {
+        width: 60px;
+        height: 90px;
+    }
+    
+    .door {
+        width: 50px;
+        height: 80px;
+    }
+    
+    .character-body {
+        transform: scale(0.8);
+    }
+}
+/* Login Animation Styles */
+.login-animation-container {
+    height: 150px;
+    position: relative;
+    margin-bottom: 2rem;
+    background: linear-gradient(180deg, #e3f2fd 0%, #f5f7fa 100%);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid #e0e0e0;
+}
+
+.animated-scene {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* Background Elements */
+.scene-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.tree {
+    position: absolute;
+    bottom: 0;
+    width: 30px;
+    background: linear-gradient(90deg, #5d4037, #4e342e);
+}
+
+.tree-left {
+    left: 20%;
+    height: 60px;
+}
+
+.tree-right {
+    right: 20%;
+    height: 80px;
+}
+
+.tree::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: -15px;
+    width: 60px;
+    height: 40px;
+    background: #2e7d32;
+    border-radius: 50% 50% 40% 40%;
+    box-shadow: 0 0 10px rgba(46, 125, 50, 0.3);
+}
+
+.sun {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    width: 30px;
+    height: 30px;
+    background: #ffeb3b;
+    border-radius: 50%;
+    box-shadow: 0 0 20px #ffeb3b;
+    animation: sun-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes sun-glow {
+    0% { box-shadow: 0 0 20px #ffeb3b; }
+    100% { box-shadow: 0 0 30px #ffeb3b, 0 0 40px #ff9800; }
+}
+
+.cloud {
+    position: absolute;
+    background: white;
+    border-radius: 50px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.cloud-1 {
+    top: 30px;
+    left: 10%;
+    width: 40px;
+    height: 20px;
+    animation: cloud-drift 20s linear infinite;
+}
+
+.cloud-2 {
+    top: 50px;
+    left: 40%;
+    width: 60px;
+    height: 25px;
+    animation: cloud-drift 25s linear infinite;
+}
+
+@keyframes cloud-drift {
+    0% { transform: translateX(-100px); }
+    100% { transform: translateX(400px); }
+}
+
+/* Door Styles */
+.login-door {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+.door-frame {
+    width: 80px;
+    height: 120px;
+    background: linear-gradient(45deg, #8d6e63, #5d4037);
+    border-radius: 10px 10px 0 0;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.door {
+    width: 70px;
+    height: 110px;
+    background: linear-gradient(45deg, #795548, #4e342e);
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    border-radius: 5px 5px 0 0;
+    transform-origin: left center;
+    transition: transform 1s ease-in-out;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.door-handle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background: #ffd54f;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #ffd54f;
+}
+
+.door-lock {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 12px;
+    background: #ffd54f;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.door-locked .door-lock {
+    opacity: 1;
+    animation: lock-shine 1s ease-in-out infinite;
+}
+
+@keyframes lock-shine {
+    0%, 100% { box-shadow: 0 0 5px #ffd54f; }
+    50% { box-shadow: 0 0 10px #ffd54f, 0 0 15px #ffd54f; }
+}
+
+.door-opening {
+    transform: perspective(500px) rotateY(-45deg);
+}
+
+.door-welcoming {
+    transform: perspective(500px) rotateY(-60deg);
+}
+
+.door-locked {
+    animation: door-shake 0.5s ease-in-out;
+}
+
+@keyframes door-shake {
+    0%, 100% { transform: perspective(500px) rotateY(0deg); }
+    25% { transform: perspective(500px) rotateY(-5deg); }
+    75% { transform: perspective(500px) rotateY(5deg); }
+}
+
+/* Character Styles */
+.login-character {
+    position: absolute;
+    bottom: 10px;
+    right: -50px;
+    z-index: 5;
+    transition: all 2s ease-in-out;
+}
+
+.character-body {
+    position: relative;
+    width: 40px;
+    height: 60px;
+}
+
+.head {
+    position: absolute;
+    top: 0;
+    left: 15px;
+    width: 20px;
+    height: 20px;
+    background: #ffb74d;
+    border-radius: 50%;
+    z-index: 3;
+}
+
+.body {
+    position: absolute;
+    top: 18px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    background: #4fc3f7;
+    border-radius: 10px;
+    z-index: 2;
+}
+
+.arm {
+    position: absolute;
+    top: 20px;
+    width: 8px;
+    height: 20px;
+    background: #ffb74d;
+    border-radius: 4px;
+    transform-origin: top center;
+}
+
+.arm-left {
+    left: 5px;
+    transform: rotate(20deg);
+    animation: arm-swing 2s ease-in-out infinite;
+}
+
+.arm-right {
+    right: 5px;
+    transform: rotate(-20deg);
+    animation: arm-swing 2s ease-in-out infinite 0.5s;
+}
+
+.leg {
+    position: absolute;
+    top: 45px;
+    width: 8px;
+    height: 25px;
+    background: #1976d2;
+    border-radius: 4px;
+    transform-origin: top center;
+}
+
+.leg-left {
+    left: 12px;
+    animation: leg-walk 1s ease-in-out infinite;
+}
+
+.leg-right {
+    right: 12px;
+    animation: leg-walk 1s ease-in-out infinite 0.5s;
+}
+
+@keyframes arm-swing {
+    0%, 100% { transform: rotate(20deg); }
+    50% { transform: rotate(-10deg); }
+}
+
+@keyframes leg-walk {
+    0%, 100% { transform: rotate(15deg); }
+    50% { transform: rotate(-15deg); }
+}
+
+.character-walking {
+    animation: character-walk 2s ease-in-out forwards;
+}
+
+@keyframes character-walk {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-280px); }
+}
+
+.character-entering {
+    animation: character-enter 1s ease-in-out forwards;
+}
+
+@keyframes character-enter {
+    0% { transform: translateX(-280px); }
+    100% { transform: translateX(-320px) scale(0.8); }
+}
+
+.character-walking-away {
+    animation: character-walk-away 2s ease-in-out forwards;
+}
+
+@keyframes character-walk-away {
+    0% { transform: translateX(-280px) scaleX(1); }
+    50% { transform: translateX(-140px) scaleX(-1); }
+    100% { transform: translateX(0) scaleX(-1); }
+}
+
+.character-disappointed {
+    animation: character-disappoint 0.5s ease-in-out;
+}
+
+@keyframes character-disappoint {
+    0%, 100% { transform: translateX(-280px) scaleX(1); }
+    50% { transform: translateX(-280px) translateY(-5px) scaleX(1); }
+}
+
+/* Welcome Effect */
+.welcome-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+.sparkle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ffeb3b;
+    border-radius: 50%;
+    animation: sparkle-pop 0.6s ease-out;
+}
+
+.sparkle-1 {
+    top: -20px;
+    left: -20px;
+    animation-delay: 0.1s;
+}
+
+.sparkle-2 {
+    top: -30px;
+    right: -10px;
+    animation-delay: 0.3s;
+}
+
+.sparkle-3 {
+    bottom: -25px;
+    left: 0;
+    animation-delay: 0.5s;
+}
+
+@keyframes sparkle-pop {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2) rotate(180deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.welcome-active {
+    opacity: 1;
+}
+
+/* Progress Indicator */
+.login-progress {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 2s ease-in-out;
+}
+
+.progress-text {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.progress-active {
+    opacity: 1;
+}
+
+.progress-complete .progress-fill {
+    width: 100%;
+}
+
+/* Button States */
+.login-btn.animating .btn-text {
+    display: none;
+}
+
+.login-btn.animating .btn-loading {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Success State */
+.login-success .login-character {
+    animation: success-bounce 0.5s ease-in-out;
+}
+
+@keyframes success-bounce {
+    0%, 100% { transform: translateX(-320px) scale(0.8); }
+    50% { transform: translateX(-320px) scale(0.9); }
+}
+
+/* Welcome Modal */
+.success-icon {
+    font-size: 4rem;
+    color: #28a745;
+    animation: success-icon 0.6s ease-out;
+}
+
+@keyframes success-icon {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .login-animation-container {
+        height: 120px;
+    }
+    
+    .door-frame {
+        width: 60px;
+        height: 90px;
+    }
+    
+    .door {
+        width: 50px;
+        height: 80px;
+    }
+    
+    .character-body {
+        transform: scale(0.8);
+    }
+}
+/* Quote Section Styles */
+.auth-quote {
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-quote::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.auth-quote .text-center {
+    position: relative;
+    z-index: 2;
+}
+
+.auth-quote h4 {
+    font-size: 1.4rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-quote p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.quote-refresh-hint {
+    opacity: 0.7;
+    font-size: 0.8rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Smooth transition for quote changes */
+.auth-quote h4, .auth-quote p {
+    transition: opacity 0.5s ease-in-out;
+}
+
+.quote-changing {
+    opacity: 0.5;
+}
+
+/* Floating animation for quote icon */
+.auth-quote .fa-quote-left {
+    animation: float-quote 4s ease-in-out infinite;
+}
+
+@keyframes float-quote {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Gradient text effect for quotes */
+.auth-quote h4 {
+    background: linear-gradient(45deg, #ffffff, #e8f5e9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .auth-quote h4 {
+        font-size: 1.2rem;
+        min-height: 100px;
+    }
+    
+    .auth-quote p {
+        font-size: 1rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top navbar-locked navbar-blur">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Learning
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="modules.html">Modules</a></li>
+                        <li><a class="dropdown-item" href="quiz.html">Assessments</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Community
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="challenges.html">Challenges</a></li>
+                        <li><a class="dropdown-item" href="leaderboard.html">Leaderboard</a></li>
+                        <li><a class="dropdown-item" href="eco-map-student.html">Eco-Map</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="redeem.html">Rewards</a>
+                </li>
+            </ul>
+            
+            <div class="d-flex" id="auth-buttons">
+                <a href="login.html" class="btn btn-outline-success me-2 auth-link">Login</a>
+                <a href="register.html" class="btn btn-success auth-link">Sign Up</a>
+            </div>
+            
+            <div class="d-none" id="user-menu">
+                <div class="dropdown">
+                    <a class="btn btn-outline-success dropdown-toggle" href="#" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-1"></i>
+                        <span id="username-display">User</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+    <!-- Login Content -->
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 auth-container">
+            <div class="row">
+                <div class="col-md-6 auth-form">
+                    <h2 class="text-center mb-4">Login to Your Account</h2>
+                    
+                    <!-- Animated Login Container -->
+                    <div class="login-animation-container mb-4" id="login-animation-container">
+                        <div class="animated-scene">
+                            <!-- Background Elements -->
+                            <div class="scene-background">
+                                <div class="tree tree-left"></div>
+                                <div class="tree tree-right"></div>
+                                <div class="sun"></div>
+                                <div class="cloud cloud-1"></div>
+                                <div class="cloud cloud-2"></div>
+                            </div>
+                            
+                            <!-- Door Element -->
+                            <div class="login-door">
+                                <div class="door-frame">
+                                    <div class="door" id="login-door">
+                                        <div class="door-handle"></div>
+                                        <div class="door-lock" id="door-lock"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Character Element -->
+                            <div class="login-character" id="login-character">
+                                <div class="character-body">
+                                    <div class="head"></div>
+                                    <div class="body"></div>
+                                    <div class="arm arm-left"></div>
+                                    <div class="arm arm-right"></div>
+                                    <div class="leg leg-left"></div>
+                                    <div class="leg leg-right"></div>
+                                </div>
+                                <div class="welcome-effect" id="welcome-effect">
+                                    <div class="sparkle sparkle-1"></div>
+                                    <div class="sparkle sparkle-2"></div>
+                                    <div class="sparkle sparkle-3"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Progress Indicator -->
+                            <div class="login-progress" id="login-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill"></div>
+                                </div>
+                                <div class="progress-text">Signing you in...</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="login-email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="login-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="login-password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="login-password" required>
+                                <button class="btn btn-outline-secondary" type="button" id="toggle-password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember-me">
+                            <label class="form-check-label" for="remember-me">Remember me</label>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 py-2 login-btn" id="login-btn">
+                            <span class="btn-text">Login</span>
+                            <div class="btn-loading d-none">
+                                <div class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <span class="ms-2">Signing In...</span>
+                            </div>
+                        </button>
+                        <div class="text-center mt-3">
+                            <p>Don't have an account? <a href="register.html">Register here</a></p>
+                        </div>
+                        <div id="login-error" class="alert alert-danger mt-3 d-none">
+                            Invalid credentials - please check your email and password
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6 auth-quote">
+    <div class="text-center">
+        <i class="fas fa-quote-left fa-3x mb-3"></i>
+        <h4 id="quote-text">"The Earth does not belong to us: we belong to the Earth."</h4>
+        <p id="quote-author">— Marlee Matlin</p>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Welcome Back Popup -->
+<div class="modal fade" id="welcomeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center p-5">
+                <div class="success-icon mb-3">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 class="text-success mb-3">Welcome Back!</h3>
+                <p class="mb-4">You have successfully logged in to Ujjivana.</p>
+                <div class="spinner-border text-success mb-3" role="status">
+                    <span class="visually-hidden">Redirecting...</span>
+                </div>
+                <p class="text-muted">Redirecting to your dashboard...</p>
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Ujjivana</h5>
+                    <p>Gamifying environmental education for a sustainable future.</p>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">About</a></li>
+                        <li><a href="modules.html" class="text-white text-decoration-none">Modules</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@ujjivana.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe for updates on new features and content.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-success" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2023 Ujjivana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+    // Login Animation Functions
+function initializeLoginAnimation() {
+    const loginForm = document.getElementById('login-form');
+    const loginBtn = document.getElementById('login-btn');
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLoginWithAnimation);
+    }
+}
+
+async function handleLoginWithAnimation(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const loginBtn = document.getElementById('login-btn');
+    const errorDiv = document.getElementById('login-error');
+    
+    // Hide any previous errors
+    errorDiv.classList.add('d-none');
+    
+    // Start animation and login process
+    await startLoginAnimation(email, password);
+}
+
+async function startLoginAnimation(email, password) {
+    const loginBtn = document.getElementById('login-btn');
+    const character = document.getElementById('login-character');
+    const door = document.getElementById('login-door');
+    
+    // Disable form and show loading state
+    loginBtn.disabled = true;
+    loginBtn.classList.add('animating');
+    
+    try {
+        // Phase 1: Character walks to door
+        character.classList.add('character-walking');
+        
+        // Wait for character to reach the door
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Phase 2: Attempt login using your existing function
+        await performActualLogin(email, password);
+        
+        // If login succeeds, continue with success animation
+        await playSuccessAnimation();
+        
+    } catch (error) {
+        // Login failed - play failure animation
+        await playFailureAnimation();
+        
+        // Show error message
+        const errorDiv = document.getElementById('login-error');
+        errorDiv.textContent = error.message;
+        errorDiv.classList.remove('d-none');
+        
+        // Re-enable the login button
+        loginBtn.disabled = false;
+        loginBtn.classList.remove('animating');
+    }
+}
+
+async function performActualLogin(email, password) {
+    // Use your existing login function but prevent it from redirecting immediately
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Store the original login function behavior
+            const originalLogin = window.login;
+            
+            // Create a wrapper that resolves/rejects based on login outcome
+            const response = await originalLogin(email, password);
+            
+            // If we reach here, login was successful
+            // But we need to prevent the immediate redirect from the original function
+            // We'll handle the redirect in our animation instead
+            console.log('Login successful, waiting for animation to complete');
+            resolve(response);
+            
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+async function playSuccessAnimation() {
+    return new Promise((resolve) => {
+        const character = document.getElementById('login-character');
+        const door = document.getElementById('login-door');
+        const progress = document.getElementById('login-progress');
+        const welcomeEffect = document.getElementById('welcome-effect');
+        const animationContainer = document.querySelector('.login-animation-container');
+        
+        // Phase 3: Door opens
+        door.classList.add('door-opening');
+        
+        setTimeout(() => {
+            // Phase 4: Door opens wider
+            door.classList.remove('door-opening');
+            door.classList.add('door-welcoming');
+            
+            // Phase 5: Character enters
+            character.classList.remove('character-walking');
+            character.classList.add('character-entering');
+            
+            setTimeout(() => {
+                // Phase 6: Show progress and welcome effect
+                progress.classList.add('progress-active');
+                setTimeout(() => {
+                    progress.classList.add('progress-complete');
+                }, 100);
+                
+                // Show welcome sparkles
+                welcomeEffect.classList.add('welcome-active');
+                
+                // Phase 7: Success animation
+                animationContainer.classList.add('login-success');
+                
+                // Phase 8: Show welcome popup after delay
+                setTimeout(() => {
+                    showWelcomePopup();
+                    resolve();
+                }, 1500);
+                
+            }, 1000);
+            
+        }, 500);
+    });
+}
+
+async function playFailureAnimation() {
+    return new Promise((resolve) => {
+        const character = document.getElementById('login-character');
+        const door = document.getElementById('login-door');
+        const doorLock = document.getElementById('door-lock');
+        
+        // Show lock on door
+        door.classList.add('door-locked');
+        
+        // Character shows disappointment
+        character.classList.add('character-disappointed');
+        
+        setTimeout(() => {
+            // Remove disappointment animation
+            character.classList.remove('character-disappointed');
+            
+            // Character turns around and walks away
+            character.classList.remove('character-walking');
+            character.classList.add('character-walking-away');
+            
+            // Remove door lock and shake
+            setTimeout(() => {
+                door.classList.remove('door-locked');
+                
+                // Reset character position after walking away
+                setTimeout(() => {
+                    resetLoginAnimation();
+                    resolve();
+                }, 2000);
+            }, 500);
+            
+        }, 1000);
+    });
+}
+
+function resetLoginAnimation() {
+    const character = document.getElementById('login-character');
+    const door = document.getElementById('login-door');
+    const progress = document.getElementById('login-progress');
+    const welcomeEffect = document.getElementById('welcome-effect');
+    const animationContainer = document.querySelector('.login-animation-container');
+    
+    // Reset all animations
+    character.classList.remove('character-walking', 'character-entering', 'character-walking-away', 'character-disappointed');
+    character.style.transform = '';
+    
+    // Reset door
+    door.classList.remove('door-opening', 'door-welcoming', 'door-locked');
+    
+    // Reset progress
+    progress.classList.remove('progress-active', 'progress-complete');
+    
+    // Reset welcome effect
+    welcomeEffect.classList.remove('welcome-active');
+    
+    // Reset success state
+    animationContainer.classList.remove('login-success');
+    
+    // Reset progress bar width
+    const progressFill = document.querySelector('.progress-fill');
+    progressFill.style.width = '0%';
+}
+
+function showWelcomePopup() {
+    const user = getCurrentUser();
+    const welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
+    
+    // Show the welcome modal
+    welcomeModal.show();
+    
+    // Determine redirect URL based on user role
+    let redirectUrl = 'index.html';
+    if (user && user.role) {
+        if (user.role === 'teacher') {
+            redirectUrl = 'teacher-dashboard.html';
+        } else if (user.role === 'admin') {
+            redirectUrl = 'admin-home.html';
+        }
+    }
+    
+    // Redirect after 3 seconds
+    setTimeout(() => {
+        window.location.href = redirectUrl;
+    }, 3000);
+}
+
+function getCurrentUser() {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+}
+
+// Toggle password visibility
+document.getElementById('toggle-password').addEventListener('click', function() {
+    const passwordInput = document.getElementById('login-password');
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+});
+
+// Initialize login animation when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    initializeLoginAnimation();
+});
+</script>
+<script>
+    // Eco Quotes Collection
+const ecoQuotes = [
+    {
+        text: "The Earth does not belong to us: we belong to the Earth.",
+        author: "Marlee Matlin"
+    },
+    {
+        text: "The greatest threat to our planet is the belief that someone else will save it.",
+        author: "Robert Swan"
+    },
+    {
+        text: "We won't have a society if we destroy the environment.",
+        author: "Margaret Mead"
+    },
+    {
+        text: "What we are doing to the forests of the world is but a mirror reflection of what we are doing to ourselves and to one another.",
+        author: "Mahatma Gandhi"
+    },
+    {
+        text: "The environment is where we all meet; where we all have a mutual interest; it is the one thing all of us share.",
+        author: "Lady Bird Johnson"
+    },
+    {
+        text: "Time spent among trees is never time wasted.",
+        author: "Anonymous"
+    },
+    {
+        text: "He that plants trees loves others beside himself.",
+        author: "Thomas Fuller"
+    },
+    {
+        text: "The clearest way into the Universe is through a forest wilderness.",
+        author: "John Muir"
+    },
+    {
+        text: "Nature is not a place to visit. It is home.",
+        author: "Gary Snyder"
+    },
+    {
+        text: "We don't inherit the earth from our ancestors, we borrow it from our children.",
+        author: "Native American Proverb"
+    },
+    {
+        text: "The poetry of the earth is never dead.",
+        author: "John Keats"
+    },
+    {
+        text: "Look deep into nature, and then you will understand everything better.",
+        author: "Albert Einstein"
+    },
+    {
+        text: "To leave the world better than you found it, sometimes you have to pick up other people's trash.",
+        author: "Bill Nye"
+    },
+    {
+        text: "What is the use of a house if you haven't got a tolerable planet to put it on?",
+        author: "Henry David Thoreau"
+    },
+    {
+        text: "The environment and the economy are really both two sides of the same coin. If we cannot sustain the environment, we cannot sustain ourselves.",
+        author: "Wangari Maathai"
+    },
+    {
+        text: "One of the first conditions of happiness is that the link between man and nature shall not be broken.",
+        author: "Leo Tolstoy"
+    },
+    {
+        text: "The wonder is that we can see these trees and not wonder more.",
+        author: "Ralph Waldo Emerson"
+    },
+    {
+        text: "Teaching children about the natural world should be treated as one of the most important events in their lives.",
+        author: "Thomas Berry"
+    },
+    {
+        text: "The creation of a thousand forests is in one acorn.",
+        author: "Ralph Waldo Emerson"
+    },
+    {
+        text: "Nature is painting for us, day after day, pictures of infinite beauty.",
+        author: "John Ruskin"
+    }
+];
+
+// Function to get a random quote
+function getRandomQuote(currentQuote = null) {
+    let randomIndex;
+    do {
+        randomIndex = Math.floor(Math.random() * ecoQuotes.length);
+    } while (currentQuote && ecoQuotes[randomIndex].text === currentQuote);
+    
+    return ecoQuotes[randomIndex];
+}
+
+// Function to display random quote
+function displayRandomQuote() {
+    const quoteTextElement = document.getElementById('quote-text');
+    const quoteAuthorElement = document.getElementById('quote-author');
+    const currentQuote = quoteTextElement ? quoteTextElement.textContent.replace(/"/g, '') : null;
+    
+    if (quoteTextElement && quoteAuthorElement) {
+        // Add changing class for transition
+        quoteTextElement.classList.add('quote-changing');
+        quoteAuthorElement.classList.add('quote-changing');
+        
+        setTimeout(() => {
+            const quote = getRandomQuote(currentQuote);
+            quoteTextElement.textContent = `"${quote.text}"`;
+            quoteAuthorElement.textContent = `— ${quote.author}`;
+            
+            // Remove changing class after update
+            setTimeout(() => {
+                quoteTextElement.classList.remove('quote-changing');
+                quoteAuthorElement.classList.remove('quote-changing');
+            }, 50);
+        }, 500);
+    }
+}
+
+// Display random quote when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    displayRandomQuote();
+    
+    // Change quote every 30 seconds
+    setInterval(displayRandomQuote, 30000);
+    
+    // Optional: Add click to refresh functionality
+    const quoteSection = document.querySelector('.auth-quote');
+    if (quoteSection) {
+        quoteSection.style.cursor = 'pointer';
+        quoteSection.addEventListener('click', displayRandomQuote);
+        quoteSection.title = 'Click for a new quote';
+    }
+});
+</script>
+</body>
+</html>

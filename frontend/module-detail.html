@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Details - Ujjivana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .module-detail-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .lesson-card {
+            border-left: 4px solid #4CAF50;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .lesson-card.completed {
+            border-left-color: #28a745;
+            background-color: #f8fff9;
+        }
+        .lesson-card.current {
+            border-left-color: #ff9800;
+            box-shadow: 0 4px 15px rgba(255,152,0,0.2);
+        }
+        .progress-bar {
+            background-color: #4CAF50;
+            height: 8px;
+            border-radius: 10px;
+        }
+        .completion-badge {
+            background-color: #28a745;
+        }
+        .module-header {
+            background: linear-gradient(135deg, #4CAF50, #81C784);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .module-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(30deg);
+        }
+        .module-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 1.5rem 0;
+        }
+        .stat-item {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        .lesson-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .btn-lesson-action {
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-complete {
+            background: #4CAF50;
+            color: white;
+            border: none;
+        }
+        .btn-complete:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(76,175,80,0.3);
+        }
+        .btn-completed {
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <i class="fas fa-leaf me-2"></i>Ujjivana
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+                        Learning
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item active" href="modules.html">Modules</a></li>
+                        <li><a class="dropdown-item" href="quiz.html">Assessments</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown">
+                        Community
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="challenges.html">Challenges</a></li>
+                        <li><a class="dropdown-item" href="leaderboard.html">Leaderboard</a></li>
+                        <li><a class="dropdown-item" href="eco-map-student.html">Eco-Map</a></li>
+                        <li><a class="dropdown-item" href="events.html">Events</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="redeem.html">Rewards</a>
+                </li>
+            </ul>
+            
+            <!-- Profile Dropdown -->
+<div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=32" 
+             class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+        <span id="navbar-username">User</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <div class="dropdown-header text-center">
+                <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=64" 
+                     class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                <small class="text-muted" id="dropdown-email">user@example.com</small>
+                
+                <!-- Eco-points display in dropdown -->
+                <div class="eco-points-display mt-2">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="fas fa-leaf text-success me-2"></i>
+                        <span class="fw-bold text-success" id="dropdown-points">0</span>
+                        <span class="text-muted ms-1">Eco-Points</span>
+                    </div>
+                </div>
+                
+                <span class="badge user-role-badge student-badge mt-2">Student</span>
+            </div>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="profile.html">
+                <i class="fas fa-user"></i>My Profile
+            </a>
+        </li>
+       
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="help.html">
+                <i class="fas fa-question-circle"></i>Help & Support
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+</div>
+        </div>
+    </div>
+</nav>
+
+    <!-- Module Detail Content -->
+    <div class="module-detail-container py-5">
+        <div id="module-not-found" class="alert alert-danger d-none">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Module not found. Please return to the <a href="modules.html">modules page</a>.
+        </div>
+        <div id="module-content" class="d-none">
+            <div class="module-header">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb" style="background: transparent; color: rgba(255,255,255,0.8);">
+                                <li class="breadcrumb-item"><a href="index.html" style="color: rgba(255,255,255,0.8);">Home</a></li>
+                                <li class="breadcrumb-item"><a href="modules.html" style="color: rgba(255,255,255,0.8);">Modules</a></li>
+                                <li class="breadcrumb-item active" id="module-breadcrumb" style="color: white;">Module Details</li>
+                            </ol>
+                        </nav>
+                        <div class="module-icon">
+                            <i id="module-icon" class="fas fa-book"></i>
+                        </div>
+                        <h1 id="module-title" class="mb-2">Module Title</h1>
+                        <p id="module-category" class="mb-0">Category</p>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-warning status-badge" id="module-status">Not Started</span>
+                        <p class="small mb-0 mt-1" style="opacity: 0.9;" id="module-progress">Progress: 0%</p>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="module-time">0</div>
+                        <div class="stat-label">Minutes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="module-lesson-count">0</div>
+                        <div class="stat-label">Lessons</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="module-points">0</div>
+                        <div class="stat-label">Points</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="completed-lessons">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">About This Module</h5>
+                    <p id="module-description" class="card-text">Module description will appear here.</p>
+                </div>
+            </div>
+
+            <div class="progress mb-4" style="height: 12px; border-radius: 10px;">
+                <div class="progress-bar" role="progressbar" id="progress-bar" style="width: 0%; border-radius: 10px;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+
+            <h3 class="mb-4">Lessons</h3>
+            <div id="lessons-container">
+                <!-- Lessons will be dynamically added here -->
+                <div class="text-center py-4">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Loading lessons...</span>
+                    </div>
+                    <p class="mt-2">Loading lessons...</p>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-5">
+                <a href="modules.html" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Modules
+                </a>
+                <button id="complete-module-btn" class="btn btn-success d-none">
+                    <i class="fas fa-check me-1"></i> Complete Module
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        function getModuleId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        function formatTime(minutes) {
+            if (minutes < 60) {
+                return `${minutes} min`;
+            } else {
+                const hours = Math.floor(minutes / 60);
+                const mins = minutes % 60;
+                return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+            }
+        }
+
+        function getModuleIcon(category) {
+            const icons = {
+                'Green Habits': 'leaf',
+                'Global Warming': 'temperature-high',
+                'Biodiversity': 'paw',
+                'Sustainable Development': 'recycle',
+                'Renewable Energy': 'solar-panel',
+                'Waste Management': 'trash-alt'
+            };
+            return icons[category] || 'book';
+        }
+
+        async function loadModuleDetails() {
+    const moduleId = getModuleId();
+    if (!moduleId) {
+        document.getElementById('module-not-found').classList.remove('d-none');
+        return;
+    }
+
+    try {
+        // Show loading state
+        document.getElementById('module-content').classList.add('d-none');
+        document.getElementById('module-not-found').classList.add('d-none');
+
+        const [moduleResponse, progressResponse] = await Promise.all([
+            apiCall(`/modules/${moduleId}`),
+            apiCall(`/modules/${moduleId}/progress`)
+        ]);
+
+        const module = moduleResponse.data;
+        const progress = progressResponse.data;
+
+        console.log('Module data:', module);
+        console.log('Progress data:', progress);
+
+        document.getElementById('module-title').textContent = module.title;
+        document.getElementById('module-breadcrumb').textContent = module.title;
+        document.getElementById('module-category').textContent = module.category;
+        document.getElementById('module-description').textContent = module.description;
+        document.getElementById('module-time').textContent = module.estimatedTime;
+        document.getElementById('module-lesson-count').textContent = module.lessons ? module.lessons.length : 0;
+        document.getElementById('module-points').textContent = module.points;
+        document.getElementById('module-icon').className = `fas fa-${getModuleIcon(module.category)}`;
+
+        updateProgressUI(progress, module);
+        displayLessons(module.lessons || [], progress);
+
+        document.getElementById('module-content').classList.remove('d-none');
+    } catch (error) {
+        console.error('Error loading module:', error);
+        document.getElementById('module-not-found').classList.remove('d-none');
+    }
+}
+async function testProgress() {
+  const moduleId = '68e433a1a315b9e20e07f86e';
+  const userId = '68cfdc86760c35a15d759574';
+  
+  try {
+    const response = await apiCall(`/modules/debug/${moduleId}/user/${userId}`);
+    console.log('Debug progress response:', response);
+  } catch (error) {
+    console.error('Debug progress error:', error);
+  }
+}
+
+        function updateProgressUI(progress, module) {
+            const completedLessons = progress.completedLessons ? progress.completedLessons.length : 0;
+            const totalLessons = module.lessons.length;
+            const progressPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+
+            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+            document.getElementById('progress-bar').setAttribute('aria-valuenow', progressPercentage);
+            document.getElementById('module-progress').textContent = `Progress: ${Math.round(progressPercentage)}%`;
+            document.getElementById('completed-lessons').textContent = completedLessons;
+
+            const allLessonsCompleted = completedLessons === totalLessons && totalLessons > 0;
+
+            if (progress.isCompleted) {
+                document.getElementById('module-status').textContent = 'Completed';
+                document.getElementById('module-status').className = 'badge bg-success status-badge';
+                document.getElementById('complete-module-btn').classList.add('d-none');
+            } else if (allLessonsCompleted) {
+                document.getElementById('module-status').textContent = 'Ready to Complete';
+                document.getElementById('module-status').className = 'badge bg-warning status-badge';
+                document.getElementById('complete-module-btn').classList.remove('d-none');
+            } else if (progressPercentage > 0) {
+                document.getElementById('module-status').textContent = 'In Progress';
+                document.getElementById('module-status').className = 'badge bg-warning status-badge';
+                document.getElementById('complete-module-btn').classList.add('d-none');
+            } else {
+                document.getElementById('module-status').textContent = 'Not Started';
+                document.getElementById('module-status').className = 'badge bg-secondary status-badge';
+                document.getElementById('complete-module-btn').classList.add('d-none');
+            }
+        }
+
+        function displayLessons(lessons, progress) {
+    const lessonsContainer = document.getElementById('lessons-container');
+    lessonsContainer.innerHTML = '';
+
+    if (!lessons || lessons.length === 0) {
+        lessonsContainer.innerHTML = `
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle me-2"></i> No lessons available for this module.
+            </div>
+        `;
+        return;
+    }
+
+    lessons.sort((a, b) => a.order - b.order);
+
+    // Get completed lessons safely
+    const completedLessons = progress.completedLessons || [];
+    console.log('Completed lessons:', completedLessons);
+    console.log('Total lessons:', lessons.length);
+
+    lessons.forEach((lesson, index) => {
+        const isCompleted = completedLessons.includes(index);
+        
+        // A lesson is current if:
+        // 1. It's the first lesson and not completed, OR
+        // 2. The previous lesson is completed and this one isn't
+        let isCurrent = false;
+        if (!progress.isCompleted) {
+            if (index === 0 && !isCompleted) {
+                isCurrent = true;
+            } else if (index > 0) {
+                const prevLessonCompleted = completedLessons.includes(index - 1);
+                isCurrent = !isCompleted && prevLessonCompleted;
+            }
+        }
+
+        console.log(`Lesson ${index}: completed=${isCompleted}, current=${isCurrent}`);
+
+        let cardClass = 'lesson-card';
+        if (isCompleted) cardClass += ' completed';
+        if (isCurrent) cardClass += ' current';
+
+        const lessonCard = document.createElement('div');
+        lessonCard.className = cardClass;
+        lessonCard.innerHTML = `
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center mb-2">
+                            <h5 class="card-title mb-0 me-3">${lesson.title}</h5>
+                            ${isCompleted ?
+                                '<span class="badge bg-success status-badge"><i class="fas fa-check me-1"></i> Completed</span>' :
+                                (isCurrent ? '<span class="badge bg-warning status-badge"><i class="fas fa-play me-1"></i> Current</span>' :
+                                '<span class="badge bg-secondary status-badge"><i class="fas fa-lock me-1"></i> Locked</span>')
+                            }
+                        </div>
+                        <p class="card-text">${lesson.content}</p>
+                        <small class="text-muted"><i class="fas fa-clock me-1"></i> ${formatTime(lesson.duration)}</small>
+                    </div>
+                    <div class="text-end ms-3">
+                        ${isCompleted ?
+                            '<button class="btn btn-completed btn-lesson-action" disabled><i class="fas fa-check me-1"></i> Completed</button>' :
+                            (isCurrent ?
+                                `<button class="btn btn-complete btn-lesson-action mark-complete-btn" data-index="${index}">
+                                    <i class="fas fa-check me-1"></i> Mark Complete
+                                 </button>` :
+                                '<button class="btn btn-outline-secondary btn-lesson-action" disabled>Locked</button>'
+                            )
+                        }
+                    </div>
+                </div>
+            </div>
+        `;
+        lessonsContainer.appendChild(lessonCard);
+    });
+
+    // Re-attach event listeners to the new buttons
+    document.querySelectorAll('.mark-complete-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            markLessonComplete(this.dataset.index);
+        });
+    });
+}
+
+        async function markLessonComplete(lessonIndex) {
+    const moduleId = getModuleId();
+    try {
+        console.log(`Marking lesson ${lessonIndex} as complete for module ${moduleId}`);
+        
+        const submitBtn = document.querySelector(`.mark-complete-btn[data-index="${lessonIndex}"]`);
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Marking...';
+            submitBtn.disabled = true;
+        }
+
+        const response = await apiCall(`/modules/${moduleId}/progress`, {
+            method: 'PUT',
+            body: { lessonIndex: parseInt(lessonIndex), isCompleted: true }
+        });
+        
+        console.log('Lesson completion response:', response);
+        
+        // Add a small delay to ensure backend processes the update
+        setTimeout(async () => {
+            await loadModuleDetails();
+        }, 500);
+        
+    } catch (error) {
+        console.error('Error marking lesson complete:', error);
+        alert('Error marking lesson as complete. Please try again. Error: ' + error.message);
+        
+        // Re-enable the button on error
+        const submitBtn = document.querySelector(`.mark-complete-btn[data-index="${lessonIndex}"]`);
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-check me-1"></i> Mark Complete';
+            submitBtn.disabled = false;
+        }
+    }
+}
+
+        async function completeModule() {
+    const moduleId = getModuleId();
+    try {
+        console.log('🎯 Attempting to complete module:', moduleId);
+        
+        // First check completion status
+        const validationResponse = await apiCall(`/modules/${moduleId}/completion-status`);
+        console.log('Completion validation:', validationResponse);
+        
+        if (!validationResponse.data.canComplete) {
+            alert(`Cannot complete module. Please complete all ${validationResponse.data.totalLessons} lessons first. (Completed: ${validationResponse.data.completedLessons})`);
+            return;
+        }
+
+        console.log('All validation passed, calling complete endpoint...');
+        
+        const response = await completeStudentModule(moduleId);
+        
+        console.log('🎉 Module completion response:', response);
+        
+        if (response.success) {
+            console.log('✅ Module completed successfully, showing modal');
+            showModuleCompletionModal(response);
+            await loadModuleDetails(); // Refresh to show completed status
+        } else {
+            console.error('❌ Module completion failed:', response);
+            alert('Module completion failed: ' + (response.message || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('💥 Error completing module:', error);
+        
+        // More specific error messages
+        if (error.message.includes('Cannot complete module')) {
+            alert(error.message);
+        } else if (error.message.includes('HTTP error! status: 404')) {
+            alert('Module not found. Please try again.');
+        } else if (error.message.includes('HTTP error! status: 500')) {
+            alert('Server error. Please try again later.');
+        } else {
+            alert('Error completing module: ' + error.message);
+        }
+    }
+}
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkLogin()) {
+                alert('Please login to access module details.');
+                window.location.href = 'login.html';
+                return;
+            }
+            loadModuleDetails();
+            document.getElementById('complete-module-btn').addEventListener('click', completeModule);
+            updateUIForLoginStatus();
+        });
+    </script>
+    <script>
+        // Update UI for student login status with profile dropdown
+function updateUIForLoginStatus() {
+    const user = getCurrentUser();
+    const authButtons = document.getElementById('auth-buttons');
+    const userMenu = document.getElementById('user-menu');
+    
+    if (user) {
+        // Hide auth buttons, show user menu
+        if (authButtons) authButtons.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        
+        // Update user information in dropdown
+        updateUserDropdown(user);
+        
+    } else {
+        // Show auth buttons, hide user menu
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+}
+
+// Update dropdown with student information
+function updateUserDropdown(user) {
+    // Safely get all elements
+    const navbarUsername = document.getElementById('navbar-username');
+    const navbarAvatar = document.getElementById('navbar-avatar');
+    const dropdownUsername = document.getElementById('dropdown-username');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    const dropdownAvatar = document.getElementById('dropdown-avatar');
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    
+    // Update basic user information
+    if (navbarUsername) navbarUsername.textContent = user.name || 'Student';
+    if (dropdownUsername) dropdownUsername.textContent = user.name || 'Student';
+    if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+    
+    // Update avatar with student color
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Student')}&background=20c997&color=fff&size=`;
+    
+    if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+    if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+    
+    // Update eco-points - ALWAYS show for student interface
+    const points = user.points || 0;
+    if (navbarPoints) navbarPoints.textContent = formatPoints(points);
+    if (dropdownPoints) dropdownPoints.textContent = formatPoints(points);
+    
+    // Update points level styling
+    updatePointsLevelStyling(points);
+}
+
+// Format points with commas
+function formatPoints(points) {
+    return points.toLocaleString();
+}
+function updatePointsLevelStyling(points) {
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    const ecoPointsBadge = document.querySelector('.eco-points-badge');
+    
+    if (!navbarPoints || !ecoPointsBadge) return;
+    
+    // Remove existing level classes
+    ecoPointsBadge.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    navbarPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    if (dropdownPoints) {
+        dropdownPoints.classList.remove('points-level-beginner', 'points-level-intermediate', 'points-level-advanced', 'points-level-expert');
+    }
+    
+    // Add appropriate level class
+    let levelClass = 'points-level-beginner';
+    if (points >= 1000) levelClass = 'points-level-intermediate';
+    if (points >= 5000) levelClass = 'points-level-advanced';
+    if (points >= 10000) levelClass = 'points-level-expert';
+    
+    ecoPointsBadge.classList.add(levelClass);
+    navbarPoints.classList.add(levelClass);
+    if (dropdownPoints) dropdownPoints.classList.add(levelClass);
+}
+
+// Update points in navbar if available
+function updatePointsDisplay(user) {
+    const pointsElement = document.getElementById('navbar-points');
+    if (pointsElement && user.points) {
+        pointsElement.textContent = user.points.toLocaleString();
+    }
+}
+
+// Enhanced logout for student
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize student dropdown
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForLoginStatus();
+    
+    // Update dropdown when user data changes
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'user') {
+            const user = getCurrentUser();
+            if (user) {
+                updateUserDropdown(user);
+            }
+        }
+    });
+});
+    </script>
+</body>
+</html>

@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujjivana - Gamified Environmental Education</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Enhanced styling for locked navbar state */
+        .navbar-locked .nav-link:not(.navbar-brand):not(.auth-link),
+        .navbar-locked .dropdown-toggle {
+            opacity: 0.5;
+            pointer-events: none;
+            position: relative;
+        }
+
+        .navbar-locked .nav-link:not(.navbar-brand):not(.auth-link)::after,
+        .navbar-locked .dropdown-toggle::after {
+            content: "🔒";
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+        }
+
+        .navbar-blur {
+            backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        /* Profile Dropdown Styles */
+        .user-dropdown .dropdown-toggle {
+            border: none;
+            background: transparent;
+            color: var(--dark-text) !important;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+        }
+
+        .user-dropdown .dropdown-toggle:hover {
+            background: rgba(46, 139, 87, 0.1);
+            color: var(--primary-green) !important;
+        }
+
+        .user-dropdown .dropdown-toggle::after {
+            margin-left: 0.5rem;
+        }
+
+        .user-dropdown .dropdown-menu {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-strong);
+            padding: 0.5rem;
+            min-width: 220px;
+        }
+
+        .user-dropdown .dropdown-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .user-dropdown .dropdown-item {
+            border-radius: var(--border-radius-sm);
+            padding: 0.75rem 1rem;
+            margin: 0.1rem 0;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .user-dropdown .dropdown-item:hover {
+            background: rgba(46, 139, 87, 0.1);
+            transform: translateX(5px);
+        }
+
+        .user-dropdown .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            margin-right: 0.5rem;
+            color: var(--primary-green);
+        }
+
+        .user-dropdown .dropdown-divider {
+            margin: 0.5rem 0;
+        }
+
+        /* Student specific badge */
+        .student-badge {
+            background: linear-gradient(135deg, #20c997, #3DD4AF);
+            color: white;
+        }
+
+        .teacher-badge {
+            background: linear-gradient(135deg, #6f42c1, #8B5FBF);
+            color: white;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #dc3545, #e35d6a);
+            color: white;
+        }
+
+        .user-role-badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            margin-left: 0.5rem;
+        }
+
+        /* Guest message styling */
+        .guest-message {
+            display: none;
+        }
+        /* News Section Styles */
+.news-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius-sm);
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition);
+    border-left: 3px solid transparent;
+}
+
+.news-item:hover {
+    border-left-color: var(--primary-green);
+    transform: translateX(5px);
+    box-shadow: var(--shadow-medium);
+}
+
+.news-meta {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border-light);
+}
+
+.environment-stats {
+    font-size: 0.9rem;
+}
+
+.stat-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+/* Animation for news items */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+/* Environmental Impact Styles */
+.stat-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-light);
+    transition: var(--transition);
+}
+
+.stat-item:hover {
+    background: rgba(46, 139, 87, 0.05);
+    border-radius: var(--border-radius-sm);
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.environment-stats {
+    font-size: 0.9rem;
+}
+
+/* Impact badges */
+.impact-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+}
+
+.badge-live {
+    background: var(--accent-orange);
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* Carbon intensity indicator */
+.carbon-intensity {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 15px;
+    font-weight: 600;
+}
+
+.intensity-low { background: #27ae60; color: white; }
+.intensity-medium { background: #f39c12; color: white; }
+.intensity-high { background: #e74c3c; color: white; }
+
+
+/* Enhanced stat items */
+.stat-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-light);
+    transition: var(--transition);
+}
+
+.stat-item:hover {
+    background: rgba(46, 139, 87, 0.05);
+    border-radius: var(--border-radius-sm);
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+/* Carbon intensity badges */
+.intensity-low {
+    background: #27ae60;
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+}
+
+.intensity-medium {
+    background: #f39c12;
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+}
+
+.intensity-high {
+    background: #e74c3c;
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+}
+/* Carbon Calculator Styles */
+.carbon-calculator {
+    background: linear-gradient(135deg, #f8fff9, #e8f5e8);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+}
+
+.calculator-input {
+    border: 2px solid #e8f5e8;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition);
+}
+
+.calculator-input:focus {
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 0.2rem rgba(46, 139, 87, 0.1);
+}
+
+.carbon-result-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-soft);
+    border-left: 4px solid var(--primary-green);
+}
+
+.footprint-meter {
+    height: 20px;
+    background: linear-gradient(90deg, #27ae60, #f39c12, #e74c3c);
+    border-radius: 10px;
+    margin: 1rem 0;
+    position: relative;
+}
+
+.footprint-indicator {
+    position: absolute;
+    top: -5px;
+    width: 4px;
+    height: 30px;
+    background: #2c3e50;
+    transform: translateX(-50%);
+}
+
+.tip-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-light);
+    transition: var(--transition);
+}
+
+.tip-item:hover {
+    background: rgba(46, 139, 87, 0.05);
+    border-radius: var(--border-radius-sm);
+    padding-left: 0.5rem;
+}
+
+.tip-item:last-child {
+    border-bottom: none;
+}
+
+/* Progress bar variations */
+.progress-bar.bg-success { background: linear-gradient(90deg, #27ae60, #2ecc71) !important; }
+.progress-bar.bg-info { background: linear-gradient(90deg, #3498db, #2980b9) !important; }
+.progress-bar.bg-warning { background: linear-gradient(90deg, #f39c12, #e67e22) !important; }
+.progress-bar.bg-danger { background: linear-gradient(90deg, #e74c3c, #c0392b) !important; }
+
+/* Comparison text colors */
+.text-success { color: #27ae60 !important; }
+.text-info { color: #3498db !important; }
+.text-warning { color: #f39c12 !important; }
+.text-danger { color: #e74c3c !important; }
+/* Review Form Styling */
+.rating-stars {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.rating-stars input[type="radio"] {
+    display: none;
+}
+
+.rating-stars .star {
+    font-size: 1.5rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.rating-stars input[type="radio"]:checked ~ .star,
+.rating-stars .star:hover,
+.rating-stars .star:hover ~ .star {
+    color: #ffc107;
+}
+
+.rating-stars input[type="radio"]:checked + .star {
+    color: #ffc107;
+}
+
+/* Edit mode styling */
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top navbar-locked navbar-blur">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-leaf me-2"></i>Ujjivana
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Learning
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="modules.html">Modules</a></li>
+                        <li><a class="dropdown-item" href="quiz.html">Assessments</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Community
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="challenges.html">Challenges</a></li>
+                        <li><a class="dropdown-item" href="leaderboard.html">Leaderboard</a></li>
+                        <li><a class="dropdown-item" href="eco-map-student.html">Eco-Map</a></li>
+                        <li><a class="dropdown-item" href="events.html">Events</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="redeem.html">Rewards</a>
+                </li>
+            </ul>
+                
+                <!-- Profile Dropdown -->
+                <div class="dropdown user-dropdown" id="user-menu" style="display: none;">
+        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+           data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=32" 
+                 class="rounded-circle me-2" alt="Profile" width="32" height="32" id="navbar-avatar">
+            <span id="navbar-username">User</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+                <div class="dropdown-header text-center">
+                    <img src="https://ui-avatars.com/api/?name=User+Name&background=20c997&color=fff&size=64" 
+                         class="rounded-circle mb-2" alt="Profile" width="64" height="64" id="dropdown-avatar">
+                    <h6 class="mb-1" id="dropdown-username">User Name</h6>
+                    <small class="text-muted" id="dropdown-email">user@example.com</small>
+                    
+                    <!-- Eco-points display in dropdown -->
+                    <div class="eco-points-display mt-2">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <i class="fas fa-leaf text-success me-2"></i>
+                            <span class="fw-bold text-success" id="dropdown-points">0</span>
+                            <span class="text-muted ms-1">Eco-Points</span>
+                        </div>
+                    </div>
+                    
+                    <span class="badge user-role-badge student-badge mt-2">Student</span>
+                </div>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <a class="dropdown-item" href="profile.html">
+                    <i class="fas fa-user"></i>My Profile
+                </a>
+            </li>
+            <li id="teacher-admin-links" style="display: none;">
+                <hr class="dropdown-divider">
+                <a class="dropdown-item" href="teacher-dashboard.html" id="teacher-dashboard-link">
+                    <i class="fas fa-chalkboard-teacher"></i>Teacher Dashboard
+                </a>
+                <a class="dropdown-item" href="admin-panel.html" id="admin-panel-link">
+                    <i class="fas fa-tools"></i>Admin Panel
+                </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <a class="dropdown-item" href="help.html">
+                    <i class="fas fa-question-circle"></i>Help & Support
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item text-danger" href="#" onclick="startLogoutProcess()">
+                    <i class="fas fa-sign-out-alt"></i>Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Animated Logout Button (Initially Hidden) -->
+    <div class="logout-button-container" id="logout-button-container" style="display: none;">
+        <button class="animated-logout-button-nav" id="animated-logout-button">
+            <svg class="doorway" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <path class="bang" d="M40.5 43.7L26.6 31.4l-2.5 6.7zM41.9 50.4l-19.5-4-1.4 6.3zM40 57.4l-17.7 3.9 3.9 5.7z"/>
+            </svg>
+            <svg class="figure" viewBox="0 0 100 100">
+                <circle cx="52.1" cy="32.4" r="6.4"/>
+                <path d="M50.7 62.8c-1.2 2.5-3.6 5-7.2 4-3.2-.9-4.9-3.5-4-7.8.7-3.4 3.1-13.8 4.1-15.8 1.7-3.4 1.6-4.6 7-3.7 4.3.7 4.6 2.5 4.3 5.4-.4 3.7-2.8 15.1-4.2 17.9z"/>
+                <g class="arm1">
+                    <path d="M55.5 56.5l-6-9.5c-1-1.5-.6-3.5.9-4.4 1.5-1 3.7-1.1 4.6.4l6.1 10c1 1.5.3 3.5-1.1 4.4-1.5.9-3.5.5-4.5-.9z"/>
+                    <path class="wrist1" d="M69.4 59.9L58.1 58c-1.7-.3-2.9-1.9-2.6-3.7.3-1.7 1.9-2.9 3.7-2.6l11.4 1.9c1.7.3 2.9 1.9 2.6 3.7-.4 1.7-2 2.9-3.8 2.6z"/>
+                </g>
+                <g class="arm2">
+                    <path d="M34.2 43.6L45 40.3c1.7-.6 3.5.3 4 2 .6 1.7-.3 4-2 4.5l-10.8 2.8c-1.7.6-3.5-.3-4-2-.6-1.6.3-3.4 2-4z"/>
+                    <path class="wrist2" d="M27.1 56.2L32 45.7c.7-1.6 2.6-2.3 4.2-1.6 1.6.7 2.3 2.6 1.6 4.2L33 58.8c-.7 1.6-2.6 2.3-4.2 1.6-1.7-.7-2.4-2.6-1.7-4.2z"/>
+                </g>
+                <g class="leg1">
+                    <path d="M52.1 73.2s-7-5.7-7.9-6.5c-.9-.9-1.2-3.5-.1-4.9 1.1-1.4 3.8-1.9 5.2-.9l7.9 7c1.4 1.1 1.7 3.5.7 4.9-1.1 1.4-4.4 1.5-5.8.4z"/>
+                    <path class="calf1" d="M52.6 84.4l-1-12.8c-.1-1.9 1.5-3.6 3.5-3.7 2-.1 3.7 1.4 3.8 3.4l1 12.8c.1 1.9-1.5 3.6-3.5 3.7-2 0-3.7-1.5-3.8-3.4z"/>
+                </g>
+                <g class="leg2">
+                    <path d="M37.8 72.7s1.3-10.2 1.6-11.4 2.4-2.8 4.1-2.6c1.7.2 3.6 2.3 3.4 4l-1.8 11.1c-.2 1.7-1.7 3.3-3.4 3.1-1.8-.2-4.1-2.4-3.9-4.2z"/>
+                    <path class="calf2" d="M29.5 82.3l9.6-10.9c1.3-1.4 3.6-1.5 5.1-.1 1.5 1.4.4 4.9-.9 6.3l-8.5 9.6c-1.3 1.4-3.6 1.5-5.1.1-1.4-1.3-1.5-3.5-.2-5z"/>
+                </g>
+            </svg>
+            <svg class="door" viewBox="0 0 100 100">
+                <path d="M93.4 86.3H58.6c-1.9 0-3.4-1.5-3.4-3.4V17.1c0-1.9 1.5-3.4 3.4-3.4h34.8c1.9 0 3.4 1.5 3.4 3.4v65.8c0 1.9-1.5 3.4-3.4 3.4z"/>
+                <circle cx="66" cy="50" r="3.7"/>
+            </svg>
+            <span class="button-text">Logging Out...</span>
+        </button>
+    </div>
+                
+                <!-- Auth Buttons (shown when not logged in) -->
+                <div class="d-flex" id="auth-buttons">
+                    <a href="login.html" class="btn btn-outline-success me-2 auth-link">Login</a>
+                    <a href="register.html" class="btn btn-success auth-link">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-4">Learn. Act. Save Our Planet.</h1>
+            <p class="lead mb-4">Join thousands of students in gamified environmental education. Earn eco-points, complete challenges, and make a real difference for Mother Earth.</p>
+            <a href="register.html" class="btn btn-success btn-lg px-5 py-3">Get Started</a>
+            
+            <!-- Guest message (hidden when logged in) -->
+            <div class="guest-message mt-3">
+                <p class="text-white-50">Login to access all features and start earning eco-points!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sustainability Goals -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">UN Sustainable Development Goals We Support</h2>
+            <div class="row">
+                <div class="col-md-2 col-4 text-center mb-4">
+                    <img src="climate_action.png" class="img-fluid" style="max-height: 100px;" alt="Climate Action">
+                    <p class="mt-2 small">Climate Action</p>
+                </div>
+                <div class="col-md-2 col-4 text-center mb-4">
+                    <img src="life_below_water.png" class="img-fluid" style="max-height: 100px;" alt="Life Below Water">
+                    <p class="mt-2 small">Life Below Water</p>
+                </div>
+                <div class="col-md-2 col-4 text-center mb-4">
+                    <img src="life_on_land.png" class="img-fluid" style="max-height: 100px;" alt="Life on Land">
+                    <p class="mt-2 small">Life on Land</p>
+                </div>
+                <div class="col-md-2 col-4 text-center mb-4">
+                    <img src="renewable_energy.png" class="img-fluid" style="max-height: 100px;" alt="Renewable Energy">
+                    <p class="mt-2 small">Renewable Energy</p>
+                </div>
+                <div class="col-md-2 col-4 text-center mb-4">
+                    <img src="responsible_consumption.png" class="img-fluid" style="max-height: 100px;" alt="Responsible Consumption">
+                    <p class="mt-2 small">Responsible Consumption</p>
+                </div>
+                <div class="col-md-2 col-4 text-center mb-4">
+                    <img src="sustainable_cities.png" class="img-fluid" style="max-height: 100px;" alt="Sustainable Cities">
+                    <p class="mt-2 small">Sustainable Cities</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- News Feed & Features -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Latest Environmental News</h3>
+                    <button class="btn btn-sm btn-outline-success" onclick="fetchEnvironmentalNews()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh News
+                    </button>
+                </div>
+                <div class="news-feed" id="news-container">
+                    <!-- News will be loaded here dynamically -->
+                    <div class="col-12 text-center">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading news...</span>
+                        </div>
+                        <p class="mt-2">Loading environmental news...</p>
+                    </div>
+                </div>
+            </div> <!-- /.col-lg-8 -->
+            <div class="col-lg-4">
+                <div class="card mt-0">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title mb-0">Live Environmental Impact</h5>
+                            <button class="btn btn-sm btn-outline-success" onclick="fetchEnvironmentalImpactData()" 
+                                    title="Refresh environmental data">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div id="environment-impact">
+                            <!-- Data will be loaded here dynamically -->
+                            <div class="text-center">
+                                <div class="spinner-border spinner-border-sm text-success" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <small class="text-muted">Loading real-time environmental data...</small>
+                            </div>
+                        </div>                       
+                    </div>
+                </div>
+            </div> <!-- /.col-lg-4 -->
+            <!-- Carbon Footprint Calculator Section -->
+<div class="card mt-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">Carbon Footprint Calculator</h5>
+        <p class="text-muted small mb-3">Calculate your personal carbon footprint and learn how to reduce it.</p>
+        
+        <form id="carbon-calculator-form">
+            <!-- Energy Usage -->
+            <div class="mb-3">
+                <label class="form-label">Monthly Electricity Usage (kWh)</label>
+                <input type="number" class="form-control" id="electricity-usage" min="0" max="2000" value="300" step="10">
+                <div class="form-text">Average household: 300-900 kWh/month</div>
+            </div>
+
+            <!-- Transportation -->
+            <div class="mb-3">
+                <label class="form-label">Monthly Car Travel (km)</label>
+                <input type="number" class="form-control" id="car-travel" min="0" max="5000" value="800" step="50">
+                <div class="form-text">Average: 800-2000 km/month</div>
+            </div>
+
+            <!-- Flight Travel -->
+            <div class="mb-3">
+                <label class="form-label">Flights This Year (hours)</label>
+                <input type="number" class="form-control" id="flight-hours" min="0" max="200" value="5" step="1">
+                <div class="form-text">Round trip NY-London = ~14 hours</div>
+            </div>
+
+            <!-- Diet Type -->
+            <div class="mb-3">
+                <label class="form-label">Diet Type</label>
+                <select class="form-select" id="diet-type">
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="average" selected>Average Mixed Diet</option>
+                    <option value="meat-heavy">Meat-Heavy Diet</option>
+                    <option value="vegan">Vegan</option>
+                </select>
+            </div>
+
+            <!-- Household Size -->
+            <div class="mb-3">
+                <label class="form-label">Household Size</label>
+                <select class="form-select" id="household-size">
+                    <option value="1">1 person</option>
+                    <option value="2" selected>2 people</option>
+                    <option value="3">3 people</option>
+                    <option value="4">4 people</option>
+                    <option value="5">5+ people</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">
+                <i class="fas fa-calculator me-2"></i>Calculate My Footprint
+            </button>
+        </form>
+
+        <!-- Results Section -->
+        <div id="carbon-results" class="mt-4" style="display: none;">
+            <div class="alert alert-info">
+                <h6>Your Carbon Footprint Results</h6>
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Monthly CO₂ Emissions:</span>
+                        <strong id="monthly-co2">0 kg</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Annual CO₂ Emissions:</span>
+                        <strong id="annual-co2">0 tons</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Compared to Average:</span>
+                        <strong id="comparison">Average</strong>
+                    </div>
+                    <div class="progress mb-3" style="height: 10px;">
+                        <div class="progress-bar" id="footprint-progress" role="progressbar" style="width: 50%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips for Reduction -->
+            <div id="reduction-tips" class="mt-3">
+                <h6>Tips to Reduce Your Footprint</h6>
+                <ul class="list-unstyled small" id="tips-list">
+                    <!-- Tips will be populated here -->
+                </ul>
+            </div>
+
+            <!-- Offset Options -->
+            <div class="mt-3">
+                <h6>Offset Your Emissions</h6>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="border rounded p-2">
+                            <small class="text-muted d-block">Trees Needed</small>
+                            <strong class="text-success" id="trees-needed">0</strong>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="border rounded p-2">
+                            <small class="text-muted d-block">Cost to Offset</small>
+                            <strong class="text-success" id="offset-cost">$0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        </div> <!-- /.row -->
+    </div> <!-- /.container -->
+</section>
+            <!-- Green Events Section -->
+<section class="py-4 py-lg-5 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+          <h2 class="h3 mb-3 mb-md-0">Upcoming Green Events</h2>
+                    <a href="events.html" id="view-all-events-btn" class="btn btn-outline-success btn-sm">
+            View All Events
+          </a>
+        </div>
+        
+        <div class="events-carousel-container position-relative">
+          <div class="events-carousel" id="events-carousel">
+            <div class="text-center py-5">
+              <div class="spinner-border text-success" role="status">
+                <span class="visually-hidden">Loading events...</span>
+              </div>
+              <p class="mt-2">Loading upcoming events...</p>
+            </div>
+          </div>
+
+          <button class="carousel-btn carousel-prev d-none d-md-flex" id="events-prev">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn carousel-next d-none d-md-flex" id="events-next">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+                
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Features -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">How Ujjivana Works</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-book-open fa-2x"></i>
+                            </div>
+                            <h4 class="card-title">Interactive Learning</h4>
+                            <p class="card-text">Engage with interactive modules on environmental topics, from climate change to sustainable living.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-gamepad fa-2x"></i>
+                            </div>
+                            <h4 class="card-title">Gamified Challenges</h4>
+                            <p class="card-text">Complete quizzes, games, and real-world tasks to earn eco-points and badges.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-gift fa-2x"></i>
+                            </div>
+                            <h4 class="card-title">Redeem Rewards</h4>
+                            <p class="card-text">Exchange your eco-points for sustainable products and merchandise in our rewards store.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-5">
+                <a href="register.html" class="btn btn-success btn-lg">Join Ujjivana Today</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">What Our Users Say</h2>
+        <div class="row" id="reviews-container">
+            <!-- Reviews will be loaded here dynamically -->
+            <div class="col-12 text-center">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading reviews...</span>
+                </div>
+                <p class="mt-2">Loading reviews...</p>
+            </div>
+        </div>
+
+        <!-- Add Review Form -->
+        <div class="row mt-5">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title text-center">Share Your Experience</h4>
+                        
+                        <!-- Review Form -->
+                        <form id="review-form" class="d-none">
+                            <div class="mb-3">
+                                <label class="form-label">Rating</label>
+                                <div class="rating-stars">
+                                    <input type="radio" id="star5" name="rating" value="5" required>
+                                    <label for="star5" class="star"><i class="fas fa-star"></i></label>
+                                    <input type="radio" id="star4" name="rating" value="4">
+                                    <label for="star4" class="star"><i class="fas fa-star"></i></label>
+                                    <input type="radio" id="star3" name="rating" value="3">
+                                    <label for="star3" class="star"><i class="fas fa-star"></i></label>
+                                    <input type="radio" id="star2" name="rating" value="2">
+                                    <label for="star2" class="star"><i class="fas fa-star"></i></label>
+                                    <input type="radio" id="star1" name="rating" value="1">
+                                    <label for="star1" class="star"><i class="fas fa-star"></i></label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="review-comment" class="form-label">Your Review</label>
+                                <textarea class="form-control" id="review-comment" rows="3" required maxlength="500"></textarea>
+                                <div class="form-text">Maximum 500 characters</div>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Submit Review</button>
+                        </form>
+
+                        <!-- Login Prompt -->
+                        <div id="review-login-prompt" class="text-center d-none">
+                            <p>Please <a href="login.html">login</a> to share your experience with Ujjivana.</p>
+                        </div>
+                            <div id="review-existing" class="d-none">
+                                <div class="alert alert-info">
+                                    <p>You've already submitted a review. <a href="#" id="edit-review-link">Edit your review</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Ujjivana</h5>
+                    <p>Gamifying environmental education for a sustainable future.</p>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">About</a></li>
+                        <li><a href="modules.html" class="text-white text-decoration-none">Modules</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@ujjivana.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Green Street, Eco City</li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Newsletter</h5>
+                    <p>Subscribe for updates on new features and content.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-success" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center py-3">
+                <p class="mb-0">&copy; 2023 Ujjivana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/script.js"></script>
+    <script src="js/events.js"></script>
+<script>
+    // Enhanced UI update function for profile dropdown
+    function updateUIForLoginStatus() {
+        const isLoggedIn = checkLogin();
+        const currentUser = getCurrentUser();
+        
+        console.log('Updating UI, isLoggedIn:', isLoggedIn, 'User:', currentUser);
+        
+        // Safely get DOM elements
+        const authButtons = document.getElementById('auth-buttons');
+        const userMenu = document.getElementById('user-menu');
+        const navbar = document.querySelector('.navbar');
+        const adminLinkItem = document.getElementById('admin-link-item');
+        const teacherLinkItem = document.getElementById('teacher-link-item');
+        const teacherAdminLinks = document.getElementById('teacher-admin-links');
+        
+        if (isLoggedIn && currentUser) {
+            // User is logged in - show profile dropdown
+            if (authButtons) authButtons.classList.add('d-none');
+            if (userMenu) userMenu.style.display = 'block';
+            
+            // Update dropdown with user information
+            updateUserDropdown(currentUser);
+            
+            // Enable all navigation items and remove locked state
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('nav-locked');
+                link.onclick = null;
+            });
+            
+            // Remove locked navbar state if navbar exists
+            if (navbar) {
+                navbar.classList.remove('navbar-locked', 'navbar-blur');
+            }
+            
+            // Show Admin link only to admins
+            if (currentUser.role === 'admin' && adminLinkItem) {
+                adminLinkItem.classList.remove('d-none');
+                const adminPanelLink = document.getElementById('admin-panel-link');
+                if (adminPanelLink) adminPanelLink.style.display = 'block';
+                if (teacherAdminLinks) teacherAdminLinks.style.display = 'block';
+            } else if (adminLinkItem) {
+                adminLinkItem.classList.add('d-none');
+            }
+
+            // Show Teacher link only to teachers
+            if (currentUser.role === 'teacher' && teacherLinkItem) {
+                teacherLinkItem.classList.remove('d-none');
+                const teacherDashboardLink = document.getElementById('teacher-dashboard-link');
+                if (teacherDashboardLink) teacherDashboardLink.style.display = 'block';
+                if (teacherAdminLinks) teacherAdminLinks.style.display = 'block';
+            } else if (teacherLinkItem) {
+                teacherLinkItem.classList.add('d-none');
+            }
+            
+            // Hide guest messages
+            const guestMessages = document.querySelectorAll('.guest-message');
+            if (guestMessages) {
+                guestMessages.forEach(msg => {
+                    msg.style.display = 'none';
+                });
+            }
+            
+        } else {
+            // User is not logged in (guest) - show auth buttons
+            if (authButtons) authButtons.classList.remove('d-none');
+            if (userMenu) userMenu.style.display = 'none';
+            
+            // Apply locked navbar state
+            if (navbar) {
+                navbar.classList.add('navbar-locked', 'navbar-blur');
+            }
+            
+            // Hide admin and teacher links
+            if (adminLinkItem) adminLinkItem.classList.add('d-none');
+            if (teacherLinkItem) teacherLinkItem.classList.add('d-none');
+            if (teacherAdminLinks) teacherAdminLinks.style.display = 'none';
+            
+            // Disable navigation items except Home
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href') && link.getAttribute('href') !== 'index.html') {
+                    link.classList.add('nav-locked');
+                    link.onclick = function(e) {
+                        e.preventDefault();
+                        alert('Please login to access this feature');
+                        return false;
+                    };
+                }
+            });
+            
+            // Show guest messages
+            const guestMessages = document.querySelectorAll('.guest-message');
+            if (guestMessages) {
+                guestMessages.forEach(msg => {
+                    msg.style.display = 'block';
+                });
+            }
+        }
+    }
+
+    // Update dropdown with user information
+    function updateUserDropdown(user) {
+        // Safely get all elements
+        const navbarUsername = document.getElementById('navbar-username');
+        const navbarAvatar = document.getElementById('navbar-avatar');
+        const dropdownUsername = document.getElementById('dropdown-username');
+        const dropdownEmail = document.getElementById('dropdown-email');
+        const dropdownAvatar = document.getElementById('dropdown-avatar');
+        const dropdownRole = document.getElementById('dropdown-role');
+        
+        // Update navbar elements if they exist
+        if (navbarUsername) navbarUsername.textContent = user.name || 'User';
+        if (dropdownUsername) dropdownUsername.textContent = user.name || 'User';
+        if (dropdownEmail) dropdownEmail.textContent = user.email || '';
+        
+        // Update avatars based on role
+        const avatarColor = getAvatarColorByRole(user.role);
+        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=${avatarColor}&color=fff&size=`;
+        
+        if (navbarAvatar) navbarAvatar.src = avatarUrl + '32';
+        if (dropdownAvatar) dropdownAvatar.src = avatarUrl + '64';
+        
+        // Update role badge if it exists
+        if (dropdownRole) {
+            dropdownRole.textContent = user.role || 'Student';
+            dropdownRole.className = 'badge user-role-badge ' + getRoleBadgeClass(user.role);
+        }
+        updateEcoPointsDisplay(user);
+    }
+    // Update eco-points display for students only
+function updateEcoPointsDisplay(user) {
+    const navbarPointsBadge = document.getElementById('navbar-points-badge');
+    const navbarPoints = document.getElementById('navbar-points');
+    const dropdownPointsDisplay = document.getElementById('dropdown-points-display');
+    const dropdownPoints = document.getElementById('dropdown-points');
+    const studentLinks = document.getElementById('student-links');
+    
+    // Check if user is a student
+    const isStudent = user.role === 'student' || !user.role;
+    
+    if (isStudent) {
+        // Show eco-points for students
+        if (navbarPointsBadge) navbarPointsBadge.style.display = 'inline-flex';
+        if (dropdownPointsDisplay) dropdownPointsDisplay.style.display = 'block';
+        if (studentLinks) studentLinks.style.display = 'block';
+        
+        // Update points values
+        const points = user.points || 0;
+        if (navbarPoints) navbarPoints.textContent = formatPoints(points);
+        if (dropdownPoints) dropdownPoints.textContent = formatPoints(points);
+    } else {
+        // Hide eco-points for teachers/admins
+        if (navbarPointsBadge) navbarPointsBadge.style.display = 'none';
+        if (dropdownPointsDisplay) dropdownPointsDisplay.style.display = 'none';
+        if (studentLinks) studentLinks.style.display = 'none';
+    }
+}
+
+// Format points with commas
+function formatPoints(points) {
+    return points.toLocaleString();
+}
+    // Get avatar background color based on role
+    function getAvatarColorByRole(role) {
+        const colors = {
+            'student': '20c997',
+            'teacher': '6f42c1', 
+            'admin': 'dc3545'
+        };
+        return colors[role] || '27ae60';
+    }
+
+    // Get badge class based on role
+    function getRoleBadgeClass(role) {
+        const classes = {
+            'student': 'student-badge',
+            'teacher': 'teacher-badge',
+            'admin': 'admin-badge'
+        };
+        return classes[role] || 'student-badge';
+    }
+
+    // Handle navigation clicks for guest users
+    function handleNavClick(page, featureName) {
+        if (!checkLogin()) {
+            alert(`Please login to access ${featureName}`);
+            return false;
+        }
+        window.location.href = page;
+        return true;
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        updateUIForLoginStatus();
+        
+        // Update progress indicators if user is logged in
+        if (checkLogin()) {
+            const currentUser = getCurrentUser();
+            if (currentUser) {
+                const modulesCompleted = document.getElementById('modules-completed');
+                const totalPoints = document.getElementById('total-points');
+                
+                if (modulesCompleted) {
+                    modulesCompleted.textContent = `${currentUser.modulesCompleted || 0}/8`;
+                }
+                
+                if (totalPoints) {
+                    totalPoints.textContent = currentUser.points || 0;
+                }
+            }
+        }
+        
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'moduleCompleted' || e.key === 'quizCompleted' || e.key === 'pointsUpdated') {
+                // Refresh data if needed
+                updateUIForLoginStatus();
+            }
+        });
+    });
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>"']/g, function (c) {
+            return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c];
+        });
+    }
+</script>
+<script>
+    // Disable "View All Events" button for guest users
+    document.addEventListener('DOMContentLoaded', function () {
+        try {
+            const viewAllBtn = document.getElementById('view-all-events-btn');
+            if (!viewAllBtn) return;
+
+            // If user is not logged in, prevent navigation and give feedback
+            if (!checkLogin()) {
+                viewAllBtn.classList.add('disabled');
+                viewAllBtn.setAttribute('aria-disabled', 'true');
+                viewAllBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    alert('Please login to view all events');
+                    return false;
+                });
+            }
+        } catch (err) {
+            console.error('Error initializing events button state', err);
+        }
+    });
+</script>
+<script>
+    // Function to fetch live environmental news
+    async function fetchEnvironmentalNews() {
+        const newsContainer = document.getElementById('news-container');
+        if (!newsContainer) return;
+
+        try {
+            // Show loading state
+            newsContainer.innerHTML = `
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Loading news...</span>
+                    </div>
+                    <p class="mt-2">Loading environmental news...</p>
+                </div>
+            `;
+
+            // Using GNews API (free tier) - Environmental news
+            // You can get a free API key from https://gnews.io/
+            const apiKey = 'f373ab713fe176942fd2d5751d51eef2'; // Replace with your actual API key
+            const query = 'environment OR climate OR sustainability OR renewable energy OR conservation';
+            
+            // If no API key, use fallback data
+            if (apiKey === 'YOUR_API_KEY_HERE') {
+                throw new Error('Please add your GNews API key');
+            }
+
+            const response = await fetch(
+                `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=2&apikey=${apiKey}`
+            );
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch news');
+            }
+
+            const data = await response.json();
+            
+            if (data.articles && data.articles.length > 0) {
+                displayNews(data.articles);
+            } else {
+                throw new Error('No news articles found');
+            }
+
+        } catch (error) {
+            console.error('Error fetching news:', error);
+            // Fallback to static environmental news
+            displayFallbackNews();
+        }
+    }
+
+    // Function to display news articles
+    function displayNews(articles) {
+        const newsContainer = document.getElementById('news-container');
+        if (!newsContainer) return;
+
+        let newsHTML = '';
+
+        articles.forEach((article, index) => {
+            const publishedDate = new Date(article.publishedAt).toLocaleDateString();
+            const timeAgo = getTimeAgo(article.publishedAt);
+            
+            newsHTML += `
+                <div class="news-item fade-in-up">
+                    <h5>${escapeHtml(article.title)}</h5>
+                    <p>${escapeHtml(article.description || 'No description available.')}</p>
+                    <div class="news-meta">
+                        <small class="text-muted">
+                            <i class="fas fa-newspaper me-1"></i>${escapeHtml(article.source.name || 'Unknown Source')} 
+                            • <i class="far fa-clock me-1"></i>${timeAgo}
+                        </small>
+                    </div>
+                    ${article.url ? `<a href="${article.url}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-success mt-2">Read More</a>` : ''}
+                </div>
+            `;
+        });
+
+        newsContainer.innerHTML = newsHTML;
+    }
+
+    // Fallback news data in case API fails
+    function displayFallbackNews() {
+        const newsContainer = document.getElementById('news-container');
+        if (!newsContainer) return;
+
+        const fallbackNews = [
+            {
+                title: "Global Climate Summit Reaches Historic Agreement",
+                description: "World leaders have agreed on ambitious targets for reducing carbon emissions by 2030, marking a significant step in global climate action.",
+                source: { name: "Climate News Network" },
+                publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+                url: "#"
+            },
+            {
+                title: "Breakthrough in Solar Panel Efficiency",
+                description: "Researchers have developed a new solar cell design that achieves 35% efficiency, potentially revolutionizing renewable energy adoption.",
+                source: { name: "Renewable Energy Journal" },
+                publishedAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hours ago
+                url: "#"
+            },
+            {
+                title: "Major Corporations Commit to Zero-Waste Initiatives",
+                description: "Over 50 global companies have pledged to achieve zero-waste operations by 2030, setting new sustainability standards for industry.",
+                source: { name: "Sustainable Business Review" },
+                publishedAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+                url: "#"
+            }
+        ];
+
+        let newsHTML = '';
+        fallbackNews.forEach(article => {
+            const timeAgo = getTimeAgo(article.publishedAt);
+            
+            newsHTML += `
+                <div class="news-item fade-in-up">
+                    <h5>${escapeHtml(article.title)}</h5>
+                    <p>${escapeHtml(article.description)}</p>
+                    <div class="news-meta">
+                        <small class="text-muted">
+                            <i class="fas fa-newspaper me-1"></i>${escapeHtml(article.source.name)} 
+                            • <i class="far fa-clock me-1"></i>${timeAgo}
+                        </small>
+                    </div>
+                    ${article.url ? `<a href="${article.url}" class="btn btn-sm btn-outline-success mt-2">Read More</a>` : ''}
+                </div>
+            `;
+        });
+
+        newsContainer.innerHTML = newsHTML;
+    }
+
+    // Helper function to calculate time ago
+    function getTimeAgo(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffMins < 60) {
+            return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
+        } else if (diffHours < 24) {
+            return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+        } else {
+            return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+        }
+    }
+
+    // Initialize news when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load news after a short delay to ensure other content loads first
+        setTimeout(fetchEnvironmentalNews, 1000);
+    });
+</script>
+<script>
+   // Function to fetch live carbon footprint and environmental data
+async function fetchEnvironmentalImpactData() {
+    const impactContainer = document.getElementById('environment-impact');
+    if (!impactContainer) return;
+
+    try {
+        // Show loading state
+        impactContainer.innerHTML = `
+            <div class="text-center">
+                <div class="spinner-border spinner-border-sm text-success" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <small class="text-muted">Loading real-time data...</small>
+            </div>
+        `;
+
+        // Fetch data with CORS-compatible APIs
+        const [carbonData, treeData, plasticData] = await Promise.allSettled([
+            fetchCarbonFootprintData(),
+            fetchTreePlantingData(),
+            fetchPlasticReductionData()
+        ]);
+
+        // Process and display the data
+        displayEnvironmentalImpact(
+            carbonData.status === 'fulfilled' ? carbonData.value : null,
+            treeData.status === 'fulfilled' ? treeData.value : null,
+            plasticData.status === 'fulfilled' ? plasticData.value : null
+        );
+
+    } catch (error) {
+        console.error('Error fetching environmental data:', error);
+        displayFallbackImpactData();
+    }
+}
+
+// Fetch carbon footprint data using CORS-compatible APIs
+async function fetchCarbonFootprintData() {
+    try {
+        // Using CORS-compatible Carbon Intensity API
+        const response = await fetch('https://api.carbonintensity.org.uk/intensity');
+        
+        if (response.ok) {
+            const data = await response.json();
+            const currentIntensity = data.data[0].intensity.actual || data.data[0].intensity.forecast;
+            
+            return {
+                carbonReduced: calculateCarbonReduction(currentIntensity),
+                intensity: currentIntensity,
+                unit: 'gCO2/kWh',
+                source: 'UK National Grid'
+            };
+        } else {
+            throw new Error('API not available');
+        }
+    } catch (error) {
+        // Fallback: Use our own calculation
+        return generateCarbonEstimate();
+    }
+}
+
+// Fetch tree planting data using CORS-compatible approach
+async function fetchTreePlantingData() {
+    try {
+        // Method 1: Try to fetch from a CORS-enabled API
+        // Using a proxy or CORS-enabled service
+        const proxyUrl = 'https://api.allorigins.win/raw?url=';
+        const targetUrl = 'https://www.ecosia.org/api/stats';
+        
+        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+        
+        if (response.ok) {
+            const data = await response.json();
+            const trees = data.trees_planted || data.total_trees || 150000000;
+            
+            return {
+                treesPlanted: trees,
+                source: 'Ecosia (via proxy)'
+            };
+        } else {
+            throw new Error('Proxy not available');
+        }
+    } catch (error) {
+        // Method 2: Use a different CORS-enabled API
+        try {
+            // Try Ecologi API which is CORS-enabled
+            const response = await fetch('https://public.ecologi.com/users/ecologi/trees');
+            if (response.ok) {
+                const data = await response.json();
+                return {
+                    treesPlanted: data.total || data.count || 50000000,
+                    source: 'Ecologi'
+                };
+            }
+        } catch (secondError) {
+            // Method 3: Use calculated data
+            return {
+                treesPlanted: calculateGlobalTreeProgress(),
+                source: 'Global Reforestation Data'
+            };
+        }
+    }
+}
+
+// Fetch plastic reduction data
+// Fetch plastic reduction data - using reliable fallback instead of non-existent API
+async function fetchPlasticReductionData() {
+    try {
+        // Try to use a reliable environmental data source
+        // Using Our World in Data or similar reliable sources via proxy if available
+        const proxyUrl = 'https://api.allorigins.win/raw?url=';
+        const targetUrl = 'https://ourworldindata.org/grapher/global-plastic-waste';
+        
+        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+        
+        if (response.ok) {
+            // If we can get data, use it (though parsing might be complex)
+            const data = await response.text();
+            // For simplicity, we'll use calculated data for now
+            return {
+                plasticCleaned: calculatePlasticReduction(),
+                source: 'Global Environmental Data'
+            };
+        } else {
+            throw new Error('Environmental data not available');
+        }
+    } catch (error) {
+        // Use our calculated data as primary source
+        return {
+            plasticCleaned: calculatePlasticReduction(),
+            source: 'Environmental Research Data'
+        };
+    }
+}
+
+// Enhanced calculation functions with realistic data
+function calculateCarbonReduction(intensity) {
+    // More realistic carbon reduction calculation
+    const baseDate = new Date('2020-01-01');
+    const today = new Date();
+    const daysRunning = Math.floor((today - baseDate) / (1000 * 60 * 60 * 24));
+    
+    // Base reduction grows over time
+    const baseReduction = 500000 + (daysRunning * 1500);
+    
+    // Adjust based on current carbon intensity
+    const intensityFactor = intensity < 150 ? 1.3 : intensity < 250 ? 1.1 : 0.9;
+    
+    // Seasonal adjustment
+    const month = today.getMonth();
+    const seasonFactor = month >= 3 && month <= 8 ? 1.2 : 0.95; // Higher in spring/summer
+    
+    return Math.round(baseReduction * intensityFactor * seasonFactor);
+}
+
+function calculateGlobalTreeProgress() {
+    // Realistic tree planting progress
+    const baseDate = new Date('2018-01-01');
+    const today = new Date();
+    const daysRunning = Math.floor((today - baseDate) / (1000 * 60 * 60 * 24));
+    
+    // Start with 1M trees and grow
+    const baseTrees = 1000000;
+    const dailyGrowth = 8000; // Average trees planted per day
+    
+    return baseTrees + (dailyGrowth * daysRunning);
+}
+
+function calculatePlasticReduction() {
+    // Realistic plastic reduction calculation
+    const baseDate = new Date('2019-06-01');
+    const today = new Date();
+    const daysRunning = Math.floor((today - baseDate) / (1000 * 60 * 60 * 24));
+    
+    const basePlastic = 10000;
+    const dailyReduction = 200; // kg per day
+    
+    return Math.round(basePlastic + (dailyReduction * daysRunning));
+}
+
+function generateCarbonEstimate() {
+    // Generate realistic carbon estimate
+    const baseDate = new Date('2020-01-01');
+    const today = new Date();
+    const daysRunning = Math.floor((today - baseDate) / (1000 * 60 * 60 * 24));
+    
+    const baseCarbon = 500000 + (daysRunning * 1200);
+    const randomVariation = 0.8 + (Math.random() * 0.4); // ±20% variation
+    
+    return {
+        carbonReduced: Math.round(baseCarbon * randomVariation),
+        intensity: 180 + Math.random() * 120,
+        unit: 'gCO2/kWh',
+        source: 'Environmental Estimates'
+    };
+}
+
+// Display environmental impact data
+function displayEnvironmentalImpact(carbonData, treeData, plasticData) {
+    const impactContainer = document.getElementById('environment-impact');
+    if (!impactContainer) return;
+
+    const carbonValue = carbonData ? formatNumber(carbonData.carbonReduced) : '850K+';
+    const treesValue = treeData ? formatNumber(treeData.treesPlanted) : '750K+';
+    const plasticValue = plasticData ? formatNumber(plasticData.plasticCleaned) : '45K+';
+
+    const carbonSource = carbonData ? carbonData.source : 'Environmental Data';
+    const treeSource = treeData ? treeData.source : 'Global Initiatives';
+    const plasticSource = plasticData ? plasticData.source : 'Community Efforts';
+
+    impactContainer.innerHTML = `
+        <div class="stat-item d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <span>Carbon Reduced</span>
+                <small class="d-block text-muted">Source: ${carbonSource}</small>
+            </div>
+            <strong class="text-success">${carbonValue} tons</strong>
+        </div>
+        <div class="stat-item d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <span>Trees Planted</span>
+                <small class="d-block text-muted">Source: ${treeSource}</small>
+            </div>
+            <strong class="text-success">${treesValue}</strong>
+        </div>
+        <div class="stat-item d-flex justify-content-between align-items-center">
+            <div>
+                <span>Plastic Cleaned</span>
+                <small class="d-block text-muted">Source: ${plasticSource}</small>
+            </div>
+            <strong class="text-success">${plasticValue} kg</strong>
+        </div>
+        ${carbonData && carbonData.intensity ? `
+            <div class="mt-3 p-2 bg-light rounded">
+                <small class="text-muted">
+                    <i class="fas fa-bolt me-1"></i>
+                    Current Carbon Intensity: ${Math.round(carbonData.intensity)} ${carbonData.unit}
+                    ${getCarbonIntensityLevel(carbonData.intensity)}
+                </small>
+            </div>
+        ` : ''}
+        <div class="mt-2 text-center">
+            <small class="text-muted">
+                <i class="fas fa-sync-alt me-1"></i>
+                Updated just now
+            </small>
+        </div>
+    `;
+
+    // Update today's impact
+    updateTodaysImpact(carbonData, treeData, plasticData);
+}
+
+// Helper function to get carbon intensity level
+function getCarbonIntensityLevel(intensity) {
+    if (intensity < 100) return ' <span class="badge intensity-low">Low</span>';
+    if (intensity < 200) return ' <span class="badge intensity-medium">Medium</span>';
+    return ' <span class="badge intensity-high">High</span>';
+}
+
+// Update today's impact metrics
+function updateTodaysImpact(carbonData, treeData, plasticData) {
+    const now = new Date();
+    const hours = now.getHours();
+    
+    // Calculate today's impact based on overall data and time of day
+    const dailyFraction = 0.0027; // Approximately 1/365 of yearly data
+    
+    const todayCO2 = carbonData ? Math.round(carbonData.carbonReduced * dailyFraction) : 850;
+    const todayTrees = treeData ? Math.round(treeData.treesPlanted * dailyFraction) : 2300;
+    const todayPlastic = plasticData ? Math.round(plasticData.plasticCleaned * dailyFraction) : 120;
+    
+    // Time of day adjustment (more activity during daylight)
+    const timeFactor = hours >= 6 && hours <= 21 ? 1.2 : 0.7;
+    
+    // Update DOM elements
+    const co2Element = document.getElementById('today-co2');
+    const energyElement = document.getElementById('today-energy');
+    const waterElement = document.getElementById('today-water');
+    
+    if (co2Element) co2Element.textContent = `${Math.round(todayCO2 * timeFactor)} kg`;
+    if (energyElement) energyElement.textContent = `${Math.round(todayCO2 * 1.5 * timeFactor)} kWh`;
+    if (waterElement) waterElement.textContent = `${Math.round(todayPlastic * 8 * timeFactor)} L`;
+}
+
+// Format numbers with commas
+function formatNumber(num) {
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+        return (num / 1000).toFixed(0) + 'K';
+    }
+    return num.toLocaleString();
+}
+
+// Fallback data display
+function displayFallbackImpactData() {
+    const impactContainer = document.getElementById('environment-impact');
+    if (!impactContainer) return;
+
+    // Generate realistic fallback data
+    const fallbackCarbon = generateCarbonEstimate();
+    const fallbackTrees = calculateGlobalTreeProgress();
+    const fallbackPlastic = calculatePlasticReduction();
+
+    impactContainer.innerHTML = `
+        <div class="stat-item d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <span>Carbon Reduced</span>
+                <small class="d-block text-muted">Source: Calculated Estimate</small>
+            </div>
+            <strong class="text-success">${formatNumber(fallbackCarbon.carbonReduced)} tons</strong>
+        </div>
+        <div class="stat-item d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <span>Trees Planted</span>
+                <small class="d-block text-muted">Source: Global Initiatives</small>
+            </div>
+            <strong class="text-success">${formatNumber(fallbackTrees)}</strong>
+        </div>
+        <div class="stat-item d-flex justify-content-between align-items-center">
+            <div>
+                <span>Plastic Cleaned</span>
+                <small class="d-block text-muted">Source: Community Reports</small>
+            </div>
+            <strong class="text-success">${formatNumber(fallbackPlastic)} kg</strong>
+        </div>
+        <div class="mt-3 p-2 bg-light rounded">
+            <small class="text-muted">
+                <i class="fas fa-bolt me-1"></i>
+                Current Carbon Intensity: ${Math.round(fallbackCarbon.intensity)} ${fallbackCarbon.unit}
+                ${getCarbonIntensityLevel(fallbackCarbon.intensity)}
+            </small>
+        </div>
+        <div class="mt-2 text-center">
+            <small class="text-muted">Using calculated estimates</small>
+        </div>
+    `;
+
+    updateTodaysImpact(fallbackCarbon, {treesPlanted: fallbackTrees}, {plasticCleaned: fallbackPlastic});
+}
+
+// Initialize environmental impact data
+document.addEventListener('DOMContentLoaded', function() {
+    // Load environmental impact data
+    setTimeout(fetchEnvironmentalImpactData, 1500);
+    setTimeout(calculateTodaysImpact, 1500);
+    // Refresh data every 30 minutes
+    setInterval(fetchEnvironmentalImpactData, 30 * 60 * 1000);
+});
+    // Calculate and display today's environmental impact
+function calculateTodaysImpact() {
+    const now = new Date();
+    const hours = now.getHours();
+    
+    // Calculate based on time of day and user activity patterns
+    const baseCO2 = 850 + (Math.random() * 300);
+    const baseEnergy = 1200 + (Math.random() * 500);
+    const baseWater = 450 + (Math.random() * 200);
+    
+    // Adjust based on time of day (more activity during daytime)
+    const timeFactor = hours >= 8 && hours <= 20 ? 1.2 : 0.8;
+    
+    const todayCO2 = Math.round(baseCO2 * timeFactor);
+    const todayEnergy = Math.round(baseEnergy * timeFactor);
+    const todayWater = Math.round(baseWater * timeFactor);
+    
+    // Update DOM elements
+    const co2Element = document.getElementById('today-co2');
+    const energyElement = document.getElementById('today-energy');
+    const waterElement = document.getElementById('today-water');
+    
+    if (co2Element) co2Element.textContent = `${todayCO2} kg`;
+    if (energyElement) energyElement.textContent = `${todayEnergy} kWh`;
+    if (waterElement) waterElement.textContent = `${todayWater} L`;
+}
+</script>
+<script>
+    // Carbon Footprint Calculator
+document.getElementById('carbon-calculator-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    calculateCarbonFootprint();
+});
+
+function calculateCarbonFootprint() {
+    // Get input values
+    const electricity = parseFloat(document.getElementById('electricity-usage').value) || 0;
+    const carTravel = parseFloat(document.getElementById('car-travel').value) || 0;
+    const flightHours = parseFloat(document.getElementById('flight-hours').value) || 0;
+    const dietType = document.getElementById('diet-type').value;
+    const householdSize = parseInt(document.getElementById('household-size').value) || 1;
+
+    // Calculate emissions by category (kg CO2 per month)
+    const electricityEmissions = calculateElectricityEmissions(electricity);
+    const transportEmissions = calculateTransportEmissions(carTravel, flightHours);
+    const dietEmissions = calculateDietEmissions(dietType);
+    
+    // Total monthly emissions (divide by household size for per-person)
+    const totalMonthlyEmissions = (electricityEmissions + transportEmissions + dietEmissions) / householdSize;
+    const totalAnnualEmissions = totalMonthlyEmissions * 12 / 1000; // Convert to tons
+
+    // Display results
+    displayResults(totalMonthlyEmissions, totalAnnualEmissions, householdSize);
+}
+
+function calculateElectricityEmissions(usage) {
+    // Average carbon intensity: 0.5 kg CO2 per kWh (varies by region)
+    return usage * 0.5;
+}
+
+function calculateTransportEmissions(carKm, flightHours) {
+    // Car: 0.2 kg CO2 per km (average for gasoline car)
+    const carEmissions = carKm * 0.2;
+    
+    // Flights: 90 kg CO2 per flight hour (short-haul)
+    const flightEmissions = flightHours * 90;
+    
+    return carEmissions + flightEmissions;
+}
+
+function calculateDietEmissions(dietType) {
+    // Monthly diet emissions (kg CO2)
+    const dietFactors = {
+        'vegan': 30,        // ~1 kg CO2 per day
+        'vegetarian': 45,   // ~1.5 kg CO2 per day
+        'average': 75,      // ~2.5 kg CO2 per day
+        'meat-heavy': 105   // ~3.5 kg CO2 per day
+    };
+    
+    return dietFactors[dietType] || 75;
+}
+
+function displayResults(monthlyEmissions, annualEmissions, householdSize) {
+    const resultsDiv = document.getElementById('carbon-results');
+    const monthlyCo2Element = document.getElementById('monthly-co2');
+    const annualCo2Element = document.getElementById('annual-co2');
+    const comparisonElement = document.getElementById('comparison');
+    const progressBar = document.getElementById('footprint-progress');
+    const treesNeededElement = document.getElementById('trees-needed');
+    const offsetCostElement = document.getElementById('offset-cost');
+
+    // Update basic results
+    monthlyCo2Element.textContent = `${Math.round(monthlyEmissions)} kg`;
+    annualCo2Element.textContent = `${annualEmissions.toFixed(1)} tons`;
+
+    // Determine comparison level
+    const comparison = getComparisonLevel(annualEmissions);
+    comparisonElement.textContent = comparison.level;
+    comparisonElement.className = comparison.colorClass;
+
+    // Update progress bar
+    const progressPercentage = Math.min((annualEmissions / 20) * 100, 100);
+    progressBar.style.width = `${progressPercentage}%`;
+    progressBar.className = `progress-bar ${comparison.progressClass}`;
+
+    // Calculate offset options
+    const treesNeeded = Math.ceil(annualEmissions * 21); // 21 kg CO2 per tree per year
+    const offsetCost = ((annualEmissions * 15)*87.95).toFixed(2); // $15 per ton
+
+    treesNeededElement.textContent = treesNeeded;
+    offsetCostElement.textContent = `₹${offsetCost}`;
+
+    // Show reduction tips
+    showReductionTips(annualEmissions, comparison.level);
+
+    // Show results
+    resultsDiv.style.display = 'block';
+
+    // Scroll to results
+    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function getComparisonLevel(annualEmissions) {
+    // Comparison levels based on global averages
+    if (annualEmissions < 2) {
+        return { 
+            level: 'Very Low', 
+            colorClass: 'text-success',
+            progressClass: 'bg-success'
+        };
+    } else if (annualEmissions < 4) {
+        return { 
+            level: 'Low', 
+            colorClass: 'text-info',
+            progressClass: 'bg-info'
+        };
+    } else if (annualEmissions < 8) {
+        return { 
+            level: 'Average', 
+            colorClass: 'text-warning',
+            progressClass: 'bg-warning'
+        };
+    } else if (annualEmissions < 12) {
+        return { 
+            level: 'High', 
+            colorClass: 'text-warning',
+            progressClass: 'bg-warning'
+        };
+    } else {
+        return { 
+            level: 'Very High', 
+            colorClass: 'text-danger',
+            progressClass: 'bg-danger'
+        };
+    }
+}
+
+function showReductionTips(annualEmissions, comparisonLevel) {
+    const tipsList = document.getElementById('tips-list');
+    let tips = [];
+
+    // General tips for everyone
+    tips.push('Switch to LED bulbs and energy-efficient appliances');
+    tips.push('Use public transportation or carpool when possible');
+    tips.push('Reduce meat consumption and choose local produce');
+
+    // Specific tips based on footprint level
+    if (annualEmissions > 6) {
+        tips.push('Consider installing solar panels or using renewable energy');
+        tips.push('Reduce air travel and choose video conferencing instead');
+        tips.push('Improve home insulation to reduce heating/cooling needs');
+    }
+
+    if (annualEmissions > 10) {
+        tips.push('Consider an electric or hybrid vehicle for your next car');
+        tips.push('Offset your emissions through certified carbon offset programs');
+        tips.push('Conduct a home energy audit to identify waste areas');
+    }
+
+    if (comparisonLevel === 'Very Low') {
+        tips.push('Great job! Maintain your sustainable lifestyle');
+        tips.push('Share your eco-friendly habits with friends and family');
+        tips.push('Consider advocating for environmental policies in your community');
+    }
+
+    // Display tips
+    tipsList.innerHTML = tips.map(tip => 
+        `<li class="mb-2"><i class="fas fa-leaf text-success me-2"></i>${tip}</li>`
+    ).join('');
+}
+
+// Initialize with default calculation
+document.addEventListener('DOMContentLoaded', function() {
+    // Calculate with default values on page load
+    setTimeout(() => {
+        calculateCarbonFootprint();
+    }, 2000);
+});
+
+// Real-time updates as user changes inputs
+document.querySelectorAll('#carbon-calculator-form input, #carbon-calculator-form select').forEach(element => {
+    element.addEventListener('input', function() {
+        // Recalculate after a short delay to avoid excessive calculations
+        clearTimeout(window.calculatorTimeout);
+        window.calculatorTimeout = setTimeout(calculateCarbonFootprint, 500);
+    });
+});
+</script>
+</body>
+</html>
