@@ -1225,23 +1225,52 @@ async function sendEmailOTP() {
         return;
     }
 
+    const sendButton = document.getElementById('send-email-otp');
+    const originalText = sendButton.innerHTML;
+    
     try {
-        const response = await apiCall('/auth/send-email-otp', {
+        // Show loading state
+        sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        sendButton.disabled = true;
+
+        const response = await fetch(`${API_BASE_URL}/auth/send-email-otp`, {
             method: 'POST',
-            body: { email }
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email })
         });
 
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to send OTP');
+        }
+
+        // Show OTP section
         document.getElementById('email-otp-section').style.display = 'block';
         document.getElementById('email-otp-status').innerHTML = 
-            '<span class="text-success">OTP sent to your email!</span>';
+            '<span class="text-success"><i class="fas fa-check-circle"></i> OTP sent to your email!</span>';
         
+        console.log('OTP sent successfully:', data);
+
     } catch (error) {
+        console.error('Send OTP error:', error);
         document.getElementById('email-otp-status').innerHTML = 
-            `<span class="text-danger">Failed to send OTP: ${error.message}</span>`;
+            `<span class="text-danger"><i class="fas fa-exclamation-triangle"></i> ${error.message}</span>`;
+        
+        // If email fails, show OTP in console for testing
+        if (error.message.includes('timeout') || error.message.includes('connection')) {
+            console.log('Email service down - check backend logs for OTP');
+        }
+    } finally {
+        // Reset button
+        sendButton.innerHTML = originalText;
+        sendButton.disabled = false;
     }
 }
 
-// Verify Email OTP
+// Verify Email OTP - Fixed version
 async function verifyEmailOTP() {
     const email = document.getElementById('register-email').value;
     const otp = document.getElementById('email-otp').value;
@@ -1251,21 +1280,44 @@ async function verifyEmailOTP() {
         return;
     }
 
+    const verifyButton = document.getElementById('verify-email-otp');
+    const originalText = verifyButton.innerHTML;
+
     try {
-        const response = await apiCall('/auth/verify-email-otp', {
+        verifyButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+        verifyButton.disabled = true;
+
+        const response = await fetch(`${API_BASE_URL}/auth/verify-email-otp`, {
             method: 'POST',
-            body: { email, otp }
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, otp })
         });
 
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Verification failed');
+        }
+
         emailOtpVerified = true;
-        emailOtpToken = response.verificationToken;
-        document.getElementById('email-otp-status').innerHTML = 
-            '<span class="text-success"><i class="fas fa-check"></i> Email verified successfully!</span>';
-        document.getElementById('verify-email-otp').disabled = true;
+        emailOtpToken = data.verificationToken;
         
-    } catch (error) {
         document.getElementById('email-otp-status').innerHTML = 
-            `<span class="text-danger">Verification failed: ${error.message}</span>`;
+            '<span class="text-success"><i class="fas fa-check-circle"></i> Email verified successfully!</span>';
+        document.getElementById('verify-email-otp').disabled = true;
+        document.getElementById('email-otp').disabled = true;
+        
+        console.log('Email verified successfully');
+
+    } catch (error) {
+        console.error('Verify OTP error:', error);
+        document.getElementById('email-otp-status').innerHTML = 
+            `<span class="text-danger"><i class="fas fa-times-circle"></i> ${error.message}</span>`;
+    } finally {
+        verifyButton.innerHTML = originalText;
+        verifyButton.disabled = false;
     }
 }
 
