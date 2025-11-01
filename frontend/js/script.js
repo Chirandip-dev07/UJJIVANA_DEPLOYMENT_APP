@@ -1,8 +1,5 @@
 // js/script.js
-// Auto-detect API URL based on environment
-const API_BASE_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:5000/api'
-    : `${window.location.origin}/api`;
+const API_BASE_URL = 'https://ujjivana-backend.onrender.com/api';
     
 console.log('Using API Base URL:', API_BASE_URL);
 
