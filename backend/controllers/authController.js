@@ -754,43 +754,48 @@ exports.sendEmailOTP = async (req, res) => {
       verificationToken
     });
 
-    try {
-  await transporter.sendMail({
-    from: `"Ujjivana" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: 'Ujjivana - Email Verification OTP',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9f9f9; padding: 20px; border-radius: 10px;">
-        <div style="text-align: center; background: linear-gradient(45deg, #2ecc71, #27ae60); padding: 20px; border-radius: 10px 10px 0 0; color: white;">
-          <h1 style="margin: 0; font-size: 24px;">Ujjivana</h1>
-          <p style="margin: 5px 0 0 0; opacity: 0.9;">Email Verification</p>
-        </div>
-        <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px;">
-          <h2 style="color: #2ecc71; text-align: center;">Your Verification Code</h2>
-          <p>Hello,</p>
-          <p>Use the following OTP to verify your email address:</p>
-          <div style="text-align: center; margin: 30px 0;">
-            <div style="display: inline-block; background: #f1f1f1; padding: 15px 30px; border-radius: 8px; border: 2px dashed #2ecc71;">
-              <span style="font-size: 32px; font-weight: bold; color: #2ecc71; letter-spacing: 5px;">${otp}</span>
+    if (transporter) {
+      try {
+        await transporter.sendMail({
+          from: `"Ujjivana" <${process.env.EMAIL_USER}>`,
+          to: email,
+          subject: 'Ujjivana - Email Verification OTP',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9f9f9; padding: 20px; border-radius: 10px;">
+              <div style="text-align: center; background: linear-gradient(45deg, #2ecc71, #27ae60); padding: 20px; border-radius: 10px 10px 0 0; color: white;">
+                <h1 style="margin: 0; font-size: 24px;">Ujjivana</h1>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">Email Verification</p>
+              </div>
+              <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px;">
+                <h2 style="color: #2ecc71; text-align: center;">Your Verification Code</h2>
+                <p>Hello,</p>
+                <p>Use the following OTP to verify your email address:</p>
+                <div style="text-align: center; margin: 30px 0;">
+                  <div style="display: inline-block; background: #f1f1f1; padding: 15px 30px; border-radius: 8px; border: 2px dashed #2ecc71;">
+                    <span style="font-size: 32px; font-weight: bold; color: #2ecc71; letter-spacing: 5px;">${otp}</span>
+                  </div>
+                </div>
+                <p>This OTP will expire in <strong>10 minutes</strong>.</p>
+                <p>If you didn't request this verification, please ignore this email.</p>
+                <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="color: #666; font-size: 12px; text-align: center;">
+                  Ujjivana - Gamifying environmental education for a sustainable future
+                </p>
+              </div>
             </div>
-          </div>
-          <p>This OTP will expire in <strong>10 minutes</strong>.</p>
-          <p>If you didn't request this verification, please ignore this email.</p>
-          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-          <p style="color: #666; font-size: 12px; text-align: center;">
-            Ujjivana - Gamifying environmental education for a sustainable future
-          </p>
-        </div>
-      </div>
-    `
-  });
-  
-  console.log(`OTP email sent to: ${email}`);
-} catch (emailError) {
-  console.error('Failed to send email:', emailError);
-  // Fallback to console log if email fails
-  console.log(`OTP for ${email}: ${otp}`);
-}
+          `
+        });
+
+        console.log(`OTP email sent to: ${email}`);
+      } catch (emailError) {
+        console.error('Failed to send email:', emailError);
+        // Fallback to console log if email fails
+        console.log(`OTP for ${email}: ${otp}`);
+      }
+    } else {
+      // Fallback to console log if transporter not configured
+      console.log(`OTP for ${email}: ${otp}`);
+    }
     
 
     res.status(200).json({
