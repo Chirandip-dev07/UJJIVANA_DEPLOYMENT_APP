@@ -688,19 +688,28 @@ const OTP = require('../models/OTP');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
-// Configure email transporter (add to your env variables)
+// Configure email transporter with better settings
 let transporter;
 
 if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
   transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE || 'gmail',
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // Use TLS
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS
-    }
+    },
+    connectionTimeout: 30000, // 30 seconds
+    greetingTimeout: 30000,
+    socketTimeout: 30000,
+    // Add retry logic
+    retries: 3,
+    retryDelay: 1000
   });
 
-  // Verify transporter configuration
+  // Verify transporter configuration with better error handling
   transporter.verify(function(error, success) {
     if (error) {
       console.error('Email transporter configuration error:', error);
