@@ -721,7 +721,7 @@ if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
   console.warn('Email credentials not configured. OTPs will be logged to console only.');
 }
 
-// @desc    Send OTP to email
+// @desc    Send OTP to email - Improved version
 // @route   POST /api/auth/send-email-otp
 // @access  Public
 exports.sendEmailOTP = async (req, res) => {
@@ -763,6 +763,7 @@ exports.sendEmailOTP = async (req, res) => {
       verificationToken
     });
 
+    // Try to send email, but don't fail if email service is down
     if (transporter) {
       try {
         await transporter.sendMail({
@@ -794,31 +795,30 @@ exports.sendEmailOTP = async (req, res) => {
             </div>
           `
         });
-
         console.log(`OTP email sent to: ${email}`);
       } catch (emailError) {
-        console.error('Failed to send email:', emailError);
-        // Fallback to console log if email fails
-        console.log(`OTP for ${email}: ${otp}`);
+        console.error('Email sending failed, but OTP is still generated:', emailError);
+        // Don't throw error - just log it
       }
     } else {
-      // Fallback to console log if transporter not configured
-      console.log(`OTP for ${email}: ${otp}`);
+      console.warn('Email transporter not configured');
     }
-    
 
+    // Always return success and log OTP for development
+    console.log(`OTP for ${email}: ${otp}`);
+    
     res.status(200).json({
       success: true,
-      message: 'OTP sent successfully',
-      // Remove this in production - only for development
-      debug: { otp }
+      message: 'OTP generated successfully',
+      // Include OTP in development for testing
+      debug: process.env.NODE_ENV === 'development' ? { otp } : undefined
     });
 
   } catch (error) {
     console.error('Send email OTP error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to send OTP'
+      message: 'Failed to generate OTP'
     });
   }
 };
