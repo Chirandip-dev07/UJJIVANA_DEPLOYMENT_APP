@@ -84,7 +84,6 @@ router.put('/updatepassword', protect, updatePassword);
 router.post('/reset-periodic-points', protect, resetPeriodicPoints);
 router.post('/update-points', protect, updatePoints);
 router.post('/update-quiz-attempt', protect, updateQuizAttempt);
-// Uncomment and define requireAdmin/registerAdmin if you need admin registration
 router.post('/register/admin', protect, requireAdmin, registerAdmin);
 router.post('/send-email-otp', sendEmailOTP);
 router.post('/verify-email-otp', verifyEmailOTP);
