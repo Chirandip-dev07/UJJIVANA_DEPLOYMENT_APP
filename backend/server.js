@@ -28,16 +28,6 @@ const app = express();
 app.use(cors());
 app.options('*', cors());
 
-// Serve static frontend files in production
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../frontend')));
-    
-    // Handle React routing, return all requests to index.html
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
-    });
-}
-
 app.get('/api/debug/progress/:moduleId/:userId', async (req, res) => {
     try {
         const { moduleId, userId } = req.params;
@@ -99,6 +89,9 @@ app.use('/api/pin-requests', pinRequestRoutes); // Add this line
 app.use('/api/surveys', surveyRoutes);
 app.use('/api/events', eventRoutes);
 
+// Serve static files from the frontend directory
+app.use(express.static(path.join(__dirname, '../frontend')));
+
 app.get('/api', (req, res) => {
     res.json({ message: 'Ujjivana API is working! Use /api/health, /api/auth, etc.' });
 });
@@ -119,6 +112,11 @@ app.use('/api/*', (req, res) => {
         message: 'API route not found',
         requestedUrl: req.originalUrl
     });
+});
+
+// Catch all handler: send back index.html for any non-API routes (SPA support)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 app.use((error, req, res, next) => {
