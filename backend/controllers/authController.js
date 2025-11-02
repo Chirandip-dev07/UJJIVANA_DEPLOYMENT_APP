@@ -687,12 +687,20 @@ exports.updatePoints = async (req, res, next) => {
 const OTP = require('../models/OTP');
 const crypto = require('crypto');
 const sgMail = require('@sendgrid/mail');
+const twilio = require('twilio');
 
 if (process.env.SENDGRID_API_KEY) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   console.log('SendGrid email service configured');
 } else {
   console.warn('SendGrid API key not configured. OTPs will be logged to console only.');
+}
+let twilioClient;
+if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+  twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+  console.log('Twilio SMS service configured');
+} else {
+  console.warn('Twilio credentials not configured. Phone OTPs will be logged to console only.');
 }
 
 // @desc    Send OTP to email - Improved version
@@ -929,6 +937,15 @@ exports.sendPhoneOTP = async (req, res) => {
       });
     }
 
+    // Basic phone validation
+    const phoneRegex = /^\+?[1-9]\d{1,14}$/; // E.164 format
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please enter a valid phone number with country code (e.g., +1234567890)'
+      });
+    }
+
     // Generate OTP and verification token
     const otp = OTP.generateOTP();
     const verificationToken = OTP.generateVerificationToken();
@@ -948,21 +965,50 @@ exports.sendPhoneOTP = async (req, res) => {
       verificationToken
     });
 
-    // In production, integrate with SMS service like Twilio
-    console.log(`OTP for ${phone}: ${otp}`); // Remove this in production
+    // Send SMS using Twilio
+    if (twilioClient) {
+      try {
+        const message = await twilioClient.messages.create({
+          body: `Your Ujjivana verification code is: ${otp}. This code will expire in 10 minutes.`,
+          from: process.env.TWILIO_PHONE_NUMBER,
+          to: phone
+        });
 
-    res.status(200).json({
-      success: true,
-      message: 'OTP sent successfully',
-      // Remove this in production - only for development
-      debug: { otp }
-    });
+        console.log(`SMS sent to ${phone}, SID: ${message.sid}`);
+        
+        res.status(200).json({
+          success: true,
+          message: 'OTP sent successfully via SMS'
+        });
+
+      } catch (smsError) {
+        console.error('Twilio error:', smsError);
+        
+        // Even if SMS fails, OTP is still generated
+        console.log(`OTP for ${phone}: ${otp}`);
+        
+        res.status(200).json({
+          success: true,
+          message: 'OTP generated successfully (SMS service temporarily unavailable)',
+          debug: { otp } // Include OTP for testing
+        });
+      }
+    } else {
+      // Twilio not configured
+      console.log(`OTP for ${phone}: ${otp}`);
+      
+      res.status(200).json({
+        success: true,
+        message: 'OTP generated successfully',
+        debug: { otp } // Always include OTP when SMS not configured
+      });
+    }
 
   } catch (error) {
     console.error('Send phone OTP error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to send OTP'
+      message: 'Failed to generate OTP'
     });
   }
 };
