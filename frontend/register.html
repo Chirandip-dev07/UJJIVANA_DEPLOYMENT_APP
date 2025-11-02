@@ -634,6 +634,79 @@
 .verification-error {
     color: #dc3545;
 }
+<style>
+/* Enhanced Alert Styles */
+.alert {
+    border-radius: 10px;
+    border: none;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.alert-info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+}
+
+.alert-warning {
+    background: #fff3cd;
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+
+.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+.alert ul {
+    margin-bottom: 0;
+    padding-left: 20px;
+}
+
+.alert li {
+    margin-bottom: 5px;
+}
+
+.alert strong {
+    font-weight: 600;
+}
+
+.alert .fas {
+    margin-right: 8px;
+}
+
+/* OTP input styling */
+#email-otp {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-align: center;
+    padding: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .alert {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+    
+    #email-otp {
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+    }
+}
+</style>
     </style>
 </head>
 <body>
@@ -790,6 +863,10 @@
         <button type="button" class="btn btn-outline-success" id="verify-email-otp">
             Verify
         </button>
+    </div>
+    <div class="form-text text-muted small">
+        <i class="fas fa-lightbulb"></i>
+        Can't find the code? Check your spam folder and wait a few minutes for delivery.
     </div>
     <div class="form-text" id="email-otp-status"></div>
 </div>
@@ -1249,33 +1326,87 @@ async function sendEmailOTP() {
         // Show OTP section
         document.getElementById('email-otp-section').style.display = 'block';
         
-        // Handle different response scenarios
+        // Enhanced success message with spam folder notice
+        let successMessage = `
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> 
+                <strong>OTP sent successfully!</strong><br>
+                We've sent a 6-digit verification code to <strong>${email}</strong>
+            </div>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <strong>Email delivery tips:</strong>
+                <ul class="mb-1 mt-1">
+                    <li>Check your <strong>Spam</strong> or <strong>Junk</strong> folder</li>
+                    <li>Gmail users: Check the <strong>Promotions</strong> tab</li>
+                    <li>Wait 1-2 minutes - emails can be delayed</li>
+                    <li>Ensure <strong>${email}</strong> is correct</li>
+                </ul>
+        `;
+
+        // If we have debug OTP (email service failed), show it prominently
         if (data.debug && data.debug.otp) {
-            // Show OTP directly if email service failed
-            document.getElementById('email-otp-status').innerHTML = 
-                `<div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle"></i> 
-                    <strong>Email service temporary unavailable.</strong><br>
-                    Use this OTP: <code style="font-size: 1.2em; background: #fff3cd; padding: 5px 10px; border-radius: 4px;">${data.debug.otp}</code>
-                </div>`;
-        } else {
-            document.getElementById('email-otp-status').innerHTML = 
-                '<div class="alert alert-success"><i class="fas fa-check-circle"></i> OTP sent successfully to your email!</div>';
+            successMessage += `
+                <div class="alert alert-warning mt-2">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Development Mode:</strong> Use this OTP for testing:
+                    <div class="text-center mt-2">
+                        <code style="font-size: 1.4em; background: #fff3cd; padding: 10px 20px; border-radius: 6px; font-weight: bold; letter-spacing: 3px;">
+                            ${data.debug.otp}
+                        </code>
+                    </div>
+                </div>
+            `;
         }
+
+        successMessage += `</div>`;
+        
+        document.getElementById('email-otp-status').innerHTML = successMessage;
+        
+        // Add resend OTP button
+        addResendOTPButton();
         
     } catch (error) {
         console.error('Send OTP error:', error);
         document.getElementById('email-otp-status').innerHTML = 
             `<div class="alert alert-danger">
                 <i class="fas fa-exclamation-triangle"></i> 
-                Error: ${error.message}
+                <strong>Error sending OTP:</strong> ${error.message}<br>
+                <small class="mt-1">Please check your email address and try again.</small>
             </div>`;
     } finally {
         sendButton.innerHTML = 'Send OTP';
         sendButton.disabled = false;
     }
 }
-
+function addResendOTPButton() {
+    const otpStatus = document.getElementById('email-otp-status');
+    if (otpStatus) {
+        const resendHTML = `
+            <div class="text-center mt-3">
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="resend-email-otp">
+                    <i class="fas fa-redo"></i> Resend OTP
+                </button>
+                <div class="form-text small mt-1">
+                    Didn't receive the code? Wait 60 seconds then try resending.
+                </div>
+            </div>
+        `;
+        otpStatus.insertAdjacentHTML('beforeend', resendHTML);
+        
+        // Add resend functionality
+        document.getElementById('resend-email-otp').addEventListener('click', function() {
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resending...';
+            
+            setTimeout(() => {
+                sendEmailOTP();
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-redo"></i> Resend OTP';
+            }, 60000); // 60 second cooldown
+        });
+    }
+}
 // Verify Email OTP - Fixed version
 async function verifyEmailOTP() {
     const email = document.getElementById('register-email').value;
@@ -1311,7 +1442,15 @@ async function verifyEmailOTP() {
         emailOtpToken = data.verificationToken;
         
         document.getElementById('email-otp-status').innerHTML = 
-            '<span class="text-success"><i class="fas fa-check-circle"></i> Email verified successfully!</span>';
+            `<div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> 
+                <strong>Email verified successfully!</strong>
+                <div class="mt-1">
+                    <i class="fas fa-shield-check text-success"></i>
+                    Your email has been verified and secured.
+                </div>
+            </div>`;
+        
         document.getElementById('verify-email-otp').disabled = true;
         document.getElementById('email-otp').disabled = true;
         
@@ -1319,14 +1458,34 @@ async function verifyEmailOTP() {
 
     } catch (error) {
         console.error('Verify OTP error:', error);
+        
+        let errorMessage = error.message;
+        let additionalHelp = '';
+        
+        if (error.message.includes('Invalid OTP') || error.message.includes('not found')) {
+            additionalHelp = `
+                <div class="mt-2">
+                    <strong>Tips:</strong>
+                    <ul class="mb-1">
+                        <li>Check your <strong>spam folder</strong> for the OTP email</li>
+                        <li>Make sure you entered the correct 6-digit code</li>
+                        <li>OTP expires after 10 minutes - request a new one if needed</li>
+                    </ul>
+                </div>
+            `;
+        }
+        
         document.getElementById('email-otp-status').innerHTML = 
-            `<span class="text-danger"><i class="fas fa-times-circle"></i> ${error.message}</span>`;
+            `<div class="alert alert-danger">
+                <i class="fas fa-times-circle"></i> 
+                <strong>Verification failed:</strong> ${errorMessage}
+                ${additionalHelp}
+            </div>`;
     } finally {
-        verifyButton.innerHTML = originalText;
+        verifyButton.innerHTML = 'Verify';
         verifyButton.disabled = false;
     }
 }
-
 // Send Phone OTP
 async function sendPhoneOTP() {
     const phone = document.getElementById('register-phone').value;
