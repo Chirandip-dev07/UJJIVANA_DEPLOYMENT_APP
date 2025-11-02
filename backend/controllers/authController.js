@@ -695,10 +695,11 @@ if (process.env.SENDGRID_API_KEY) {
 } else {
   console.warn('SendGrid API key not configured. OTPs will be logged to console only.');
 }
+// Configure Twilio Verify API
 let twilioClient;
 if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
   twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-  console.log('Twilio SMS service configured');
+  console.log('Twilio Verify API configured');
 } else {
   console.warn('Twilio credentials not configured. Phone OTPs will be logged to console only.');
 }
@@ -923,7 +924,7 @@ exports.verifyEmailOTP = async (req, res) => {
   }
 };
 
-// @desc    Send OTP to phone
+// @desc    Send OTP to phone using Twilio Verify API
 // @route   POST /api/auth/send-phone-otp
 // @access  Public
 exports.sendPhoneOTP = async (req, res) => {
@@ -946,7 +947,7 @@ exports.sendPhoneOTP = async (req, res) => {
       });
     }
 
-    // Generate OTP and verification token
+    // Generate OTP and verification token (for our own records)
     const otp = OTP.generateOTP();
     const verificationToken = OTP.generateVerificationToken();
     
@@ -956,7 +957,7 @@ exports.sendPhoneOTP = async (req, res) => {
     // Delete any existing OTP for this phone
     await OTP.deleteMany({ phone, type: 'phone' });
 
-    // Create new OTP
+    // Create new OTP in our database
     await OTP.create({
       phone,
       otp,
@@ -965,37 +966,41 @@ exports.sendPhoneOTP = async (req, res) => {
       verificationToken
     });
 
-    // Send SMS using Twilio
-    if (twilioClient) {
+    // Send SMS using Twilio Verify API
+    if (twilioClient && process.env.TWILIO_VERIFY_SERVICE_SID) {
       try {
-        const message = await twilioClient.messages.create({
-          body: `Your Ujjivana verification code is: ${otp}. This code will expire in 10 minutes.`,
-          from: process.env.TWILIO_PHONE_NUMBER,
-          to: phone
-        });
+        const verification = await twilioClient.verify.v2
+          .services(process.env.TWILIO_VERIFY_SERVICE_SID)
+          .verifications
+          .create({
+            to: phone,
+            channel: 'sms',
+            locale: 'en' // Optional: set language for SMS
+          });
 
-        console.log(`SMS sent to ${phone}, SID: ${message.sid}`);
+        console.log(`Twilio Verify API: SMS sent to ${phone}, SID: ${verification.sid}`);
         
         res.status(200).json({
           success: true,
-          message: 'OTP sent successfully via SMS'
+          message: 'OTP sent successfully via SMS',
+          // We don't need to send OTP to frontend since Twilio handles verification
         });
 
-      } catch (smsError) {
-        console.error('Twilio error:', smsError);
+      } catch (verifyError) {
+        console.error('Twilio Verify API error:', verifyError);
         
-        // Even if SMS fails, OTP is still generated
-        console.log(`OTP for ${phone}: ${otp}`);
+        // Fallback: If Verify API fails, use our own OTP system
+        console.log(`OTP for ${phone}: ${otp} (Verify API failed, using fallback)`);
         
         res.status(200).json({
           success: true,
           message: 'OTP generated successfully (SMS service temporarily unavailable)',
-          debug: { otp } // Include OTP for testing
+          debug: { otp } // Include OTP for testing when Verify API fails
         });
       }
     } else {
-      // Twilio not configured
-      console.log(`OTP for ${phone}: ${otp}`);
+      // Twilio not configured properly
+      console.log(`OTP for ${phone}: ${otp} (Twilio not configured)`);
       
       res.status(200).json({
         success: true,
@@ -1013,7 +1018,7 @@ exports.sendPhoneOTP = async (req, res) => {
   }
 };
 
-// @desc    Verify phone OTP
+// @desc    Verify phone OTP using Twilio Verify API
 // @route   POST /api/auth/verify-phone-otp
 // @access  Public
 exports.verifyPhoneOTP = async (req, res) => {
@@ -1027,7 +1032,54 @@ exports.verifyPhoneOTP = async (req, res) => {
       });
     }
 
-    // Find the OTP record
+    // First try Twilio Verify API if configured
+    if (twilioClient && process.env.TWILIO_VERIFY_SERVICE_SID) {
+      try {
+        const verificationCheck = await twilioClient.verify.v2
+          .services(process.env.TWILIO_VERIFY_SERVICE_SID)
+          .verificationChecks
+          .create({
+            to: phone,
+            code: otp
+          });
+
+        console.log(`Twilio Verify API: Verification status for ${phone}: ${verificationCheck.status}`);
+
+        if (verificationCheck.status === 'approved') {
+          // OTP is valid, create our verification record
+          const verificationToken = OTP.generateVerificationToken();
+          
+          // Delete any existing OTP for this phone
+          await OTP.deleteMany({ phone, type: 'phone' });
+
+          // Create verified OTP record
+          await OTP.create({
+            phone,
+            otp,
+            type: 'phone',
+            verified: true,
+            verificationToken
+          });
+
+          return res.status(200).json({
+            success: true,
+            message: 'Phone number verified successfully',
+            verificationToken: verificationToken
+          });
+        } else {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid OTP or OTP expired'
+          });
+        }
+
+      } catch (verifyError) {
+        console.error('Twilio Verify API check error:', verifyError);
+        // Fall through to our own OTP verification
+      }
+    }
+
+    // Fallback: Use our own OTP verification
     const otpRecord = await OTP.findOne({ 
       phone, 
       otp, 
