@@ -686,39 +686,13 @@ exports.updatePoints = async (req, res, next) => {
 };
 const OTP = require('../models/OTP');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
-// Configure email transporter with better settings
-let transporter;
-
-if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-  transporter = nodemailer.createTransport({
-    service: 'gmail',
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // Use TLS
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    },
-    connectionTimeout: 30000, // 30 seconds
-    greetingTimeout: 30000,
-    socketTimeout: 30000,
-    // Add retry logic
-    retries: 3,
-    retryDelay: 1000
-  });
-
-  // Verify transporter configuration with better error handling
-  transporter.verify(function(error, success) {
-    if (error) {
-      console.error('Email transporter configuration error:', error);
-    } else {
-      console.log('Email transporter is ready to send messages');
-    }
-  });
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  console.log('SendGrid email service configured');
 } else {
-  console.warn('Email credentials not configured. OTPs will be logged to console only.');
+  console.warn('SendGrid API key not configured. OTPs will be logged to console only.');
 }
 
 // @desc    Send OTP to email - Improved version
@@ -763,56 +737,84 @@ exports.sendEmailOTP = async (req, res) => {
       verificationToken
     });
 
-    // Try to send email, but don't fail if email service is down
-    if (transporter) {
+    // Send email using SendGrid
+    if (process.env.SENDGRID_API_KEY) {
       try {
-        await transporter.sendMail({
-          from: `"Ujjivana" <${process.env.EMAIL_USER}>`,
+        const msg = {
           to: email,
+          from: process.env.SENDGRID_FROM_EMAIL || 'noreply@ujjivana.com', // Use your verified sender
           subject: 'Ujjivana - Email Verification OTP',
           html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9f9f9; padding: 20px; border-radius: 10px;">
-              <div style="text-align: center; background: linear-gradient(45deg, #2ecc71, #27ae60); padding: 20px; border-radius: 10px 10px 0 0; color: white;">
-                <h1 style="margin: 0; font-size: 24px;">Ujjivana</h1>
-                <p style="margin: 5px 0 0 0; opacity: 0.9;">Email Verification</p>
-              </div>
-              <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px;">
-                <h2 style="color: #2ecc71; text-align: center;">Your Verification Code</h2>
-                <p>Hello,</p>
-                <p>Use the following OTP to verify your email address:</p>
-                <div style="text-align: center; margin: 30px 0;">
-                  <div style="display: inline-block; background: #f1f1f1; padding: 15px 30px; border-radius: 8px; border: 2px dashed #2ecc71;">
-                    <span style="font-size: 32px; font-weight: bold; color: #2ecc71; letter-spacing: 5px;">${otp}</span>
-                  </div>
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; background: #f9f9f9; padding: 20px; border-radius: 10px; }
+                    .header { text-align: center; background: linear-gradient(45deg, #2ecc71, #27ae60); padding: 20px; border-radius: 10px 10px 0 0; color: white; }
+                    .content { background: white; padding: 30px; border-radius: 0 0 10px 10px; }
+                    .otp-box { text-align: center; margin: 30px 0; }
+                    .otp-code { display: inline-block; background: #f1f1f1; padding: 15px 30px; border-radius: 8px; border: 2px dashed #2ecc71; font-size: 32px; font-weight: bold; color: #2ecc71; letter-spacing: 5px; }
+                    .footer { text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1 style="margin: 0; font-size: 24px;">Ujjivana</h1>
+                        <p style="margin: 5px 0 0 0; opacity: 0.9;">Email Verification</p>
+                    </div>
+                    <div class="content">
+                        <h2 style="color: #2ecc71; text-align: center;">Your Verification Code</h2>
+                        <p>Hello,</p>
+                        <p>Use the following OTP to verify your email address for your Ujjivana account:</p>
+                        <div class="otp-box">
+                            <div class="otp-code">${otp}</div>
+                        </div>
+                        <p>This OTP will expire in <strong>10 minutes</strong>.</p>
+                        <p>If you didn't request this verification, please ignore this email.</p>
+                        <div class="footer">
+                            <p>Ujjivana - Gamifying environmental education for a sustainable future</p>
+                        </div>
+                    </div>
                 </div>
-                <p>This OTP will expire in <strong>10 minutes</strong>.</p>
-                <p>If you didn't request this verification, please ignore this email.</p>
-                <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-                <p style="color: #666; font-size: 12px; text-align: center;">
-                  Ujjivana - Gamifying environmental education for a sustainable future
-                </p>
-              </div>
-            </div>
+            </body>
+            </html>
           `
-        });
+        };
+        
+        await sgMail.send(msg);
         console.log(`OTP email sent to: ${email}`);
+        
+        res.status(200).json({
+          success: true,
+          message: 'OTP sent successfully to your email'
+        });
+
       } catch (emailError) {
-        console.error('Email sending failed, but OTP is still generated:', emailError);
-        // Don't throw error - just log it
+        console.error('SendGrid error:', emailError);
+        
+        // Even if email fails, OTP is still generated
+        console.log(`OTP for ${email}: ${otp}`);
+        
+        res.status(200).json({
+          success: true,
+          message: 'OTP generated successfully (email service temporarily unavailable)',
+          // Include OTP for development/testing
+          debug: process.env.NODE_ENV === 'development' ? { otp } : undefined
+        });
       }
     } else {
-      console.warn('Email transporter not configured');
+      // SendGrid not configured
+      console.log(`OTP for ${email}: ${otp}`);
+      
+      res.status(200).json({
+        success: true,
+        message: 'OTP generated successfully',
+        debug: { otp } // Always include OTP when email not configured
+      });
     }
-
-    // Always return success and log OTP for development
-    console.log(`OTP for ${email}: ${otp}`);
-    
-    res.status(200).json({
-      success: true,
-      message: 'OTP generated successfully',
-      // Include OTP in development for testing
-      debug: process.env.NODE_ENV === 'development' ? { otp } : undefined
-    });
 
   } catch (error) {
     console.error('Send email OTP error:', error);
@@ -822,7 +824,6 @@ exports.sendEmailOTP = async (req, res) => {
     });
   }
 };
-
 // @desc    Verify email OTP
 // @route   POST /api/auth/verify-email-otp
 // @access  Public
