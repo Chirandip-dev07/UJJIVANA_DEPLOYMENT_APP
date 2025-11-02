@@ -808,7 +808,7 @@ exports.sendEmailOTP = async (req, res) => {
         open_tracking: {
           enable: false // Disable open tracking for OTP emails
         }
-      }
+      },
       headers: {
         'X-Entity-Ref': 'otp-verification',
         'List-Unsubscribe': '<https://ujjivana.com/unsubscribe>', // Add if you have this
