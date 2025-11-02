@@ -870,27 +870,37 @@
     </div>
     <div class="form-text" id="email-otp-status"></div>
 </div>
-                        <div class="mb-3">
-    <label for="register-phone" class="form-label">Contact Number</label>
-    <div class="input-group">
-        <input type="tel" class="form-control" id="register-phone">
-        <button type="button" class="btn btn-outline-success" id="send-phone-otp">
-            Send OTP
-        </button>
-    </div>
-</div>
-
-<!-- Phone OTP Verification -->
-<div class="mb-3" id="phone-otp-section" style="display: none;">
-    <label for="phone-otp" class="form-label">Phone OTP Verification</label>
-    <div class="input-group">
-        <input type="text" class="form-control" id="phone-otp" placeholder="Enter OTP">
-        <button type="button" class="btn btn-outline-success" id="verify-phone-otp">
-            Verify
-        </button>
-    </div>
-    <div class="form-text" id="phone-otp-status"></div>
-</div>
+                       <div class="mb-3">
+                        <label for="register-phone" class="form-label">Contact Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-phone"></i>
+                            </span>
+                            <input type="tel" class="form-control" id="register-phone" placeholder="+91 1234567890">
+                            <button type="button" class="btn btn-outline-success" id="send-phone-otp">
+                                Send OTP
+                            </button>
+                        </div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i> Include country code (e.g., +91 for India, +1 for US)
+                        </div>
+                    </div>
+                    
+                    <!-- Phone OTP Verification -->
+                    <div class="mb-3" id="phone-otp-section" style="display: none;">
+                        <label for="phone-otp" class="form-label">SMS Verification Code</label>
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" id="phone-otp" placeholder="Enter 6-digit OTP" maxlength="6">
+                            <button type="button" class="btn btn-outline-success" id="verify-phone-otp">
+                                Verify
+                            </button>
+                        </div>
+                        <div class="form-text text-muted small">
+                            <i class="fas fa-lightbulb"></i>
+                            We sent a 6-digit code via SMS. Check your phone messages.
+                        </div>
+                        <div class="form-text" id="phone-otp-status"></div>
+                    </div>
                         <div class="mb-3">
                             <label for="register-school" class="form-label">School/College Name</label>
                             <input type="text" class="form-control" id="register-school">
@@ -1126,7 +1136,7 @@ async function performRegistration(name, email, password, phone, school, rollNum
         name, 
         email, 
         password, 
-        phone, 
+        phone: phone.replace(/\s/g, ''), // Remove spaces from phone
         school,
         role: userType,
         emailVerificationToken: emailOtpToken
@@ -1135,6 +1145,7 @@ async function performRegistration(name, email, password, phone, school, rollNum
     // Add phone verification token if phone was verified
     if (phoneOtpVerified) {
         userData.phoneVerificationToken = phoneOtpToken;
+        userData.phoneVerified = true;
     }
     
     // Only add rollNumber for students
@@ -1142,7 +1153,6 @@ async function performRegistration(name, email, password, phone, school, rollNum
         userData.rollNumber = rollNumber;
     }
     
-    // Use your existing register function
     return await register(userData);
 }
 async function register(userData) {
@@ -1495,19 +1505,86 @@ async function sendPhoneOTP() {
         return;
     }
 
+    // Basic phone validation
+    if (!phone.startsWith('+')) {
+        alert('Please include country code (e.g., +91 for India, +1 for US)');
+        return;
+    }
+
+    const sendButton = document.getElementById('send-phone-otp');
+    const originalText = sendButton.innerHTML;
+    
     try {
-        const response = await apiCall('/auth/send-phone-otp', {
+        sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        sendButton.disabled = true;
+
+        const response = await fetch(`${API_BASE_URL}/auth/send-phone-otp`, {
             method: 'POST',
-            body: { phone }
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ phone })
         });
 
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to send OTP');
+        }
+
+        // Show OTP section
         document.getElementById('phone-otp-section').style.display = 'block';
-        document.getElementById('phone-otp-status').innerHTML = 
-            '<span class="text-success">OTP sent to your phone!</span>';
+        
+        let successMessage = `
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> 
+                <strong>SMS sent successfully!</strong><br>
+                We've sent a 6-digit verification code to <strong>${phone}</strong>
+            </div>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <strong>SMS delivery tips:</strong>
+                <ul class="mb-1 mt-1">
+                    <li>Check your phone messages</li>
+                    <li>Wait 1-2 minutes - SMS can be delayed</li>
+                    <li>Ensure <strong>${phone}</strong> is correct</li>
+                    <li>Check your spam messages folder</li>
+                </ul>
+        `;
+
+        // If we have debug OTP (SMS service failed), show it prominently
+        if (data.debug && data.debug.otp) {
+            successMessage += `
+                <div class="alert alert-warning mt-2">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>SMS service notice:</strong> Use this OTP for testing:
+                    <div class="text-center mt-2">
+                        <code style="font-size: 1.4em; background: #fff3cd; padding: 10px 20px; border-radius: 6px; font-weight: bold; letter-spacing: 3px;">
+                            ${data.debug.otp}
+                        </code>
+                    </div>
+                </div>
+            `;
+        }
+
+        successMessage += `</div>`;
+        
+        document.getElementById('phone-otp-status').innerHTML = successMessage;
+        
+        // Add resend OTP button
+        addPhoneResendOTPButton();
         
     } catch (error) {
+        console.error('Send phone OTP error:', error);
         document.getElementById('phone-otp-status').innerHTML = 
-            `<span class="text-danger">Failed to send OTP: ${error.message}</span>`;
+            `<div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i> 
+                <strong>Error sending SMS:</strong> ${error.message}<br>
+                <small class="mt-1">Please check your phone number and try again.</small>
+            </div>`;
+    } finally {
+        sendButton.innerHTML = 'Send OTP';
+        sendButton.disabled = false;
     }
 }
 
@@ -1521,23 +1598,131 @@ async function verifyPhoneOTP() {
         return;
     }
 
+    const verifyButton = document.getElementById('verify-phone-otp');
+    const originalText = verifyButton.innerHTML;
+
     try {
-        const response = await apiCall('/auth/verify-phone-otp', {
+        verifyButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+        verifyButton.disabled = true;
+
+        const response = await fetch(`${API_BASE_URL}/auth/verify-phone-otp`, {
             method: 'POST',
-            body: { phone, otp }
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ phone, otp })
         });
 
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Verification failed');
+        }
+
         phoneOtpVerified = true;
-        phoneOtpToken = response.verificationToken;
-        document.getElementById('phone-otp-status').innerHTML = 
-            '<span class="text-success"><i class="fas fa-check"></i> Phone verified successfully!</span>';
-        document.getElementById('verify-phone-otp').disabled = true;
+        phoneOtpToken = data.verificationToken;
         
-    } catch (error) {
         document.getElementById('phone-otp-status').innerHTML = 
-            `<span class="text-danger">Verification failed: ${error.message}</span>`;
+            `<div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> 
+                <strong>Phone verified successfully!</strong>
+                <div class="mt-1">
+                    <i class="fas fa-shield-check text-success"></i>
+                    Your phone number has been verified and secured.
+                </div>
+            </div>`;
+        
+        document.getElementById('verify-phone-otp').disabled = true;
+        document.getElementById('phone-otp').disabled = true;
+        
+        console.log('Phone verified successfully');
+
+    } catch (error) {
+        console.error('Verify phone OTP error:', error);
+        
+        let errorMessage = error.message;
+        let additionalHelp = '';
+        
+        if (error.message.includes('Invalid OTP') || error.message.includes('not found')) {
+            additionalHelp = `
+                <div class="mt-2">
+                    <strong>Tips:</strong>
+                    <ul class="mb-1">
+                        <li>Check your SMS messages for the 6-digit code</li>
+                        <li>Make sure you entered the correct code</li>
+                        <li>OTP expires after 10 minutes - request a new one if needed</li>
+                        <li>Ensure your phone can receive SMS messages</li>
+                    </ul>
+                </div>
+            `;
+        }
+        
+        document.getElementById('phone-otp-status').innerHTML = 
+            `<div class="alert alert-danger">
+                <i class="fas fa-times-circle"></i> 
+                <strong>Verification failed:</strong> ${errorMessage}
+                ${additionalHelp}
+            </div>`;
+    } finally {
+        verifyButton.innerHTML = 'Verify';
+        verifyButton.disabled = false;
     }
 }
+
+// Add resend phone OTP functionality
+function addPhoneResendOTPButton() {
+    const otpStatus = document.getElementById('phone-otp-status');
+    if (otpStatus && !document.getElementById('resend-phone-otp')) {
+        const resendHTML = `
+            <div class="text-center mt-3">
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="resend-phone-otp">
+                    <i class="fas fa-redo"></i> Resend OTP
+                </button>
+                <div class="form-text small mt-1">
+                    Didn't receive the code? Wait 60 seconds then try resending.
+                </div>
+            </div>
+        `;
+        otpStatus.insertAdjacentHTML('beforeend', resendHTML);
+        
+        // Add resend functionality
+        document.getElementById('resend-phone-otp').addEventListener('click', function() {
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resending...';
+            
+            setTimeout(() => {
+                sendPhoneOTP();
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-redo"></i> Resend OTP';
+            }, 60000); // 60 second cooldown
+        });
+    }
+}
+    // Phone number formatting and validation
+document.getElementById('register-phone').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    
+    // Format with + and spaces
+    if (value.length > 0) {
+        value = '+' + value;
+        if (value.length > 3) {
+            value = value.substring(0, 3) + ' ' + value.substring(3);
+        }
+        if (value.length > 7) {
+            value = value.substring(0, 7) + ' ' + value.substring(7);
+        }
+    }
+    
+    e.target.value = value;
+});
+
+// Auto-format on blur
+document.getElementById('register-phone').addEventListener('blur', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 0 && !value.startsWith('+')) {
+        e.target.value = '+' + value;
+    }
+});
 </script>
 <script>
     // Eco Quotes Collection
