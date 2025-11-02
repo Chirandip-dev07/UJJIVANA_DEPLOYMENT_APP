@@ -949,8 +949,7 @@ exports.sendPhoneOTP = async (req, res) => {
       });
     }
 
-    // Generate OTP and verification token
-    const otp = OTP.generateOTP();
+    // Generate verification token (we'll use this, but NOT an OTP)
     const verificationToken = OTP.generateVerificationToken();
     
     // Set expiration (10 minutes)
@@ -958,15 +957,6 @@ exports.sendPhoneOTP = async (req, res) => {
 
     // Delete any existing OTP for this phone
     await OTP.deleteMany({ phone: cleanPhone, type: 'phone' });
-
-    // Create new OTP in our database (required for verification flow)
-    await OTP.create({
-      phone: cleanPhone,
-      otp,
-      type: 'phone',
-      expiresAt,
-      verificationToken
-    });
 
     // Send SMS using Twilio Verify API
     if (twilioClient && process.env.TWILIO_VERIFY_SERVICE_SID) {
@@ -982,6 +972,16 @@ exports.sendPhoneOTP = async (req, res) => {
 
         console.log(`✅ Twilio Verify API: SMS sent to ${cleanPhone}, SID: ${verification.sid}`);
         
+        // Create OTP record with a placeholder - we don't know the actual OTP
+        // Twilio handles the OTP generation and verification
+        await OTP.create({
+          phone: cleanPhone,
+          otp: 'twilio_handle', // Placeholder since Twilio generates the actual OTP
+          type: 'phone',
+          expiresAt,
+          verificationToken
+        });
+
         res.status(200).json({
           success: true,
           message: 'Verification code sent via SMS'
@@ -990,7 +990,18 @@ exports.sendPhoneOTP = async (req, res) => {
       } catch (verifyError) {
         console.error('❌ Twilio Verify API failed:', verifyError.message);
         
-        // Fallback: If Verify API fails, use our own OTP system
+        // FALLBACK: If Twilio fails, use our own OTP system
+        const otp = OTP.generateOTP();
+        
+        // Create OTP record with actual OTP for fallback
+        await OTP.create({
+          phone: cleanPhone,
+          otp, // Real OTP for fallback
+          type: 'phone',
+          expiresAt,
+          verificationToken
+        });
+
         console.log(`📞 Fallback OTP for ${cleanPhone}: ${otp}`);
         
         res.status(200).json({
@@ -1000,7 +1011,17 @@ exports.sendPhoneOTP = async (req, res) => {
         });
       }
     } else {
-      // Twilio not configured
+      // Twilio not configured - use our own OTP system
+      const otp = OTP.generateOTP();
+      
+      await OTP.create({
+        phone: cleanPhone,
+        otp, // Real OTP
+        type: 'phone',
+        expiresAt,
+        verificationToken
+      });
+
       console.log(`OTP for ${cleanPhone}: ${otp} (Twilio not configured)`);
       
       res.status(200).json({
