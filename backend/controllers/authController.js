@@ -739,73 +739,107 @@ exports.sendEmailOTP = async (req, res) => {
 
     // Send email using SendGrid
     if (process.env.SENDGRID_API_KEY) {
-      try {
-        const msg = {
-          to: email,
-          from: process.env.SENDGRID_FROM_EMAIL || 'noreply@ujjivana.com', // Use your verified sender
-          subject: 'Ujjivana - Email Verification OTP',
-          html: `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                    .container { max-width: 600px; margin: 0 auto; background: #f9f9f9; padding: 20px; border-radius: 10px; }
-                    .header { text-align: center; background: linear-gradient(45deg, #2ecc71, #27ae60); padding: 20px; border-radius: 10px 10px 0 0; color: white; }
-                    .content { background: white; padding: 30px; border-radius: 0 0 10px 10px; }
-                    .otp-box { text-align: center; margin: 30px 0; }
-                    .otp-code { display: inline-block; background: #f1f1f1; padding: 15px 30px; border-radius: 8px; border: 2px dashed #2ecc71; font-size: 32px; font-weight: bold; color: #2ecc71; letter-spacing: 5px; }
-                    .footer { text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="header">
-                        <h1 style="margin: 0; font-size: 24px;">Ujjivana</h1>
-                        <p style="margin: 5px 0 0 0; opacity: 0.9;">Email Verification</p>
+  try {
+    const msg = {
+      to: email,
+      from: {
+        email: process.env.SENDGRID_FROM_EMAIL,
+        name: 'Ujjivana' // Add sender name
+      },
+      subject: 'Your Ujjivana Verification Code',
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Email Verification</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5;">
+            <div style="max-width: 600px; margin: 0 auto; background: white;">
+                <!-- Header -->
+                <div style="background: linear-gradient(45deg, #2ecc71, #27ae60); padding: 30px 20px; text-align: center; color: white;">
+                    <h1 style="margin: 0; font-size: 28px; font-weight: bold;">Ujjivana</h1>
+                    <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 16px;">Environmental Education Platform</p>
+                </div>
+                
+                <!-- Content -->
+                <div style="padding: 40px 30px;">
+                    <h2 style="color: #2ecc71; text-align: center; margin-bottom: 30px;">Email Verification Required</h2>
+                    
+                    <p style="font-size: 16px;">Hello,</p>
+                    
+                    <p style="font-size: 16px;">You're just one step away from joining Ujjivana! Use the verification code below to complete your registration:</p>
+                    
+                    <!-- OTP Box -->
+                    <div style="text-align: center; margin: 40px 0;">
+                        <div style="display: inline-block; background: #f8f9fa; padding: 20px 40px; border-radius: 10px; border: 2px solid #e9ecef;">
+                            <div style="font-size: 36px; font-weight: bold; color: #2ecc71; letter-spacing: 8px; font-family: 'Courier New', monospace;">${otp}</div>
+                        </div>
                     </div>
-                    <div class="content">
-                        <h2 style="color: #2ecc71; text-align: center;">Your Verification Code</h2>
-                        <p>Hello,</p>
-                        <p>Use the following OTP to verify your email address for your Ujjivana account:</p>
-                        <div class="otp-box">
-                            <div class="otp-code">${otp}</div>
-                        </div>
-                        <p>This OTP will expire in <strong>10 minutes</strong>.</p>
-                        <p>If you didn't request this verification, please ignore this email.</p>
-                        <div class="footer">
-                            <p>Ujjivana - Gamifying environmental education for a sustainable future</p>
-                        </div>
+                    
+                    <p style="font-size: 16px; color: #666;">
+                        <strong>Important:</strong> This code will expire in 10 minutes. 
+                        If you didn't request this verification, please ignore this email.
+                    </p>
+                    
+                    <div style="border-top: 1px solid #eee; margin-top: 30px; padding-top: 20px;">
+                        <p style="font-size: 14px; color: #999; text-align: center;">
+                            Ujjivana - Gamifying environmental education for a sustainable future<br>
+                            <a href="https://ujjivana.com" style="color: #2ecc71;">Visit our website</a>
+                        </p>
                     </div>
                 </div>
-            </body>
-            </html>
-          `
-        };
-        
-        await sgMail.send(msg);
-        console.log(`OTP email sent to: ${email}`);
-        
-        res.status(200).json({
-          success: true,
-          message: 'OTP sent successfully to your email'
-        });
-
-      } catch (emailError) {
-        console.error('SendGrid error:', emailError);
-        
-        // Even if email fails, OTP is still generated
-        console.log(`OTP for ${email}: ${otp}`);
-        
-        res.status(200).json({
-          success: true,
-          message: 'OTP generated successfully (email service temporarily unavailable)',
-          // Include OTP for development/testing
-          debug: process.env.NODE_ENV === 'development' ? { otp } : undefined
-        });
+            </div>
+        </body>
+        </html>
+      `,
+      text: `Ujjivana Email Verification\n\nHello,\n\nYour verification code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this verification, please ignore this email.\n\nBest regards,\nUjjivana Team`, // Plain text version
+      categories: ['transactional', 'verification'], // Add categories for better tracking
+      mail_settings: {
+        sandbox_mode: {
+          enable: false // Ensure sandbox mode is off
+        }
+      },
+      tracking_settings: {
+        click_tracking: {
+          enable: false // Disable click tracking for OTP emails
+        },
+        open_tracking: {
+          enable: false // Disable open tracking for OTP emails
+        }
       }
-    } else {
+      headers: {
+        'X-Entity-Ref': 'otp-verification',
+        'List-Unsubscribe': '<https://ujjivana.com/unsubscribe>', // Add if you have this
+      },
+      custom_args: {
+        type: 'otp_verification',
+        user_type: 'new_registration'
+      }
+    };
+    
+    await sgMail.send(msg);
+    console.log(`OTP email sent to: ${email}`);
+    
+    res.status(200).json({
+      success: true,
+      message: 'OTP sent successfully to your email'
+    });
+
+  } catch (emailError) {
+    console.error('SendGrid error:', emailError);
+    
+    // Even if email fails, OTP is still generated
+    console.log(`OTP for ${email}: ${otp}`);
+    
+    res.status(200).json({
+      success: true,
+      message: 'OTP generated successfully',
+      debug: { otp } // Include OTP for testing
+    });
+  }
+} else {
       // SendGrid not configured
       console.log(`OTP for ${email}: ${otp}`);
       
