@@ -1229,7 +1229,6 @@ async function sendEmailOTP() {
     const originalText = sendButton.innerHTML;
     
     try {
-        // Show loading state
         sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
         sendButton.disabled = true;
 
@@ -1249,23 +1248,30 @@ async function sendEmailOTP() {
 
         // Show OTP section
         document.getElementById('email-otp-section').style.display = 'block';
-        document.getElementById('email-otp-status').innerHTML = 
-            '<span class="text-success"><i class="fas fa-check-circle"></i> OTP sent to your email!</span>';
         
-        console.log('OTP sent successfully:', data);
-
+        // Handle different response scenarios
+        if (data.debug && data.debug.otp) {
+            // Show OTP directly if email service failed
+            document.getElementById('email-otp-status').innerHTML = 
+                `<div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    <strong>Email service temporary unavailable.</strong><br>
+                    Use this OTP: <code style="font-size: 1.2em; background: #fff3cd; padding: 5px 10px; border-radius: 4px;">${data.debug.otp}</code>
+                </div>`;
+        } else {
+            document.getElementById('email-otp-status').innerHTML = 
+                '<div class="alert alert-success"><i class="fas fa-check-circle"></i> OTP sent successfully to your email!</div>';
+        }
+        
     } catch (error) {
         console.error('Send OTP error:', error);
         document.getElementById('email-otp-status').innerHTML = 
-            `<span class="text-danger"><i class="fas fa-exclamation-triangle"></i> ${error.message}</span>`;
-        
-        // If email fails, show OTP in console for testing
-        if (error.message.includes('timeout') || error.message.includes('connection')) {
-            console.log('Email service down - check backend logs for OTP');
-        }
+            `<div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i> 
+                Error: ${error.message}
+            </div>`;
     } finally {
-        // Reset button
-        sendButton.innerHTML = originalText;
+        sendButton.innerHTML = 'Send OTP';
         sendButton.disabled = false;
     }
 }
