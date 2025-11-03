@@ -1160,13 +1160,11 @@ function formatPoints(points) {
 </script>
 <script>
     // Function to fetch live environmental news
-    // Function to fetch live environmental news with CORS proxy
-async function fetchEnvironmentalNews() {
+   async function fetchEnvironmentalNews() {
     const newsContainer = document.getElementById('news-container');
     if (!newsContainer) return;
 
     try {
-        // Show loading state
         newsContainer.innerHTML = `
             <div class="col-12 text-center">
                 <div class="spinner-border text-success" role="status">
@@ -1179,15 +1177,11 @@ async function fetchEnvironmentalNews() {
         const apiKey = 'f373ab713fe176942fd2d5751d51eef2';
         const query = 'environment OR climate OR sustainability OR renewable energy OR conservation';
         
-        // Using CORS proxy to avoid CORS issues
-        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        // Alternative CORS proxy
+        const proxyUrl = 'https://api.allorigins.win/raw?url=';
         const targetUrl = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=2&apikey=${apiKey}`;
         
-        const response = await fetch(proxyUrl + targetUrl, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
+        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
 
         if (!response.ok) {
             throw new Error('Failed to fetch news');
@@ -1203,7 +1197,6 @@ async function fetchEnvironmentalNews() {
 
     } catch (error) {
         console.error('Error fetching news:', error);
-        // Fallback to static environmental news
         displayFallbackNews();
     }
 }
