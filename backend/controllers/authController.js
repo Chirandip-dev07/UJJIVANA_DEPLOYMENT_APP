@@ -687,6 +687,7 @@ exports.updatePoints = async (req, res, next) => {
 const OTP = require('../models/OTP');
 const crypto = require('crypto');
 const { Resend } = require('resend');
+const sgMail = require('@sendgrid/mail');
 const twilio = require('twilio');
 
 // Configure Resend
@@ -697,6 +698,10 @@ if (process.env.RESEND_API_KEY) {
 } else {
   console.warn('Resend API key not configured. OTPs will be logged to console only.');
 }
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  console.log('SendGrid email service configured');
+}
 // Configure Twilio Verify API
 let twilioClient;
 if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
@@ -706,7 +711,7 @@ if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
   console.warn('Twilio credentials not configured. Phone OTPs will be logged to console only.');
 }
 
-// @desc    Send OTP to email using Resend
+// @desc    Send OTP to email
 // @route   POST /api/auth/send-email-otp
 // @access  Public
 exports.sendEmailOTP = async (req, res) => {
@@ -722,7 +727,7 @@ exports.sendEmailOTP = async (req, res) => {
 
     console.log(`📧 Attempting to send OTP to: ${email}`);
 
-    // Check if user already exists with this email
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -731,17 +736,15 @@ exports.sendEmailOTP = async (req, res) => {
       });
     }
 
-    // Generate OTP and verification token
+    // Generate OTP
     const otp = OTP.generateOTP();
     const verificationToken = OTP.generateVerificationToken();
-    
-    // Set expiration (10 minutes)
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    // Delete any existing OTP for this email
+    // Clean up old OTPs
     await OTP.deleteMany({ email, type: 'email' });
 
-    // Create new OTP
+    // Create OTP record
     await OTP.create({
       email,
       otp,
@@ -750,101 +753,105 @@ exports.sendEmailOTP = async (req, res) => {
       verificationToken
     });
 
-    // Send email using Resend
+    const emailHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Email Verification</title>
+      </head>
+      <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5;">
+          <div style="max-width: 600px; margin: 0 auto; background: white;">
+              <div style="background: linear-gradient(45deg, #2ecc71, #27ae60); padding: 30px 20px; text-align: center; color: white;">
+                  <h1 style="margin: 0; font-size: 28px; font-weight: bold;">Ujjivana</h1>
+                  <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 16px;">Environmental Education Platform</p>
+              </div>
+              <div style="padding: 40px 30px;">
+                  <h2 style="color: #2ecc71; text-align: center; margin-bottom: 30px;">Email Verification Required</h2>
+                  <p style="font-size: 16px;">Hello,</p>
+                  <p style="font-size: 16px;">You're just one step away from joining Ujjivana! Use the verification code below:</p>
+                  <div style="text-align: center; margin: 40px 0;">
+                      <div style="display: inline-block; background: #f8f9fa; padding: 20px 40px; border-radius: 10px; border: 2px solid #e9ecef;">
+                          <div style="font-size: 36px; font-weight: bold; color: #2ecc71; letter-spacing: 8px; font-family: 'Courier New', monospace;">${otp}</div>
+                      </div>
+                  </div>
+                  <p style="font-size: 16px; color: #666;">
+                      <strong>Important:</strong> This code expires in 10 minutes.
+                  </p>
+              </div>
+          </div>
+      </body>
+      </html>
+    `;
+
+    // Try Resend first (with your verified email as sender)
     if (resend) {
       try {
-        console.log(`🔧 Resend API Key present: ${process.env.RESEND_API_KEY ? 'Yes' : 'No'}`);
-        
         const { data, error } = await resend.emails.send({
-          from: 'Ujjivana <onboarding@resend.dev>', // You can change this later
+          from: 'Ujjivana <chirandiproy@gmail.com>', // Use your verified email
           to: email,
           subject: 'Verify Your Email - Ujjivana',
-          html: `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Email Verification</title>
-            </head>
-            <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5;">
-                <div style="max-width: 600px; margin: 0 auto; background: white;">
-                    <!-- Header -->
-                    <div style="background: linear-gradient(45deg, #2ecc71, #27ae60); padding: 30px 20px; text-align: center; color: white;">
-                        <h1 style="margin: 0; font-size: 28px; font-weight: bold;">Ujjivana</h1>
-                        <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 16px;">Environmental Education Platform</p>
-                    </div>
-                    
-                    <!-- Content -->
-                    <div style="padding: 40px 30px;">
-                        <h2 style="color: #2ecc71; text-align: center; margin-bottom: 30px;">Email Verification Required</h2>
-                        
-                        <p style="font-size: 16px;">Hello,</p>
-                        
-                        <p style="font-size: 16px;">You're just one step away from joining Ujjivana! Use the verification code below to complete your registration:</p>
-                        
-                        <!-- OTP Box -->
-                        <div style="text-align: center; margin: 40px 0;">
-                            <div style="display: inline-block; background: #f8f9fa; padding: 20px 40px; border-radius: 10px; border: 2px solid #e9ecef;">
-                                <div style="font-size: 36px; font-weight: bold; color: #2ecc71; letter-spacing: 8px; font-family: 'Courier New', monospace;">${otp}</div>
-                            </div>
-                        </div>
-                        
-                        <p style="font-size: 16px; color: #666;">
-                            <strong>Important:</strong> This code will expire in 10 minutes. 
-                            If you didn't request this verification, please ignore this email.
-                        </p>
-                        
-                        <div style="border-top: 1px solid #eee; margin-top: 30px; padding-top: 20px;">
-                            <p style="font-size: 14px; color: #999; text-align: center;">
-                                Ujjivana - Gamifying environmental education for a sustainable future<br>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </body>
-            </html>
-          `,
-          text: `Your Ujjivana verification code is: ${otp}. This code will expire in 10 minutes.`
+          html: emailHtml,
+          text: `Your Ujjivana verification code is: ${otp}. Valid for 10 minutes.`
         });
 
         if (error) {
           throw new Error(error.message);
         }
 
-        console.log(`✅ Email sent successfully via Resend to: ${email}`);
-        console.log(`📨 Resend Response ID:`, data?.id);
-
-        res.status(200).json({
-          success: true,
-          message: 'OTP sent successfully to your email'
-        });
-
-      } catch (emailError) {
-        console.error('❌ Resend error:', {
-          message: emailError.message,
-          stack: emailError.stack
-        });
+        console.log(`✅ Email sent via Resend to: ${email}`);
         
-        // Even if email fails, OTP is still generated
-        console.log(`OTP for ${email}: ${otp}`);
-        
-        res.status(200).json({
+        return res.status(200).json({
           success: true,
-          message: 'OTP generated successfully (email service temporarily unavailable)',
-          debug: { otp }
+          message: 'OTP sent successfully to your email',
+          provider: 'resend'
         });
+
+      } catch (resendError) {
+        console.error('❌ Resend failed:', resendError.message);
+        // Fall through to SendGrid
       }
-    } else {
-      // Resend not configured
-      console.log(`OTP for ${email}: ${otp} (Resend not configured)`);
-      
-      res.status(200).json({
-        success: true,
-        message: 'OTP generated successfully',
-        debug: { otp }
-      });
     }
+
+    // Try SendGrid as fallback
+    if (process.env.SENDGRID_API_KEY && process.env.SENDGRID_FROM_EMAIL) {
+      try {
+        const msg = {
+          to: email,
+          from: {
+            email: process.env.SENDGRID_FROM_EMAIL,
+            name: 'Ujjivana'
+          },
+          subject: 'Verify Your Email - Ujjivana',
+          html: emailHtml,
+          text: `Your Ujjivana verification code is: ${otp}. Valid for 10 minutes.`
+        };
+
+        await sgMail.send(msg);
+        console.log(`✅ Email sent via SendGrid to: ${email}`);
+        
+        return res.status(200).json({
+          success: true,
+          message: 'OTP sent successfully to your email',
+          provider: 'sendgrid'
+        });
+
+      } catch (sendgridError) {
+        console.error('❌ SendGrid failed:', sendgridError.message);
+        // Fall through to final fallback
+      }
+    }
+
+    // Final fallback - log OTP
+    console.log(`OTP for ${email}: ${otp} (All email services failed)`);
+    
+    res.status(200).json({
+      success: true,
+      message: 'OTP generated successfully (email service temporarily unavailable)',
+      debug: { otp },
+      provider: 'fallback'
+    });
 
   } catch (error) {
     console.error('Send email OTP error:', error);
