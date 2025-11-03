@@ -686,14 +686,16 @@ exports.updatePoints = async (req, res, next) => {
 };
 const OTP = require('../models/OTP');
 const crypto = require('crypto');
-const sgMail = require('@sendgrid/mail');
+const { Resend } = require('resend');
 const twilio = require('twilio');
 
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  console.log('SendGrid email service configured');
+// Configure Resend
+let resend;
+if (process.env.RESEND_API_KEY) {
+  resend = new Resend(process.env.RESEND_API_KEY);
+  console.log('Resend email service configured');
 } else {
-  console.warn('SendGrid API key not configured. OTPs will be logged to console only.');
+  console.warn('Resend API key not configured. OTPs will be logged to console only.');
 }
 // Configure Twilio Verify API
 let twilioClient;
@@ -704,7 +706,7 @@ if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
   console.warn('Twilio credentials not configured. Phone OTPs will be logged to console only.');
 }
 
-// @desc    Send OTP to email - Improved version
+// @desc    Send OTP to email using Resend
 // @route   POST /api/auth/send-email-otp
 // @access  Public
 exports.sendEmailOTP = async (req, res) => {
@@ -717,6 +719,8 @@ exports.sendEmailOTP = async (req, res) => {
         message: 'Email is required'
       });
     }
+
+    console.log(`📧 Attempting to send OTP to: ${email}`);
 
     // Check if user already exists with this email
     const existingUser = await User.findOne({ email });
@@ -746,116 +750,99 @@ exports.sendEmailOTP = async (req, res) => {
       verificationToken
     });
 
-    // Send email using SendGrid
-    if (process.env.SENDGRID_API_KEY) {
-  try {
-    const msg = {
-      to: email,
-      from: {
-        email: process.env.SENDGRID_FROM_EMAIL,
-        name: 'Ujjivana' // Add sender name
-      },
-      subject: 'Your Ujjivana Verification Code',
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Email Verification</title>
-        </head>
-        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5;">
-            <div style="max-width: 600px; margin: 0 auto; background: white;">
-                <!-- Header -->
-                <div style="background: linear-gradient(45deg, #2ecc71, #27ae60); padding: 30px 20px; text-align: center; color: white;">
-                    <h1 style="margin: 0; font-size: 28px; font-weight: bold;">Ujjivana</h1>
-                    <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 16px;">Environmental Education Platform</p>
-                </div>
-                
-                <!-- Content -->
-                <div style="padding: 40px 30px;">
-                    <h2 style="color: #2ecc71; text-align: center; margin-bottom: 30px;">Email Verification Required</h2>
+    // Send email using Resend
+    if (resend) {
+      try {
+        console.log(`🔧 Resend API Key present: ${process.env.RESEND_API_KEY ? 'Yes' : 'No'}`);
+        
+        const { data, error } = await resend.emails.send({
+          from: 'Ujjivana <onboarding@resend.dev>', // You can change this later
+          to: email,
+          subject: 'Verify Your Email - Ujjivana',
+          html: `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Email Verification</title>
+            </head>
+            <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5;">
+                <div style="max-width: 600px; margin: 0 auto; background: white;">
+                    <!-- Header -->
+                    <div style="background: linear-gradient(45deg, #2ecc71, #27ae60); padding: 30px 20px; text-align: center; color: white;">
+                        <h1 style="margin: 0; font-size: 28px; font-weight: bold;">Ujjivana</h1>
+                        <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 16px;">Environmental Education Platform</p>
+                    </div>
                     
-                    <p style="font-size: 16px;">Hello,</p>
-                    
-                    <p style="font-size: 16px;">You're just one step away from joining Ujjivana! Use the verification code below to complete your registration:</p>
-                    
-                    <!-- OTP Box -->
-                    <div style="text-align: center; margin: 40px 0;">
-                        <div style="display: inline-block; background: #f8f9fa; padding: 20px 40px; border-radius: 10px; border: 2px solid #e9ecef;">
-                            <div style="font-size: 36px; font-weight: bold; color: #2ecc71; letter-spacing: 8px; font-family: 'Courier New', monospace;">${otp}</div>
+                    <!-- Content -->
+                    <div style="padding: 40px 30px;">
+                        <h2 style="color: #2ecc71; text-align: center; margin-bottom: 30px;">Email Verification Required</h2>
+                        
+                        <p style="font-size: 16px;">Hello,</p>
+                        
+                        <p style="font-size: 16px;">You're just one step away from joining Ujjivana! Use the verification code below to complete your registration:</p>
+                        
+                        <!-- OTP Box -->
+                        <div style="text-align: center; margin: 40px 0;">
+                            <div style="display: inline-block; background: #f8f9fa; padding: 20px 40px; border-radius: 10px; border: 2px solid #e9ecef;">
+                                <div style="font-size: 36px; font-weight: bold; color: #2ecc71; letter-spacing: 8px; font-family: 'Courier New', monospace;">${otp}</div>
+                            </div>
+                        </div>
+                        
+                        <p style="font-size: 16px; color: #666;">
+                            <strong>Important:</strong> This code will expire in 10 minutes. 
+                            If you didn't request this verification, please ignore this email.
+                        </p>
+                        
+                        <div style="border-top: 1px solid #eee; margin-top: 30px; padding-top: 20px;">
+                            <p style="font-size: 14px; color: #999; text-align: center;">
+                                Ujjivana - Gamifying environmental education for a sustainable future<br>
+                            </p>
                         </div>
                     </div>
-                    
-                    <p style="font-size: 16px; color: #666;">
-                        <strong>Important:</strong> This code will expire in 10 minutes. 
-                        If you didn't request this verification, please ignore this email.
-                    </p>
-                    
-                    <div style="border-top: 1px solid #eee; margin-top: 30px; padding-top: 20px;">
-                        <p style="font-size: 14px; color: #999; text-align: center;">
-                            Ujjivana - Gamifying environmental education for a sustainable future<br>
-                            <a href="https://ujjivana.com" style="color: #2ecc71;">Visit our website</a>
-                        </p>
-                    </div>
                 </div>
-            </div>
-        </body>
-        </html>
-      `,
-      text: `Ujjivana Email Verification\n\nHello,\n\nYour verification code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this verification, please ignore this email.\n\nBest regards,\nUjjivana Team`, // Plain text version
-      categories: ['transactional', 'verification'], // Add categories for better tracking
-      mail_settings: {
-        sandbox_mode: {
-          enable: false // Ensure sandbox mode is off
-        }
-      },
-      tracking_settings: {
-        click_tracking: {
-          enable: false // Disable click tracking for OTP emails
-        },
-        open_tracking: {
-          enable: false // Disable open tracking for OTP emails
-        }
-      },
-      headers: {
-        'X-Entity-Ref': 'otp-verification',
-        'List-Unsubscribe': '<https://ujjivana.com/unsubscribe>', // Add if you have this
-      },
-      custom_args: {
-        type: 'otp_verification',
-        user_type: 'new_registration'
-      }
-    };
-    
-    await sgMail.send(msg);
-    console.log(`OTP email sent to: ${email}`);
-    
-    res.status(200).json({
-      success: true,
-      message: 'OTP sent successfully to your email'
-    });
+            </body>
+            </html>
+          `,
+          text: `Your Ujjivana verification code is: ${otp}. This code will expire in 10 minutes.`
+        });
 
-  } catch (emailError) {
-    console.error('SendGrid error:', emailError);
-    
-    // Even if email fails, OTP is still generated
-    console.log(`OTP for ${email}: ${otp}`);
-    
-    res.status(200).json({
-      success: true,
-      message: 'OTP generated successfully',
-      debug: { otp } // Include OTP for testing
-    });
-  }
-} else {
-      // SendGrid not configured
-      console.log(`OTP for ${email}: ${otp}`);
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        console.log(`✅ Email sent successfully via Resend to: ${email}`);
+        console.log(`📨 Resend Response ID:`, data?.id);
+
+        res.status(200).json({
+          success: true,
+          message: 'OTP sent successfully to your email'
+        });
+
+      } catch (emailError) {
+        console.error('❌ Resend error:', {
+          message: emailError.message,
+          stack: emailError.stack
+        });
+        
+        // Even if email fails, OTP is still generated
+        console.log(`OTP for ${email}: ${otp}`);
+        
+        res.status(200).json({
+          success: true,
+          message: 'OTP generated successfully (email service temporarily unavailable)',
+          debug: { otp }
+        });
+      }
+    } else {
+      // Resend not configured
+      console.log(`OTP for ${email}: ${otp} (Resend not configured)`);
       
       res.status(200).json({
         success: true,
         message: 'OTP generated successfully',
-        debug: { otp } // Always include OTP when email not configured
+        debug: { otp }
       });
     }
 
@@ -867,6 +854,7 @@ exports.sendEmailOTP = async (req, res) => {
     });
   }
 };
+
 // @desc    Verify email OTP
 // @route   POST /api/auth/verify-email-otp
 // @access  Public
