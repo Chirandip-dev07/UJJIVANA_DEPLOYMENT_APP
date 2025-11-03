@@ -587,66 +587,61 @@
 
         // Load user leaderboard
         async function loadUserLeaderboard(timeframe = 'all', page = 1) {
-            try {
-                const response = await getUserLeaderboard(timeframe, page, 10);
-                const users = response.data;
-                const leaderboardContainer = document.getElementById('user-leaderboard');
-                
-                leaderboardContainer.innerHTML = '';
+    try {
+        const response = await getUserLeaderboard(timeframe, page, 10);
+        const users = response.data;
+        const leaderboardContainer = document.getElementById('user-leaderboard');
+        
+        leaderboardContainer.innerHTML = '';
 
-                if (!users || users.length === 0) {
-                    leaderboardContainer.innerHTML = `
-                        <div class="no-data">
-                            <i class="fas fa-trophy fa-3x mb-3" style="color: #9E9E9E;"></i>
-                            <h5>No active students yet</h5>
-                            <p>Be the first to earn points by completing modules and quizzes!</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                // Update podium
-                if (users.length >= 3) {
-                    document.getElementById('first-place-name').textContent = users[0].name;
-                    document.getElementById('first-place-points').textContent = `${formatNumber(users[0].points)} pts`;
-                    
-                    document.getElementById('second-place-name').textContent = users[1].name;
-                    document.getElementById('second-place-points').textContent = `${formatNumber(users[1].points)} pts`;
-                    
-                    document.getElementById('third-place-name').textContent = users[2].name;
-                    document.getElementById('third-place-points').textContent = `${formatNumber(users[2].points)} pts`;
-                }
-
-                // Render leaderboard
-                users.forEach((user, index) => {
-                    const rank = (page - 1) * 10 + index + 1;
-                    const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'other-ranks';
-                    const isCurrentUser = currentUser && (user.id === currentUser.id || user._id === currentUser.id);
-
-                    const leaderboardItem = `
-                        <div class="leaderboard-entry ${rankClass} ${isCurrentUser ? 'current-user' : ''}" data-user-id="${user.id || user._id}">
-                            <div class="d-flex align-items-center">
-                                <div class="rank-badge">${rank}</div>
-                                <div class="user-info">
-                                    <h6 class="mb-0">${user.name} ${isCurrentUser ? '<span class="current-user-badge">You</span>' : ''}</h6>
-                                    <div class="school-name">${user.school || 'No school'}</div>
-                                </div>
-                            </div>
-                            <div class="points-badge">${formatNumber(user.points)} pts</div>
-                        </div>
-                    `;
-                    leaderboardContainer.innerHTML += leaderboardItem;
-                });
-
-                // Update pagination
-                updatePagination('user', response.page, response.pages);
-
-            } catch (error) {
-                console.error('Error loading user leaderboard:', error);
-                document.getElementById('user-leaderboard').innerHTML = 
-                    '<p class="text-center text-danger py-4">Error loading leaderboard. Please try again.</p>';
-            }
+        if (!users || users.length === 0) {
+            leaderboardContainer.innerHTML = `
+                <div class="no-data">
+                    <i class="fas fa-trophy fa-3x mb-3" style="color: #9E9E9E;"></i>
+                    <h5>No active students yet</h5>
+                    <p>Be the first to earn points by completing modules and quizzes!</p>
+                </div>
+            `;
+            
+            // Reset podium when no data
+            resetPodium();
+            return;
         }
+
+        // Update podium with proper data handling
+        updatePodiumData(users);
+
+        // Render leaderboard
+        users.forEach((user, index) => {
+            const rank = (page - 1) * 10 + index + 1;
+            const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'other-ranks';
+            const isCurrentUser = currentUser && (user.id === currentUser.id || user._id === currentUser.id);
+
+            const leaderboardItem = `
+                <div class="leaderboard-entry ${rankClass} ${isCurrentUser ? 'current-user' : ''}" data-user-id="${user.id || user._id}">
+                    <div class="d-flex align-items-center">
+                        <div class="rank-badge">${rank}</div>
+                        <div class="user-info">
+                            <h6 class="mb-0">${user.name || user.username || 'Unknown User'} ${isCurrentUser ? '<span class="current-user-badge">You</span>' : ''}</h6>
+                            <div class="school-name">${user.school || user.schoolName || 'No school'}</div>
+                        </div>
+                    </div>
+                    <div class="points-badge">${formatNumber(user.points || user.ecoPoints || 0)} pts</div>
+                </div>
+            `;
+            leaderboardContainer.innerHTML += leaderboardItem;
+        });
+
+        // Update pagination
+        updatePagination('user', response.page, response.pages);
+
+    } catch (error) {
+        console.error('Error loading user leaderboard:', error);
+        document.getElementById('user-leaderboard').innerHTML = 
+            '<p class="text-center text-danger py-4">Error loading leaderboard. Please try again.</p>';
+        resetPodium();
+    }
+}
 
         // Get quiz attempts count
         function getQuizAttemptsCount(user) {
@@ -861,26 +856,73 @@
             achievementsContainer.innerHTML = html;
         }
 
+// New function to update podium data with better error handling
+function updatePodiumData(users) {
+    // Reset podium first
+    resetPodium();
+    
+    if (users.length >= 1) {
+        const firstPlace = users[0];
+        document.getElementById('first-place-name').textContent = firstPlace.name || firstPlace.username || 'Top Performer';
+        document.getElementById('first-place-points').textContent = `${formatNumber(firstPlace.points || firstPlace.ecoPoints || 0)} pts`;
+    }
+    
+    if (users.length >= 2) {
+        const secondPlace = users[1];
+        document.getElementById('second-place-name').textContent = secondPlace.name || secondPlace.username || 'Second Place';
+        document.getElementById('second-place-points').textContent = `${formatNumber(secondPlace.points || secondPlace.ecoPoints || 0)} pts`;
+    }
+    
+    if (users.length >= 3) {
+        const thirdPlace = users[2];
+        document.getElementById('third-place-name').textContent = thirdPlace.name || thirdPlace.username || 'Third Place';
+        document.getElementById('third-place-points').textContent = `${formatNumber(thirdPlace.points || thirdPlace.ecoPoints || 0)} pts`;
+    }
+}
 
-        // Refresh leaderboard
-        async function refreshLeaderboard() {
-            currentUser = getCurrentUser();
-            
-            if (currentUser) {
-                // Update eco performance section
-                const rankResponse = await getUserRank('all');
-                if (rankResponse && rankResponse.success) {
-                    document.getElementById('user-rank').textContent = `#${rankResponse.data.rank}`;
-                }
-                
-                document.getElementById('user-streak').textContent = currentUser.streak || 0;
-                document.getElementById('user-points').textContent = formatNumber(currentUser.points || 0);
+// Function to reset podium to default state
+function resetPodium() {
+    document.getElementById('first-place-name').textContent = '-';
+    document.getElementById('first-place-points').textContent = '0 pts';
+    document.getElementById('second-place-name').textContent = '-';
+    document.getElementById('second-place-points').textContent = '0 pts';
+    document.getElementById('third-place-name').textContent = '-';
+    document.getElementById('third-place-points').textContent = '0 pts';
+}
 
-                await loadUserLeaderboard(currentTimeframe, currentUserPage);
-                await loadSchoolLeaderboard(currentSchoolPage);
-                loadAchievements(currentUser);
+// Also update the refreshLeaderboard function to ensure podium gets updated
+async function refreshLeaderboard() {
+    currentUser = getCurrentUser();
+    
+    if (currentUser) {
+        // Update eco performance section
+        try {
+            const rankResponse = await getUserRank('all');
+            if (rankResponse && rankResponse.success) {
+                document.getElementById('user-rank').textContent = `#${rankResponse.data.rank}`;
+            } else {
+                document.getElementById('user-rank').textContent = '#0';
             }
+        } catch (error) {
+            console.error('Error getting user rank:', error);
+            document.getElementById('user-rank').textContent = '#0';
         }
+        
+        document.getElementById('user-streak').textContent = currentUser.streak || 0;
+        document.getElementById('user-points').textContent = formatNumber(currentUser.points || currentUser.ecoPoints || 0);
+
+        await loadUserLeaderboard(currentTimeframe, currentUserPage);
+        await loadSchoolLeaderboard(currentSchoolPage);
+        loadAchievements(currentUser);
+    } else {
+        // Reset everything if no user
+        resetPodium();
+        document.getElementById('user-rank').textContent = '#0';
+        document.getElementById('user-streak').textContent = '0';
+        document.getElementById('user-points').textContent = '0';
+    }
+}
+
 
         // Create confetti effect
         function createConfetti() {
