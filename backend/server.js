@@ -65,6 +65,61 @@ app.get('/api/debug/progress/:moduleId/:userId', async (req, res) => {
     }
 });
 
+app.get('/api/environmental-news', async (req, res) => {
+    try {
+        const apiKey = process.env.GNEWS_API_KEY || 'f373ab713fe176942fd2d5751d51eef2';
+        const query = 'environment OR climate OR sustainability OR renewable energy OR conservation';
+        const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=2&apikey=${apiKey}`;
+        
+        console.log('Fetching environmental news from GNews API...');
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`GNews API responded with status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        res.json({
+            success: true,
+            articles: data.articles || [],
+            total: data.totalArticles || 0
+        });
+        
+    } catch (error) {
+        console.error('Error fetching environmental news:', error);
+        
+        // Return fallback data if API fails
+        const fallbackNews = [
+            {
+                title: "Global Climate Summit Reaches Historic Agreement",
+                description: "World leaders have agreed on ambitious targets for reducing carbon emissions by 2030, marking a significant step in global climate action.",
+                source: { name: "Climate News Network" },
+                publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                url: "#",
+                image: "https://via.placeholder.com/300x150?text=Climate+News"
+            },
+            {
+                title: "Breakthrough in Solar Panel Efficiency",
+                description: "Researchers have developed a new solar cell design that achieves 35% efficiency, potentially revolutionizing renewable energy adoption.",
+                source: { name: "Renewable Energy Journal" },
+                publishedAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+                url: "#",
+                image: "https://via.placeholder.com/300x150?text=Solar+Energy"
+            }
+        ];
+        
+        res.json({
+            success: false,
+            message: 'Using fallback data',
+            articles: fallbackNews,
+            total: fallbackNews.length
+        });
+    }
+});
+
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
